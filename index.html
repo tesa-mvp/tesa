@@ -504,7 +504,10 @@
     async function loadTorqueData(){
       try{
         setStatus("Loading dataset…", true, false);
-        const res = await fetch(DATASET_FILE);
+        const res = await fetch(DATASET_FILE, { cache: "no-store" });
+        if (!res.ok){
+          throw new Error(`HTTP ${res.status} while fetching ${DATASET_FILE}`);
+        }
         const data = await res.json();
 
         bikeMeta = {
@@ -944,7 +947,7 @@ if (hasInfoToRead){
         speak(spoken.base);
       }
 
-
+    }
 
     function renderAmbiguous(cands, info){
       resultBody.className = "";
