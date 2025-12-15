@@ -2938,6 +2938,10 @@
           "name": "Valve collet fitting tool"
         }
       ],
+      "extra_notes": [
+        "MOTOR OIL to thread, GREASE D to under head",
+        "Nut to crankshaft"
+      ],
       "sample_questions": [
         "What is the tightening torque for Test single - All info?",
         "What is the torque spec for test single?",
@@ -2985,6 +2989,10 @@
           "name": "Valve collet fitting tool"
         }
       ],
+      "extra_notes": [
+        "MOTOR OIL to thread, GREASE D to under head",
+        "Nut to crankshaft"
+      ],
       "sample_questions": [
         "What are the tightening steps for Test multi-step - All info?",
         "What is the torque procedure for test multi?",
@@ -3026,6 +3034,10 @@
           "number": "88713.3467",
           "name": "Valve collet fitting tool"
         }
+      ],
+      "extra_notes": [
+        "MOTOR OIL to thread, GREASE D to under head",
+        "Nut to crankshaft"
       ],
       "sample_questions": [
         "What are the tightening steps for Test multi-size - All info?",
