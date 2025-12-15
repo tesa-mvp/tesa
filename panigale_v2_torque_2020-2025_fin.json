@@ -10,7 +10,7 @@
       "group": "engine_oil_system",
       "component_name": "Engine oil drain plug",
       "tightening_type": "single",
-      "sealant": "SEAL",
+      "sealant": "THREE BOND 1215 (SEAL)",
       "common_name": [
         "oil drain",
         "oil drain plug",
@@ -124,7 +124,7 @@
       "group": "fuel_tank_drain",
       "component_name": "Fuel tank drain union",
       "tightening_type": "single",
-      "sealant": "LOCK 6",
+      "sealant": "Loctite 577 (LOCK 6)",
       "common_name": [
         "fuel tank drain",
         "tank drain"
@@ -147,7 +147,7 @@
       "group": "fuel_tank_quick_coupling",
       "component_name": "Fuel tank quick coupling",
       "tightening_type": "single",
-      "sealant": "LOCK 6",
+      "sealant": "Loctite 577 (LOCK 6)",
       "common_name": [
         "fuel line joint"
       ],
@@ -169,7 +169,7 @@
       "group": "fuel_tank_mount_front",
       "component_name": "Fuel tank front bolt",
       "tightening_type": "single",
-      "lubrication": "GREASE B",
+      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
       "common_name": [
         "tank front bolt"
       ],
@@ -279,7 +279,7 @@
       "group": "intake_throttle_body",
       "component_name": "Throttle body bolt",
       "tightening_type": "single",
-      "threadlock": "LOCK 1",
+      "threadlock": "Loctite 222 (LOCK 1)",
       "common_name": [
         "throttle body"
       ],
@@ -301,7 +301,7 @@
       "group": "brake_front_caliper",
       "component_name": "Front brake caliper bolt",
       "tightening_type": "multi_step",
-      "lubrication": "GREASE B",
+      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
       "common_name": [
         "front caliper",
         "front caliper bolt",
@@ -309,12 +309,14 @@
       ],
       "torque_steps": [
         {
-          "step": "1",
-          "torque_nm": 2
+          "step": "Step1",
+          "torque_nm": 2,
+          "raw": "2Nm"
         },
         {
-          "step": "2",
-          "torque_nm": 45
+          "step": "Step2",
+          "torque_nm": 45,
+          "raw": "45Nm"
         }
       ],
       "sample_questions": [
@@ -334,7 +336,7 @@
       "group": "brake_rear_caliper",
       "component_name": "Rear brake caliper bolt",
       "tightening_type": "single",
-      "lubrication": "GREASE M",
+      "lubrication": "ROCOL-DRY MOLY PASTE (GREASE M)",
       "common_name": [
         "rear caliper",
         "rear caliper bolt",
@@ -358,7 +360,7 @@
       "group": "swingarm_eccentric",
       "component_name": "Eccentric hub pinch bolt",
       "tightening_type": "single",
-      "lubrication": "GREASE M",
+      "lubrication": "ROCOL — DRY MOLY PASTE (GREASE M)",
       "common_name": [
         "eccentric hub",
         "swingarm pinch bolt",
@@ -385,7 +387,7 @@
       "group": "steering_head",
       "component_name": "Steering head ring nut",
       "tightening_type": "single",
-      "lubrication": "GREASE D",
+      "lubrication": "SHELL Retinax HD2 (GREASE D)",
       "common_name": [
         "steering stem",
         "steering head",
@@ -414,7 +416,7 @@
       "group": "suspension_front_triple",
       "component_name": "Top triple clamp pinch bolt",
       "tightening_type": "single",
-      "lubrication": "GREASE D",
+      "lubrication": "SHELL Retinax HD2 (GREASE D)",
       "common_name": [
         "top clamp pinch bolt",
         "upper clamp pinch bolt",
@@ -439,7 +441,7 @@
       "group": "brake_rear_disc",
       "component_name": "Rear brake disc bolt",
       "tightening_type": "single",
-      "threadlock": "LOCK 3 - Loctite 270",
+      "threadlock": "Loctite 270 (LOCK 3)",
       "common_name": [
         "rear disc bolt",
         "rear disc rotor bolt",
@@ -468,7 +470,7 @@
       "group": "rear_wheel_phonic_wheel",
       "component_name": "Rear phonic wheel bolt",
       "tightening_type": "single",
-      "threadlock": "LOCK 3 - Loctite 270",
+      "threadlock": "Loctite 270 (LOCK 3)",
       "common_name": [
         "rear phonic wheel bolt",
         "rear speed ring bolt",
@@ -495,7 +497,7 @@
       "group": "rear_wheel_axle",
       "component_name": "Rear wheel shaft nut",
       "tightening_type": "single",
-      "lubrication": "GREASE M",
+      "lubrication": "ROCOL-DRY MOLY PASTE (GREASE M)",
       "common_name": [
         "rear wheel nut",
         "rear wheel"
@@ -567,6 +569,7 @@
         "iginition switch cover",
         "ignition key cover",
         "ignition cover",
+        "ignition cover special nut",
         "ignition cover special nut"
       ],
       "torque_nm_single": 8,
@@ -655,7 +658,7 @@
       "group": "Engine",
       "component_name": "Generator bolt to case cover",
       "tightening_type": "single",
-      "threadlock": "LOCK 2",
+      "threadlock": "Loctite 243 (LOCK 2)",
       "common_name": [
         "generator",
         "stator",
@@ -722,7 +725,7 @@
       "group": "Engine",
       "component_name": "Gear position sensor bolt",
       "tightening_type": "single",
-      "threadlock": "LOCK 2",
+      "threadlock": "Loctite 243 (LOCK 2)",
       "common_name": [
         "gear position sensor"
       ],
@@ -762,7 +765,7 @@
       "group": "Frame",
       "component_name": "Front axle nut",
       "tightening_type": "single",
-      "lubrication": "GREASE B",
+      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
       "common_name": [
         "front wheel axle",
         "front axle nut"
@@ -862,7 +865,7 @@
       "group": "Frame",
       "component_name": "Rear brake master cylinder rod bolt",
       "tightening_type": "single",
-      "threadlock": "LOCK 2",
+      "threadlock": "Loctite 243 (LOCK 2)",
       "common_name": [
         "rear brake master cylinder rod",
         "rear brake rod",
@@ -886,8 +889,8 @@
       "group": "Frame",
       "component_name": "Rear brake lever bolt",
       "tightening_type": "single",
-      "threadlock": "LOCK 2",
-      "lubrication": "GREASE D",
+      "threadlock": "Loctite 243 (LOCK 2)",
+      "lubrication": "SHELL Retinax HD2 (GREASE D)",
       "common_name": [
         "rear brake lever",
         "rear brake pedal"
@@ -931,7 +934,7 @@
       "group": "Frame",
       "component_name": "Rear brake master cylinder bracket bolt",
       "tightening_type": "multi_step",
-      "threadlock": "M8: LOCK 1",
+      "threadlock": "M8: Loctite 222 (LOCK 1)",
       "common_name": [
         "rear brake master cylider bracket",
         "rear brake master cylinder holder",
@@ -943,11 +946,13 @@
       "torque_steps": [
         {
           "step": "M8",
-          "torque_nm": 10
+          "torque_nm": 10,
+          "raw": "10Nm"
         },
         {
           "step": "M6",
-          "torque_nm": 6
+          "torque_nm": 6,
+          "raw": "6Nm"
         }
       ],
       "extra_notes": [
@@ -970,7 +975,7 @@
       "group": "Frame",
       "component_name": "Rear brake master cylinder bolt",
       "tightening_type": "single",
-      "threadlock": "LOCK 2",
+      "threadlock": "Loctite 243 (LOCK 2)",
       "common_name": [
         "rear brake master cylinder",
         "rear brake cylinder"
@@ -993,7 +998,7 @@
       "group": "Frame",
       "component_name": "Heel guard bolt",
       "tightening_type": "single",
-      "threadlock": "LOCK 2",
+      "threadlock": "Loctite 243 (LOCK 2)",
       "common_name": [
         "heel guard"
       ],
@@ -1037,7 +1042,7 @@
       "group": "Frame",
       "component_name": "ABS control unit support bolt",
       "tightening_type": "single",
-      "threadlock": "LOCK 2",
+      "threadlock": "Loctite 243 (LOCK 2)",
       "common_name": [
         "ABS bracket",
         "ABS support",
@@ -1064,7 +1069,7 @@
       "group": "Frame",
       "component_name": "Handlebar clamp bolt",
       "tightening_type": "single",
-      "lubrication": "GREASE B",
+      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
       "common_name": [
         "handlebar clamp"
       ],
@@ -1156,7 +1161,7 @@
       "group": "Frame",
       "component_name": "Steering damper bolt",
       "tightening_type": "single",
-      "threadlock": "LOCK 1",
+      "threadlock": "Loctite 222 (LOCK 1)",
       "common_name": [
         "steering damper",
         "steering dampener"
@@ -1179,7 +1184,7 @@
       "group": "Frame",
       "component_name": "Gear change linkage bolt",
       "tightening_type": "single",
-      "threadlock": "LOCK 2",
+      "threadlock": "Loctite 243 (LOCK 2)",
       "common_name": [
         "gear change linkage",
         "gear change rod",
@@ -1206,8 +1211,8 @@
       "group": "Frame",
       "component_name": "Gearchange lever bolt",
       "tightening_type": "single",
-      "threadlock": "LOCK 2",
-      "lubrication": "GREASE D",
+      "threadlock": "Loctite 243 (LOCK 2)",
+      "lubrication": "SHELL Retinax HD2 (GREASE D)",
       "common_name": [
         "gear change lever",
         "gear change pedal",
@@ -1232,7 +1237,7 @@
       "group": "Frame",
       "component_name": "Lower triple clamp pinch bolt",
       "tightening_type": "single",
-      "lubrication": "GREASE B",
+      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
       "common_name": [
         "lower triple clamp pinch",
         "fork pinch bolt"
@@ -1258,7 +1263,7 @@
       "group": "Frame",
       "component_name": "Rear shock bolt",
       "tightening_type": "single",
-      "lubrication": "GREASE B",
+      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
       "common_name": [
         "shock bolt",
         "rear shock",
@@ -1285,7 +1290,7 @@
       "group": "Frame",
       "component_name": "Rear shock rocker arm bolt",
       "tightening_type": "single",
-      "lubrication": "GREASE B",
+      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
       "thread_spec": "Torx",
       "common_name": [
         "shock rocker arm",
@@ -1312,7 +1317,7 @@
       "group": "Frame",
       "component_name": "Rear shock linkage bolt",
       "tightening_type": "single",
-      "lubrication": "GREASE B",
+      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
       "common_name": [
         "rear shock linkage",
         "shock linkage",
@@ -1339,7 +1344,7 @@
       "group": "Frame",
       "component_name": "Swing arm shaft",
       "tightening_type": "single",
-      "lubrication": "GREASE B",
+      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
       "common_name": [
         "swing arm",
         "swing arm bolt"
@@ -1362,7 +1367,7 @@
       "group": "Engine",
       "component_name": "Front sprocket bolt",
       "tightening_type": "single",
-      "lubrication": "GREASE B",
+      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
       "common_name": [
         "front sprocket"
       ],
@@ -1405,7 +1410,7 @@
       "group": "Frame",
       "component_name": "Swing arm support bolt",
       "tightening_type": "single",
-      "lubrication": "GREASE B",
+      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
       "common_name": [
         "swing arm support"
       ],
@@ -1430,7 +1435,7 @@
       "group": "Frame",
       "component_name": "Swing arm shaft pinch bolt",
       "tightening_type": "single",
-      "lubrication": "GREASE B",
+      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
       "common_name": [
         "swing arm support pinch bolt"
       ],
@@ -1452,7 +1457,7 @@
       "group": "Frame",
       "component_name": "Quick shfat sensor bolt",
       "tightening_type": "single",
-      "threadlock": "LOCK 1",
+      "threadlock": "Loctite 222 (LOCK 1)",
       "common_name": [
         "quick shift sensor",
         "quick shifter"
@@ -1475,7 +1480,7 @@
       "group": "Frame",
       "component_name": "Rear sprocket stud-bolt",
       "tightening_type": "single",
-      "threadlock": "LOCK 2",
+      "threadlock": "Loctite 243 (LOCK 2)",
       "common_name": [
         "rear sprocket stud"
       ],
@@ -1497,7 +1502,7 @@
       "group": "Frame",
       "component_name": "Rear sprocket nut",
       "tightening_type": "single",
-      "threadlock": "LOCK 2",
+      "threadlock": "Loctite 243 (LOCK 2)",
       "common_name": [
         "rear sprocket"
       ],
@@ -1529,11 +1534,13 @@
       "torque_steps": [
         {
           "step": "M8",
-          "torque_nm": 25
+          "torque_nm": 25,
+          "raw": "25Nm"
         },
         {
           "step": "M6",
-          "torque_nm": 10
+          "torque_nm": 10,
+          "raw": "10Nm"
         }
       ],
       "extra_notes": [
@@ -1556,8 +1563,8 @@
       "group": "Frame",
       "component_name": "Side stand bolt",
       "tightening_type": "single",
-      "threadlock": "LOCK 2",
-      "lubrication": "GREASE B",
+      "threadlock": "Loctite 243 (LOCK 2)",
+      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
       "common_name": [
         "side stand",
         "quick stand"
@@ -1580,7 +1587,7 @@
       "group": "Frame",
       "component_name": "Ignition switch support bolt",
       "tightening_type": "single",
-      "lubrication": "GREASE B",
+      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
       "common_name": [
         "iginition switch support",
         "ignition switch bracket",
@@ -1605,7 +1612,7 @@
       "group": "Frame",
       "component_name": "Dashbaord support bolt",
       "tightening_type": "single",
-      "lubrication": "GREASE B",
+      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
       "common_name": [
         "dashboard bracket",
         "dashboard support"
@@ -1652,7 +1659,7 @@
       "group": "Frame",
       "component_name": "Sub frame bolt to main frame",
       "tightening_type": "single",
-      "lubrication": "GREASE B",
+      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
       "common_name": [
         "sub frame to main frame",
         "sub frame"
@@ -1675,7 +1682,7 @@
       "group": "Frame",
       "component_name": "Sub frame bolt to cylinder head",
       "tightening_type": "single",
-      "lubrication": "GREASE B",
+      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
       "common_name": [
         "sub frame to engine",
         "sub frame to cylinder head",
@@ -1720,8 +1727,8 @@
       "group": "Frame",
       "component_name": "Fuel tank bolt",
       "tightening_type": "single",
-      "threadlock": "LOCK 6",
-      "lubrication": "GREASE B",
+      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
+      "sealant": "Loctite 577 (LOCK 6)",
       "common_name": [
         "fuel tank",
         "gas tank"
@@ -1747,7 +1754,7 @@
       "group": "Frame",
       "component_name": "Fuel pump bolt",
       "tightening_type": "single",
-      "lubrication": "GREASE B",
+      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
       "common_name": [
         "fuel pump",
         "fuel tank flange",
@@ -1776,7 +1783,7 @@
       "group": "Engine",
       "component_name": "Secondary air valve cover bolt",
       "tightening_type": "single",
-      "threadlock": "LOCK 2",
+      "threadlock": "Loctite 243 (LOCK 2)",
       "common_name": [
         "secondary air system",
         "secondary air valve",
@@ -1824,7 +1831,7 @@
       "group": "Engine",
       "component_name": "Canister support bolt",
       "tightening_type": "single",
-      "threadlock": "LOCK 2",
+      "threadlock": "Loctite 243 (LOCK 2)",
       "common_name": [
         "canister",
         "canister support",
@@ -1849,7 +1856,7 @@
       "group": "Frame",
       "component_name": "Main frame nut",
       "tightening_type": "single",
-      "lubrication": "GREASE B",
+      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
       "common_name": [
         "main frame",
         "front frame"
@@ -1872,7 +1879,7 @@
       "group": "Engine",
       "component_name": "Starter motor cable bolt",
       "tightening_type": "single",
-      "lubrication": "GREASE B",
+      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
       "common_name": [
         "starter motor cable",
         "starter cable"
@@ -1918,7 +1925,7 @@
       "group": "Engine",
       "component_name": "Flywheel bolt to rotor",
       "tightening_type": "single",
-      "threadlock": "LOCK 5",
+      "threadlock": "Loctite 648, 128455 (LOCK 5)",
       "common_name": [
         "flywheel",
         "flywheel to rotor",
@@ -1945,7 +1952,7 @@
       "group": "Engine",
       "component_name": "Flywheel nut",
       "tightening_type": "single",
-      "lubrication": "Thread: MOTOR OIL; Under head: GREASE D",
+      "lubrication": "Thread: MOTOR OIL, Under head: GREASE D",
       "common_name": [
         "flywheel"
       ],
@@ -1970,7 +1977,7 @@
       "group": "Engine",
       "component_name": "Clutch hub nut",
       "tightening_type": "single",
-      "lubrication": "GREASE B",
+      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
       "common_name": [
         "clutch hub",
         "clutch nut"
@@ -1999,7 +2006,7 @@
       "group": "Engine",
       "component_name": "Clutch pressure plate bolt",
       "tightening_type": "single",
-      "lubrication": "MOTOR OIL",
+      "lubrication": "SHELL Advance 4T Ultra (MOTOR OIL)",
       "common_name": [
         "clutch pressure plate",
         "pressure plate"
@@ -2047,7 +2054,7 @@
       "group": "Engine",
       "component_name": "Clutch noise dampening sheet bolt",
       "tightening_type": "single",
-      "threadlock": "LOCK 2",
+      "threadlock": "Loctite 243 (LOCK 2)",
       "common_name": [
         "clutch noise dampening sheet",
         "clutch noise damper",
@@ -2079,7 +2086,7 @@
       ],
       "torque_nm_single": 13,
       "extra_notes": [
-        "Only doulbe-ended stud: LOCK 2"
+        "Only doulbe-ended stud: Loctite 243 (LOCK 2)"
       ],
       "sample_questions": [
         "What is the tightening torque for Clutch cover bolt?",
@@ -2098,7 +2105,7 @@
       "group": "Engine",
       "component_name": "Primary drive gear bolt",
       "tightening_type": "single",
-      "lubrication": "MOTOR OIL",
+      "lubrication": "SHELL Advance 4T Ultra (MOTOR OIL)",
       "common_name": [
         "primary drive gear",
         "primary gear",
@@ -2146,7 +2153,7 @@
       "group": "Engine",
       "component_name": "Water pump idle gear bolt",
       "tightening_type": "single",
-      "threadlock": "LOCK 2",
+      "threadlock": "Loctite 243 (LOCK 2)",
       "common_name": [
         "water pump gear",
         "water pump idle gear"
@@ -2218,7 +2225,7 @@
       "group": "Engine",
       "component_name": "Heat exchanger bolt",
       "tightening_type": "single",
-      "threadlock": "LOCK 2",
+      "threadlock": "Loctite 243 (LOCK 2)",
       "common_name": [
         "heat exchanger",
         "oil heat exchanger"
@@ -2244,7 +2251,7 @@
       "group": "Engine",
       "component_name": "Gear stopper lever bolt",
       "tightening_type": "single",
-      "threadlock": "LOCK 2",
+      "threadlock": "Loctite 243 (LOCK 2)",
       "common_name": [
         "gear stopper",
         "gear stopper lever",
@@ -2269,7 +2276,7 @@
       "group": "Engine",
       "component_name": "Gearbox drum bolt",
       "tightening_type": "single",
-      "threadlock": "LOCK 2",
+      "threadlock": "Loctite 243 (LOCK 2)",
       "common_name": [
         "gearbox drum",
         "gearbox drum flange",
@@ -2321,7 +2328,7 @@
       "group": "Engine",
       "component_name": "Mesh filter bolt",
       "tightening_type": "single",
-      "threadlock": "LOCK 2",
+      "threadlock": "Loctite 243 (LOCK 2)",
       "common_name": [
         "mesh filter",
         "oil mesh filter",
@@ -2369,7 +2376,7 @@
       "group": "Engine",
       "component_name": "Camshaft gear bolt",
       "tightening_type": "single",
-      "threadlock": "LOCK 2",
+      "threadlock": "Loctite 243 (LOCK 2)",
       "common_name": [
         "camshaft gear"
       ],
@@ -2391,7 +2398,7 @@
       "group": "Engine",
       "component_name": "Decompressor nut",
       "tightening_type": "single",
-      "threadlock": "LOCK 2",
+      "threadlock": "Loctite 243 (LOCK 2)",
       "common_name": [
         "decompressor"
       ],
@@ -2413,7 +2420,7 @@
       "group": "Engine",
       "component_name": "Camshaft impeller bolt",
       "tightening_type": "single",
-      "threadlock": "LOCK 2",
+      "threadlock": "Loctite 243 (LOCK 2)",
       "common_name": [
         "camshaft impeller"
       ],
@@ -2435,19 +2442,21 @@
       "group": "Engine",
       "component_name": "Camshaft cap bolt",
       "tightening_type": "multi_step",
-      "lubrication": "MOTOR OIL",
+      "lubrication": "SHELL Advance 4T Ultra (MOTOR OIL)",
       "common_name": [
         "camshaft cap",
         "camshaft support"
       ],
       "torque_steps": [
         {
-          "step": "1",
-          "torque_nm": 10
+          "step": "Step1",
+          "torque_nm": 10,
+          "raw": "10Nm"
         },
         {
-          "step": "2",
-          "torque_nm": 22.5
+          "step": "Step2",
+          "torque_nm": 22.5,
+          "raw": "22.5Nm"
         }
       ],
       "extra_notes": [
@@ -2497,7 +2506,7 @@
       "group": "Engine",
       "component_name": "Rocker arm shaft plug",
       "tightening_type": "single",
-      "threadlock": "LOCK 2",
+      "threadlock": "Loctite 243 (LOCK 2)",
       "common_name": [
         "rocker arm plug"
       ],
@@ -2519,7 +2528,7 @@
       "group": "Engine",
       "component_name": "Rocker arm shaft retainer plate bolt",
       "tightening_type": "single",
-      "threadlock": "LOCK 2",
+      "threadlock": "Loctite 243 (LOCK 2)",
       "common_name": [
         "rocker arm shaft plate",
         "rocker arm shaft retainer plate",
@@ -2565,7 +2574,7 @@
       "group": "Engine",
       "component_name": "Timing chain guide special bolt",
       "tightening_type": "single",
-      "lubrication": "GREASE A",
+      "lubrication": "SHELL Alvania R3 (GREASE A)",
       "common_name": [
         "timing chain guide",
         "timing chain slider",
@@ -2633,7 +2642,7 @@
       "group": "Engine",
       "component_name": "Cylinder head stud nut - 12-point",
       "tightening_type": "multi_step",
-      "lubrication": "GREASE C",
+      "lubrication": "SHELL Retinax LX2 (GREASE C)",
       "thread_spec": "M10",
       "common_name": [
         "cylinder head nut",
@@ -2641,16 +2650,19 @@
       ],
       "torque_steps": [
         {
-          "step": "1",
-          "torque_nm": 20
+          "step": "Step1",
+          "torque_nm": 20,
+          "raw": "20Nm"
         },
         {
-          "step": "2",
-          "torque_nm": 40
+          "step": "Step2",
+          "torque_nm": 40,
+          "raw": "40Nm"
         },
         {
-          "step": "3",
-          "torque_nm": 67
+          "step": "Step3",
+          "torque_nm": 67,
+          "raw": "67Nm"
         }
       ],
       "sample_questions": [
@@ -2670,7 +2682,7 @@
       "group": "Engine",
       "component_name": "Cylinder head stud nut - 6-point",
       "tightening_type": "single",
-      "lubrication": "GREASE C",
+      "lubrication": "SHELL Retinax LX2 (GREASE C)",
       "thread_spec": "M6",
       "common_name": [
         "cylinder head nut",
@@ -2715,7 +2727,7 @@
       "group": "Engine",
       "component_name": "Cylinder head stud",
       "tightening_type": "single",
-      "threadlock": "LOCK 5",
+      "threadlock": "Loctite 648, 128455 (LOCK 5)",
       "common_name": [
         "cylinder head stud",
         "head stud"
@@ -2738,7 +2750,7 @@
       "group": "Engine",
       "component_name": "Starter motor bolt",
       "tightening_type": "single",
-      "threadlock": "LOCK 2",
+      "threadlock": "Loctite 243 (LOCK 2)",
       "common_name": [
         "starter motor"
       ],
@@ -2760,7 +2772,7 @@
       "group": "Engine",
       "component_name": "Crankcase bolt - M8",
       "tightening_type": "multi_step",
-      "lubrication": "GREASE B",
+      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
       "common_name": [
         "crankcase",
         "engine case",
@@ -2769,12 +2781,14 @@
       ],
       "torque_steps": [
         {
-          "step": "1",
-          "torque_nm": 15
+          "step": "Step1",
+          "torque_nm": 15,
+          "raw": "15Nm"
         },
         {
-          "step": "2",
-          "torque_nm": 25
+          "step": "Step2",
+          "torque_nm": 25,
+          "raw": "25Nm"
         }
       ],
       "sample_questions": [
@@ -2818,21 +2832,23 @@
       "group": "engine_internal",
       "component_name": "Connecting rod bolt",
       "tightening_type": "multi_step",
-      "lubrication": "GREASE B",
+      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
       "common_name": [
         "connecting rod"
       ],
       "torque_steps": [
         {
-          "step": "1",
-          "torque_nm": 20
+          "step": "Step1",
+          "torque_nm": 20,
+          "raw": "20Nm"
         },
         {
-          "step": "2",
-          "torque_nm": 35
+          "step": "Step2",
+          "torque_nm": 35,
+          "raw": "35Nm"
         },
         {
-          "step": "3",
+          "step": "Step3",
           "raw": "100°"
         }
       ],
@@ -2854,6 +2870,80 @@
         "How tight should I torque the Connecting rod bolt?",
         "What's the torque spec on the Connecting rod bolt?",
         "Give me the torque for Connecting rod bolt."
+      ]
+    },
+    {
+      "id": "test_single",
+      "system": "frame",
+      "group": "test",
+      "component_name": "Test single - All info",
+      "tightening_type": "single",
+      "threadlock": "Loctite 648, 128455 (LOCK 5)",
+      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
+      "sealant": "THREE BOND 1215 (SEAL)",
+      "common_name": [
+        "test single",
+        "test"
+      ],
+      "torque_nm_single": 25,
+      "special_tools": [
+        {
+          "number": "88713.3467",
+          "name": "Valve collet fitting tool"
+        }
+      ],
+      "extra_notes": [
+        "Criss-cross pattern"
+      ],
+      "sample_questions": [
+        "What is the tightening torque for Test single - All info?",
+        "What is the torque spec for test single?",
+        "How tight should I tighten the test single?"
+      ]
+    },
+    {
+      "id": "test_multi",
+      "system": "frame",
+      "group": "test",
+      "component_name": "Test multi - All info",
+      "tightening_type": "multi_step",
+      "threadlock": "Loctite 648, 128455 (LOCK 5)",
+      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
+      "sealant": "THREE BOND 1215 (SEAL)",
+      "common_name": [
+        "test multi",
+        "test"
+      ],
+      "torque_steps": [
+        {
+          "step": "Step1",
+          "torque_nm": 20,
+          "raw": "20Nm"
+        },
+        {
+          "step": "Step2",
+          "torque_nm": 40,
+          "raw": "40Nm"
+        },
+        {
+          "step": "Step3",
+          "torque_nm": 67,
+          "raw": "67Nm"
+        }
+      ],
+      "special_tools": [
+        {
+          "number": "88713.3467",
+          "name": "Valve collet fitting tool"
+        }
+      ],
+      "extra_notes": [
+        "Criss-cross pattern"
+      ],
+      "sample_questions": [
+        "What are the tightening steps for Test multi - All info?",
+        "What is the torque procedure for test multi?",
+        "How do I tighten the test multi?"
       ]
     }
   ]
