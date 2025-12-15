@@ -792,7 +792,14 @@
         }
       }
 
-      // ✅ NEW: tools + notes block sits BETWEEN torque/steps and chemistry line
+      // Chemistry line (threadlock/lube/sealant)
+      if (chemItems.length){
+        html += `<div class="chemLine">` + chemItems.map(ci => (
+          `<div class="chemItem"><span class="chemKey">${escapeHtml(ci.k)}:</span> ${escapeHtml(ci.v)}</div>`
+        )).join("") + `</div>`;
+      }
+
+      // ✅ Info block (Note → Special tool → New parts required)
       const hasInfoBlock = (
         extraNotes.length ||
         toolLines.length ||
@@ -820,13 +827,6 @@
         }
 
         html += `</div>`;
-      }
-
-      // Chemistry line (threadlock/lube/sealant)
-      if (chemItems.length){
-        html += `<div class="chemLine">` + chemItems.map(ci => (
-          `<div class="chemItem"><span class="chemKey">${escapeHtml(ci.k)}:</span> ${escapeHtml(ci.v)}</div>`
-        )).join("") + `</div>`;
       }
 
       // Meta pills
