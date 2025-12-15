@@ -1751,17 +1751,14 @@
       "component_name": "Fuel tank bolt",
       "tightening_type": "single",
       "lubrication": "SHELL Retinax HDX2",
-      "lubrication_symbol": "GREASE B",
-      "sealant": "Loctite 577",
+      "lubrication_symbol": "GREASE B to front bolts",
+      "sealant": "Loctite 577 to rear bolt",
       "sealant_symbol": "LOCK 6",
       "common_name": [
         "fuel tank",
         "gas tank"
       ],
       "torque_nm_single": 10,
-      "extra_notes": [
-        "GREASE B to front bolts, Loctite 577 to rear bolt"
-      ],
       "sample_questions": [
         "What is the tightening torque for Fuel tank bolt?",
         "What is the torque for Fuel tank bolt?",
