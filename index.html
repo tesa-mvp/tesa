@@ -544,39 +544,13 @@
       window.speechSynthesis.speak(u);
     }
 
-    function parseKeyValuePairs(str){
-      // Accept formats like: "Thread: MOTOR OIL;Under head: GREASE D"
-      // Returns [{k, v}] or [] if not in key:value form.
-      const s = String(str || "").trim();
-      if (!s) return [];
-      const parts = s.split(";").map(p=>p.trim()).filter(Boolean);
-      const out = [];
-      for (const p of parts){
-        const i = p.indexOf(":");
-        if (i === -1) return [];
-        const k = p.slice(0, i).trim();
-        const v = p.slice(i+1).trim();
-        if (!k || !v) return [];
-        out.push({k, v});
-      }
-      return out;
-    }
-
-    function chemToUiLines(label, raw){
-      const kv = parseKeyValuePairs(raw);
-      if (!kv.length) return [{k: label, v: raw}];
-      return kv.map(({k,v})=>({k: `${label} · ${k}`, v}));
-    }
-
-    function nmSpeak(n){
-      return `${n} newton meters`;
-    }
     function buildSpokenAnswer(item){
       if (!item) return "No matching fastener found.";
 
       const name = item.component_name || "this fastener";
       const hasSteps = Array.isArray(item.torque_steps) && item.torque_steps.length > 0;
 
+      // Detect bolt-size variants: ALL step labels are like M8, M6, M10...
       let isBoltSizeVariant = false;
       if (hasSteps){
         const labels = item.torque_steps.map((s, idx) => {
@@ -585,6 +559,93 @@
         });
         isBoltSizeVariant = labels.length > 0 && labels.every(l => /^m\d+$/i.test(l));
       }
+
+      const parts = [];
+
+      // ---- Bolt-size variant (M8/M6 etc): speak naturally ----
+      if (hasSteps && isBoltSizeVariant){
+        parts.push(`${name}. Torque by bolt size.`);
+
+        item.torque_steps.forEach((s, idx) => {
+          const size = (s.step != null ? String(s.step) : String(idx + 1)).trim().toUpperCase();
+
+          const seg = [];
+          if (s.torque_nm != null) seg.push(`${s.torque_nm} newton meters`);
+          if (s.angle_deg != null) seg.push(`plus ${s.angle_deg} degrees`);
+
+          if (seg.length){
+            parts.push(`${size}: ${seg.join(", ")}.`);
+          } else if (s.raw){
+            parts.push(`${size}: ${s.raw}.`);
+          }
+        });
+
+      // ---- True multi-step procedure: speak as steps ----
+      } else if (hasSteps){
+        parts.push(`${name}. Tightening procedure.`);
+
+        item.torque_steps.forEach((step, idx) => {
+          // Normalize label
+          let label = (step.step != null ? String(step.step) : String(idx + 1)).trim();
+          if (/^\d+$/.test(label)) label = `Step ${label}`;
+          else if (/^step\s*\d+$/i.test(label)){
+            const m = label.match(/(\d+)/);
+            if (m) label = `Step ${m[1]}`;
+          } else {
+            // keep as-is for custom labels
+            // e.g., "Final check", "Stage A", etc.
+          }
+
+          if (step.torque_nm != null && step.angle_deg != null){
+            parts.push(`${label}. ${step.torque_nm} newton meters, then add ${step.angle_deg} degrees.`);
+          } else if (step.torque_nm != null){
+            parts.push(`${label}. ${step.torque_nm} newton meters.`);
+          } else if (step.angle_deg != null){
+            parts.push(`${label}. Add ${step.angle_deg} degrees.`);
+          } else if (step.raw){
+            parts.push(`${label}. ${step.raw}.`);
+          }
+        });
+
+      // ---- Single torque ----
+      } else if (item.torque_nm_single != null){
+        parts.push(`${name}. Torque is ${item.torque_nm_single} newton meters.`);
+
+      } else {
+        parts.push(`Torque for ${name} is not specified in this dataset.`);
+      }
+
+      // Optional notes (keep concise)
+      if (item.threadlock)  parts.push(`Threadlock: ${item.threadlock}.`);
+      if (item.lubrication) parts.push(`Lubrication: ${item.lubrication}.`);
+      if (item.sealant)     parts.push(`Sealant: ${item.sealant}.`);
+
+      if (item.replace_new_part === true){
+        parts.push(`Use a new part. Do not reuse the old one.`);
+      }
+
+      if (Array.isArray(item.special_tools) && item.special_tools.length){
+        const tools = item.special_tools.map(t => {
+          if (t.number && t.name) return `${t.number}, ${t.name}`;
+          if (t.number) return `${t.number}`;
+          if (t.name) return `${t.name}`;
+          return null;
+        }).filter(Boolean);
+
+        if (tools.length){
+          parts.push(`Required special tool${tools.length > 1 ? "s" : ""}: ${tools.join(", ")}.`);
+        }
+      }
+
+      if (Array.isArray(item.extra_notes) && item.extra_notes.length){
+        // speak at most 2 notes to avoid long ramble in MVP
+        item.extra_notes.slice(0,2).forEach(note => {
+          parts.push(note.endsWith(".") ? note : (note + "."));
+        });
+      }
+
+      return parts.join(" ");
+    }
 
     function compactTorqueLine(item){
       const hasSteps = Array.isArray(item.torque_steps) && item.torque_steps.length > 0;
@@ -597,135 +658,42 @@
       if (item.torque_nm_single != null) return { big: `${item.torque_nm_single}`, unit:"Nm", sub:"Single torque", isMulti:false };
       return { big:"—", unit:"", sub:"Not specified", isMulti:false };
     }
+
     function renderResult(item, info){
       const name = item.component_name || "Unknown fastener";
 
+      // ----- Chemistry line (threadlock / lube / sealant) emphasized -----
       const chemItems = [];
-      if (item.threadlock){
-        chemToUiLines("Threadlock", item.threadlock).forEach(x=>chemItems.push(x));
-      }
-      if (item.lubrication){
-        chemToUiLines("Lubrication", item.lubrication).forEach(x=>chemItems.push(x));
-      }
-      if (item.sealant){
-        chemToUiLines("Sealant", item.sealant).forEach(x=>chemItems.push(x));
-      }
+      if (item.threadlock)  chemItems.push({k:"Threadlock", v:item.threadlock});
+      if (item.lubrication) chemItems.push({k:"Lubrication", v:item.lubrication});
+      if (item.sealant)     chemItems.push({k:"Sealant", v:item.sealant});
 
+      // ----- Meta pills (keep high value, chemistry moved out) -----
       const pills = [];
       if (item.group) pills.push(`Group: ${item.group}`);
       if (item.thread_spec) pills.push(`Thread: ${item.thread_spec}`);
       if (item.replace_new_part === true) pills.push("Use new part");
+      if (info && typeof info.bestScore === "number") pills.push(`Score: ${info.bestScore}`);
 
+      // ----- Normalize torque_steps into display rows -----
+      // We will detect two types:
+      // 1) Bolt-size variants: step labels look like M8 / M6 / M10 ...
+      // 2) True tightening sequence: Step 1 / Step 2 / etc (or any other sequence labels)
       const hasSteps = Array.isArray(item.torque_steps) && item.torque_steps.length > 0;
+
       const rows = [];
       if (hasSteps){
         item.torque_steps.forEach((s, idx) => {
           const rawLabel = (s.step != null ? String(s.step) : String(idx + 1)).trim();
+          // Build a value string
           const parts = [];
           if (s.torque_nm != null) parts.push(`${s.torque_nm} Nm`);
           if (s.angle_deg != null) parts.push(`+ ${s.angle_deg}°`);
           const value = parts.length ? parts.join(" ") : (s.raw || "Follow manual");
+
           rows.push({ label: rawLabel, value });
         });
       }
-
-      const isBoltSizeVariant =
-        rows.length > 0 &&
-        rows.every(r => /^m\d+$/i.test(r.label));
-
-      const hasSingle = (item.torque_nm_single != null);
-
-      let headlineBig = "—";
-      let headlineUnit = "";
-      let headlineSub = "Not specified";
-
-      if (isBoltSizeVariant){
-        headlineBig = "Torque";
-        headlineSub = "By bolt size";
-      } else if (hasSteps){
-        headlineBig = "Procedure";
-        headlineSub = "Follow steps below";
-      } else if (hasSingle){
-        headlineBig = `${item.torque_nm_single}`;
-        headlineUnit = "Nm";
-        headlineSub = "Single torque";
-      } else {
-        headlineBig = "—";
-        headlineSub = "Not specified in this dataset";
-      }
-
-      const toolLines = [];
-      if (Array.isArray(item.special_tools) && item.special_tools.length){
-        item.special_tools.forEach(t=>{
-          if (t.number && t.name) toolLines.push(`${t.number} — ${t.name}`);
-          else if (t.number) toolLines.push(`${t.number}`);
-          else if (t.name) toolLines.push(`${t.name}`);
-        });
-      }
-      const extraNotes = Array.isArray(item.extra_notes) ? item.extra_notes : [];
-
-      let htmlOut = `
-        <div class="partName">${escapeHtml(name)}</div>
-
-        <div class="torqueBig">
-          ${escapeHtml(headlineBig)}${headlineUnit ? `<span class="torqueUnit">${escapeHtml(headlineUnit)}</span>` : ""}
-        </div>
-        <div class="subLine">${escapeHtml(headlineSub)}</div>
-      `;
-
-      if (chemItems.length){
-        htmlOut += `<div class="chemLine">` + chemItems.map(ci => (
-          `<div class="chemItem"><span class="chemKey">${escapeHtml(ci.k)}:</span> ${escapeHtml(ci.v)}</div>`
-        )).join("") + `</div>`;
-      }
-
-      if (pills.length){
-        htmlOut += `<div class="metaRow">` + pills.map(p=>(
-          `<span class="meta"><span class="mDot"></span>${escapeHtml(p)}</span>`
-        )).join("") + `</div>`;
-      }
-
-      if (rows.length){
-        const sectionTitle = isBoltSizeVariant ? "Torque by bolt size" : "Tightening steps";
-        htmlOut += `<div class="stepList">`;
-        htmlOut += `<div class="note"><b>${escapeHtml(sectionTitle)}</b></div>`;
-
-        rows.forEach(r => {
-          let tag = r.label;
-          if (!isBoltSizeVariant){
-            if (/^\d+$/.test(tag)) tag = `Step ${tag}`;
-            else if (/^step\s*\d+$/i.test(tag)) {
-              const m = tag.match(/(\d+)/);
-              if (m) tag = `Step ${m[1]}`;
-            }
-          }
-          htmlOut += `
-            <div class="stepRow">
-              <div class="stepTag">${escapeHtml(tag)}</div>
-              <div class="stepVal">${escapeHtml(r.value)}</div>
-            </div>
-          `;
-        });
-        htmlOut += `</div>`;
-      }
-
-      const hasNotes = toolLines.length || extraNotes.length;
-      if (hasNotes){
-        htmlOut += `<div class="notes">`;
-        if (toolLines.length){
-          htmlOut += `<div class="note"><b>Special tool</b>: ${escapeHtml(toolLines.join(", "))}</div>`;
-        }
-        extraNotes.forEach(n=>{
-          htmlOut += `<div class="note">${escapeHtml(n)}</div>`;
-        });
-        htmlOut += `</div>`;
-      }
-
-      resultBody.className = "";
-      resultBody.innerHTML = htmlOut;
-
-      speak(buildSpokenAnswer(item));
-    }
 
       // Bolt-size variant detection: ALL labels must match M<number> (case-insensitive)
       const isBoltSizeVariant =
