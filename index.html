@@ -319,6 +319,28 @@
       font-weight: 900;  /* 가독성 강화 (선택) */
     }
 
+    /* Tools + Notes block (between torque/steps and chemistry line) */
+    .infoBlock{
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(7,9,16,.55);
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .infoLine{
+      font-size: 12px;
+      color: #d7d8df;
+      line-height: 1.35;
+    }
+    .infoKey{
+      font-weight: 800;
+      letter-spacing: .02em;
+      color: #cfe0ff;
+    }
 
     /* Candidate chooser (safety rail #3) */
     .candidates{
@@ -675,15 +697,14 @@
     function renderResult(item, info){
       const name = item.component_name || "Unknown fastener";
 
-      // ----- Chemistry line (threadlock / lube / sealant) emphasized -----
+      // ----- Chemistry line (threadlock / lube / sealant) -----
       const chemItems = [];
       if (item.threadlock)  chemItems.push({k:"Threadlock", v:item.threadlock});
       if (item.lubrication) chemItems.push({k:"Lubrication", v:item.lubrication});
       if (item.sealant)     chemItems.push({k:"Sealant", v:item.sealant});
 
-      // ----- Normalize torque_steps into display rows -----
+      // ----- Steps normalize -----
       const hasSteps = Array.isArray(item.torque_steps) && item.torque_steps.length > 0;
-
       const rows = [];
       if (hasSteps){
         item.torque_steps.forEach((s, idx) => {
@@ -696,47 +717,29 @@
         });
       }
 
-      // Bolt-size variant detection: ALL labels must match M<number>
       const isBoltSizeVariant =
         rows.length > 0 &&
         rows.every(r => /^m\d+$/i.test(r.label));
 
       const hasSingle = (item.torque_nm_single != null);
 
-      // ----- Meta pills (Type / Group / Thread / Use new / Score) -----
+      // ----- Pills: Type, Thread, Group, Score (in that order) -----
       const pills = [];
 
-        // ✅ Type pill: single / multi
+      // Type
       if (rows.length) pills.push("Type: multi");
       else if (hasSingle) pills.push("Type: single");
 
-        // Group
-      if (item.group) pills.push(`Group: ${item.group}`);
-
-        // Thread
+      // Thread
       if (item.thread_spec) pills.push(`Thread: ${item.thread_spec}`);
 
-        // New parts
-      if (item.replace_new_part === true) pills.push("Use new part");
+      // Group
+      if (item.group) pills.push(`Group: ${item.group}`);
 
-        // Score
+      // Score
       if (info && typeof info.bestScore === "number") pills.push(`Score: ${info.bestScore}`);
 
-      // ----- Headline (single only) -----
-      let headlineBig = "—";
-      let headlineUnit = "";
-
-      if (hasSingle){
-        headlineBig = `${item.torque_nm_single}`;
-        headlineUnit = "Nm";
-      } else {
-        // multi-step일 때는 headline 자체를 안 쓰고 step list를 위에 표시할 거라 빈 값 유지
-        headlineBig = "";
-        headlineUnit = "";
-        headlineSub = "";
-      }
-
-      // ----- Tools + extra notes -----
+      // ----- Special tools + Extra notes (new block) -----
       const toolLines = [];
       if (Array.isArray(item.special_tools) && item.special_tools.length){
         item.special_tools.forEach(t=>{
@@ -748,11 +751,9 @@
       const extraNotes = Array.isArray(item.extra_notes) ? item.extra_notes : [];
 
       // ----- Build HTML -----
-      let html = `
-        <div class="partName">${escapeHtml(name)}</div>
-      `;
+      let html = `<div class="partName">${escapeHtml(name)}</div>`;
 
-      // ✅ multi-step: single 토크가 나오는 "상단 공간"에 step list를 보여줌
+      // ✅ multi-step: show steps in the single-torque area
       if (rows.length){
         html += `<div class="stepList multi" style="margin-top:8px;padding-top:0;border-top:none;">`;
 
@@ -777,16 +778,39 @@
 
         html += `</div>`;
       } else {
-        // ✅ single: 기존처럼 큰 숫자 토크 표시
-        html += `
-          <div class="torqueBig">
-            ${escapeHtml(headlineBig)}${headlineUnit ? `<span class="torqueUnit">${escapeHtml(headlineUnit)}</span>` : ""}
-          </div>
-          ${headlineSub ? `<div class="subLine">${escapeHtml(headlineSub)}</div>` : ""}
-        `;
+        // ✅ single: big torque number only (no "Single torque" line)
+        if (hasSingle){
+          html += `
+            <div class="torqueBig">
+              ${escapeHtml(String(item.torque_nm_single))}<span class="torqueUnit">Nm</span>
+            </div>
+          `;
+        } else {
+          html += `
+            <div class="torqueBig">—</div>
+          `;
+        }
       }
 
-      // Chemistry emphasized directly under headline/steps
+      // ✅ NEW: tools + notes block sits BETWEEN torque/steps and chemistry line
+      const hasInfoBlock = (toolLines.length || extraNotes.length);
+      if (hasInfoBlock){
+        html += `<div class="infoBlock">`;
+
+        if (toolLines.length){
+          html += `<div class="infoLine"><span class="infoKey">Special tool:</span> ${escapeHtml(toolLines.join(", "))}</div>`;
+        }
+
+        if (extraNotes.length){
+          extraNotes.forEach(n=>{
+            html += `<div class="infoLine"><span class="infoKey">Note:</span> ${escapeHtml(n)}</div>`;
+          });
+        }
+
+        html += `</div>`;
+      }
+
+      // Chemistry line (threadlock/lube/sealant)
       if (chemItems.length){
         html += `<div class="chemLine">` + chemItems.map(ci => (
           `<div class="chemItem"><span class="chemKey">${escapeHtml(ci.k)}:</span> ${escapeHtml(ci.v)}</div>`
@@ -800,23 +824,11 @@
         )).join("") + `</div>`;
       }
 
-      // Notes area (tools + extra notes)
-      const hasNotes = toolLines.length || extraNotes.length;
-      if (hasNotes){
-        html += `<div class="notes">`;
-        if (toolLines.length){
-          html += `<div class="note"><b>Special tool</b>: ${escapeHtml(toolLines.join(", "))}</div>`;
-        }
-        extraNotes.forEach(n=>{
-          html += `<div class="note">${escapeHtml(n)}</div>`;
-        });
-        html += `</div>`;
-      }
+      // ❌ 기존 하단 notes 섹션은 삭제 (요청사항)
 
       resultBody.className = "";
       resultBody.innerHTML = html;
 
-      // Speak (unchanged)
       speak(buildSpokenAnswer(item));
     }
 
