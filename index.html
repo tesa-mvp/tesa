@@ -655,8 +655,6 @@
       if (item.lubrication) parts.push(`Lubrication: ${item.lubrication}.`);
       if (item.sealant)     parts.push(`Sealant: ${item.sealant}.`);
 
-      if (item.replace_new_part === true){
-        parts.push(`Use a new part. Do not reuse the old one.`);
       }
 
       if (Array.isArray(item.special_tools) && item.special_tools.length){
@@ -799,31 +797,40 @@
         )).join("") + `</div>`;
       }
 
-      // ✅ Info block (Note → Special tool → New parts required)
+      // ✅ Info block (Special tool → Tightening sequence → Extra notes)
       const hasInfoBlock = (
-        extraNotes.length ||
-        toolLines.length ||
-        item.replace_new_part === true
+        (Array.isArray(item.special_tools) && item.special_tools.length) ||
+        !!item.tightening_seq ||
+        (Array.isArray(item.extra_notes) && item.extra_notes.length)
       );
 
       if (hasInfoBlock){
         html += `<div class="infoBlock">`;
 
-        // 1) Note (first)
-        if (extraNotes.length){
-          extraNotes.forEach(n=>{
+        // 1) Special tool
+        if (Array.isArray(item.special_tools) && item.special_tools.length){
+          const toolLines = item.special_tools.map(t=>{
+            if (t.number && t.name) return `${t.number} — ${t.name}`;
+            if (t.number) return `${t.number}`;
+            if (t.name) return `${t.name}`;
+            return "";
+          }).filter(Boolean);
+
+          if (toolLines.length){
+            html += `<div class="infoLine"><span class="infoKey">Special tool:</span> ${escapeHtml(toolLines.join(", "))}</div>`;
+          }
+        }
+
+        // 2) Tightening sequence
+        if (item.tightening_seq){
+          html += `<div class="infoLine"><span class="infoKey">Sequence:</span> ${escapeHtml(String(item.tightening_seq))}</div>`;
+        }
+
+        // 3) Extra notes
+        if (Array.isArray(item.extra_notes) && item.extra_notes.length){
+          item.extra_notes.forEach(n=>{
             html += `<div class="infoLine"><span class="infoKey">Note:</span> ${escapeHtml(n)}</div>`;
           });
-        }
-
-        // 2) Special tool (second)
-        if (toolLines.length){
-          html += `<div class="infoLine"><span class="infoKey">Special tool:</span> ${escapeHtml(toolLines.join(", "))}</div>`;
-        }
-
-        // 3) replace_new_part (last, with icon)
-        if (item.replace_new_part === true){
-          html += `<div class="infoLine"><span class="infoKey">⚠</span> New parts required.</div>`;
         }
 
         html += `</div>`;
