@@ -658,8 +658,6 @@
 
       if (item.sealant)     parts.push(`Sealant: ${item.sealant}.`);
 
-      }
-
       if (Array.isArray(item.special_tools) && item.special_tools.length){
         const tools = item.special_tools.map(t => {
           if (t.number && t.name) return `${t.number}, ${t.name}`;
