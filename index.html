@@ -748,10 +748,7 @@
 
       // ✅ multi-step: single 토크가 나오는 "상단 공간"에 step list를 보여줌
       if (rows.length){
-        const sectionTitle = isBoltSizeVariant ? "Torque by bolt size" : "Tightening steps";
-
         html += `<div class="stepList" style="margin-top:8px;padding-top:0;border-top:none;">`;
-        html += `<div class="note"><b>${escapeHtml(sectionTitle)}</b></div>`;
 
         rows.forEach(r => {
           let tag = r.label;
