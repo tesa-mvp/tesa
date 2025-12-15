@@ -652,7 +652,10 @@
 
       // Optional notes (keep concise)
       if (item.threadlock)  parts.push(`Threadlock: ${item.threadlock}.`);
-      if (item.lubrication) parts.push(`Lubrication: ${item.lubrication}.`);
+
+      const lubeSpoken = item.lubrication_symbol || item.lubrication;
+      if (lubeSpoken) parts.push(`Lubrication: ${lubeSpoken}.`);
+
       if (item.sealant)     parts.push(`Sealant: ${item.sealant}.`);
 
       }
@@ -698,7 +701,11 @@
       // ----- Chemistry line (threadlock / lube / sealant) -----
       const chemItems = [];
       if (item.threadlock)  chemItems.push({k:"Threadlock", v:item.threadlock});
-      if (item.lubrication) chemItems.push({k:"Lubrication", v:item.lubrication});
+
+        // ✅ show symbol instead of full lubrication text
+      const lubeDisplay = item.lubrication_symbol || item.lubrication;
+      if (lubeDisplay) chemItems.push({k:"Lubrication", v:lubeDisplay});
+
       if (item.sealant)     chemItems.push({k:"Sealant", v:item.sealant});
 
       // ----- Steps normalize -----
