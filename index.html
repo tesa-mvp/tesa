@@ -697,27 +697,32 @@
 
       const hasSingle = (item.torque_nm_single != null);
 
-      // ----- Meta pills (Group / Type / Thread / Use new / Score) -----
+      // ----- Meta pills (Type / Group / Thread / Use new / Score) -----
       const pills = [];
-      if (item.group) pills.push(`Group: ${item.group}`);
-      if (item.thread_spec) pills.push(`Thread: ${item.thread_spec}`);
 
-      // ✅ Type pill: single / multi
+        // ✅ Type pill: single / multi
       if (rows.length) pills.push("Type: multi");
       else if (hasSingle) pills.push("Type: single");
 
+        // Group
+      if (item.group) pills.push(`Group: ${item.group}`);
+
+        // Thread
+      if (item.thread_spec) pills.push(`Thread: ${item.thread_spec}`);
+
+        // New parts
       if (item.replace_new_part === true) pills.push("Use new part");
+
+        // Score
       if (info && typeof info.bestScore === "number") pills.push(`Score: ${info.bestScore}`);
 
       // ----- Headline (single only) -----
       let headlineBig = "—";
       let headlineUnit = "";
-      let headlineSub = "";
 
       if (hasSingle){
         headlineBig = `${item.torque_nm_single}`;
         headlineUnit = "Nm";
-        headlineSub = "Single torque";
       } else {
         // multi-step일 때는 headline 자체를 안 쓰고 step list를 위에 표시할 거라 빈 값 유지
         headlineBig = "";
