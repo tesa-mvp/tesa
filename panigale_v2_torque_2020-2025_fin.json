@@ -2109,6 +2109,8 @@
       "group": "Engine",
       "component_name": "Clutch cover bolt",
       "tightening_type": "single",
+      "threadlock": "Loctite 243 to doulbe-ended studs only",
+      "threadlock_symbol": "LOCK 2",
       "common_name": [
         "clutch cover",
         "clutch case cover"
