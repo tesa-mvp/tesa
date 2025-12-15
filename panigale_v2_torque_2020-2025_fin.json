@@ -2887,6 +2887,7 @@
         "test"
       ],
       "torque_nm_single": 25,
+      "replace_new_part": true,
       "special_tools": [
         {
           "number": "88713.3467",
@@ -2933,6 +2934,7 @@
           "raw": "67Nm"
         }
       ],
+      "replace_new_part": true,
       "special_tools": [
         {
           "number": "88713.3467",
