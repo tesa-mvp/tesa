@@ -319,6 +319,29 @@
       font-weight: 900;  /* 가독성 강화 (선택) */
     }
 
+    .moreInfoBar{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(7,9,16,.55);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .moreInfoText{font-size:12px;color:#d7d8df;line-height:1.25}
+    .moreInfoBtns{display:flex;gap:8px}
+    .moreBtn{
+      padding:7px 10px;border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(9,11,18,.85);
+      color:var(--text);
+      font-size:11px;
+      cursor:pointer;
+    }
+    .moreBtn:hover{border-color:rgba(79,140,255,.6)}
+
     /* Tools + Notes block (between torque/steps and chemistry line) */
     .infoBlock{
       margin-top: 10px;
@@ -579,119 +602,115 @@
       window.speechSynthesis.speak(u);
     }
 
-    function buildSpokenAnswer(item){
-      if (!item) return "No matching fastener found.";
+function buildSpokenAnswerParts(item){
+  if (!item) return { base:"No matching fastener found.", info:"" };
 
-      const name = item.component_name || "this fastener";
-      const hasSteps = Array.isArray(item.torque_steps) && item.torque_steps.length > 0;
+  const name = item.component_name || "this fastener";
+  const hasSteps = Array.isArray(item.torque_steps) && item.torque_steps.length > 0;
 
-      // Detect bolt-size variants: ALL step labels are like M8, M6, M10...
-      let isBoltSizeVariant = false;
-      if (hasSteps){
-        const labels = item.torque_steps.map((s, idx) => {
-          const raw = (s.step != null ? String(s.step) : String(idx + 1)).trim();
-          return raw;
-        });
-        isBoltSizeVariant = labels.length > 0 && labels.every(l => /^m\d+$/i.test(l));
+  // Detect bolt-size variants: ALL step labels are like M8, M6, M10...
+  let isBoltSizeVariant = false;
+  if (hasSteps){
+    const labels = item.torque_steps.map((s, idx) => {
+      const raw = (s.step != null ? String(s.step) : String(idx + 1)).trim();
+      return raw;
+    });
+    isBoltSizeVariant = labels.length > 0 && labels.every(l => /^m\d+$/i.test(l));
+  }
+
+  const baseParts = [];
+  const infoParts = [];
+
+  // partName: speak name only
+  baseParts.push(`${name}.`);
+
+  // ---- Torque / steps ----
+  if (hasSteps && isBoltSizeVariant){
+    baseParts.push(`Torque by size.`);
+    item.torque_steps.forEach((s, idx) => {
+      const size = (s.step != null ? String(s.step) : String(idx + 1)).trim().toUpperCase();
+      const seg = [];
+      if (s.torque_nm != null) seg.push(`${s.torque_nm} newton meters`);
+      if (s.angle_deg != null) seg.push(`plus ${s.angle_deg} degrees`);
+      if (seg.length) baseParts.push(`${size}: ${seg.join(", ")}.`);
+      else if (s.raw) baseParts.push(`${size}: ${s.raw}.`);
+    });
+  } else if (hasSteps){
+    baseParts.push(`Tightening procedure.`);
+    item.torque_steps.forEach((step, idx) => {
+      let label = (step.step != null ? String(step.step) : String(idx + 1)).trim();
+      if (/^\d+$/.test(label)) label = `Step ${label}`;
+      else if (/^step\s*\d+$/i.test(label)){
+        const m = label.match(/(\d+)/);
+        if (m) label = `Step ${m[1]}`;
       }
-
-      const parts = [];
-
-      // ---- Bolt-size variant (M8/M6 etc): speak naturally ----
-      if (hasSteps && isBoltSizeVariant){
-        parts.push(`${name}. Torque by bolt size.`);
-
-        item.torque_steps.forEach((s, idx) => {
-          const size = (s.step != null ? String(s.step) : String(idx + 1)).trim().toUpperCase();
-
-          const seg = [];
-          if (s.torque_nm != null) seg.push(`${s.torque_nm} newton meters`);
-          if (s.angle_deg != null) seg.push(`plus ${s.angle_deg} degrees`);
-
-          if (seg.length){
-            parts.push(`${size}: ${seg.join(", ")}.`);
-          } else if (s.raw){
-            parts.push(`${size}: ${s.raw}.`);
-          }
-        });
-
-      // ---- True multi-step procedure: speak as steps ----
-      } else if (hasSteps){
-        parts.push(`${name}. Tightening procedure.`);
-
-        item.torque_steps.forEach((step, idx) => {
-          // Normalize label
-          let label = (step.step != null ? String(step.step) : String(idx + 1)).trim();
-          if (/^\d+$/.test(label)) label = `Step ${label}`;
-          else if (/^step\s*\d+$/i.test(label)){
-            const m = label.match(/(\d+)/);
-            if (m) label = `Step ${m[1]}`;
-          } else {
-            // keep as-is for custom labels
-            // e.g., "Final check", "Stage A", etc.
-          }
-
-          if (step.torque_nm != null && step.angle_deg != null){
-            parts.push(`${label}. ${step.torque_nm} newton meters, then add ${step.angle_deg} degrees.`);
-          } else if (step.torque_nm != null){
-            parts.push(`${label}. ${step.torque_nm} newton meters.`);
-          } else if (step.angle_deg != null){
-            parts.push(`${label}. Add ${step.angle_deg} degrees.`);
-          } else if (step.raw){
-            parts.push(`${label}. ${step.raw}.`);
-          }
-        });
-
-      // ---- Single torque ----
-      } else if (item.torque_nm_single != null){
-        parts.push(`${name}. Torque is ${item.torque_nm_single} newton meters.`);
-
-      } else {
-        parts.push(`Torque for ${name} is not specified in this dataset.`);
+      if (step.torque_nm != null && step.angle_deg != null){
+        baseParts.push(`${label}. ${step.torque_nm} newton meters, then add ${step.angle_deg} degrees.`);
+      } else if (step.torque_nm != null){
+        baseParts.push(`${label}. ${step.torque_nm} newton meters.`);
+      } else if (step.angle_deg != null){
+        baseParts.push(`${label}. Add ${step.angle_deg} degrees.`);
+      } else if (step.raw){
+        baseParts.push(`${label}. ${step.raw}.`);
       }
+    });
+  } else if (item.torque_nm_single != null){
+    baseParts.push(`${item.torque_nm_single} newton meters.`);
+  } else {
+    baseParts.push(`Torque is not specified in this dataset.`);
+  }
 
-      // Optional notes (keep concise)
-      if (item.threadlock)  parts.push(`Threadlock: ${item.threadlock}.`);
+  // ---- Chemistry (values only) ----
+  const chemVals = [];
+  if (item.threadlock) chemVals.push(String(item.threadlock));
+  const lubeSpoken = item.lubrication_symbol || item.lubrication;
+  if (lubeSpoken) chemVals.push(String(lubeSpoken));
+  if (item.sealant) chemVals.push(String(item.sealant));
+  if (chemVals.length){
+    baseParts.push(`${chemVals.join(", ")}.`);
+  }
 
-      const lubeSpoken = item.lubrication_symbol || item.lubrication;
-      if (lubeSpoken) parts.push(`Lubrication: ${lubeSpoken}.`);
+  // ---- Info block (spoken only when user says YES) ----
+  // Special tools speaking rules:
+  // - name+number OR name only: "<name> is required."
+  // - number only: "Special tool <number> is required."
+  // - neither: say nothing
+  if (Array.isArray(item.special_tools) && item.special_tools.length){
+    item.special_tools.forEach(t => {
+      const toolName = (t?.special_tool_name ?? t?.name ?? "").toString().trim();
+      const toolNum  = (t?.special_tool_number ?? t?.number ?? t?.tool_number ?? "").toString().trim();
 
-      if (item.sealant)     parts.push(`Sealant: ${item.sealant}.`);
-
-      if (Array.isArray(item.special_tools) && item.special_tools.length){
-        const tools = item.special_tools.map(t => {
-          if (t.number && t.name) return `${t.number}, ${t.name}`;
-          if (t.number) return `${t.number}`;
-          if (t.name) return `${t.name}`;
-          return null;
-        }).filter(Boolean);
-
-        if (tools.length){
-          parts.push(`Required special tool${tools.length > 1 ? "s" : ""}: ${tools.join(", ")}.`);
-        }
+      if (toolName){
+        infoParts.push(`${toolName} is required.`);
+      } else if (toolNum){
+        infoParts.push(`Special tool ${toolNum} is required.`);
       }
+    });
+  }
 
-      if (Array.isArray(item.extra_notes) && item.extra_notes.length){
-        // speak at most 2 notes to avoid long ramble in MVP
-        item.extra_notes.slice(0,2).forEach(note => {
-          parts.push(note.endsWith(".") ? note : (note + "."));
-        });
-      }
 
-      return parts.join(" ");
-    }
+  // Sequence: read value only
+  if (item.tightening_seq){
+    infoParts.push(String(item.tightening_seq).trim().endsWith(".")
+      ? String(item.tightening_seq).trim()
+      : `${String(item.tightening_seq).trim()}.`
+    );
+  }
 
-    function compactTorqueLine(item){
-      const hasSteps = Array.isArray(item.torque_steps) && item.torque_steps.length > 0;
+  // Note: read value only
+  if (Array.isArray(item.extra_notes) && item.extra_notes.length){
+    item.extra_notes.forEach(note => {
+      const n = String(note || "").trim();
+      if (!n) return;
+      infoParts.push(n.endsWith(".") ? n : (n + "."));
+    });
+  }
 
-      // multi_step이면 큰 숫자 하나로 보여주지 말고, step 리스트가 메인
-      if (hasSteps){
-        return { big: "Multi-step", unit:"", sub:"See tightening steps below", isMulti:true };
-      }
-
-      if (item.torque_nm_single != null) return { big: `${item.torque_nm_single}`, unit:"Nm", sub:"Single torque", isMulti:false };
-      return { big:"—", unit:"", sub:"Not specified", isMulti:false };
-    }
+  return {
+    base: baseParts.join(" "),
+    info: infoParts.join(" ")
+  };
+}
 
     function renderResult(item, info){
       const name = item.component_name || "Unknown fastener";
@@ -746,9 +765,17 @@
       const toolLines = [];
       if (Array.isArray(item.special_tools) && item.special_tools.length){
         item.special_tools.forEach(t=>{
-          if (t.number && t.name) toolLines.push(`${t.number} — ${t.name}`);
-          else if (t.number) toolLines.push(`${t.number}`);
-          else if (t.name) toolLines.push(`${t.name}`);
+          const toolName = (t?.special_tool_name ?? t?.name ?? "").toString().trim();
+          const toolNum  = (t?.special_tool_number ?? t?.number ?? t?.tool_number ?? "").toString().trim();
+
+          // Screen exposure rules:
+          // - name+number: "name - number"
+          // - name only: "name"
+          // - number only: "number"
+          // - neither: do not show
+          if (toolName && toolNum) toolLines.push(`${toolName} - ${toolNum}`);
+          else if (toolName) toolLines.push(`${toolName}`);
+          else if (toolNum) toolLines.push(`${toolNum}`);
         });
       }
       const extraNotes = Array.isArray(item.extra_notes) ? item.extra_notes : [];
@@ -803,21 +830,34 @@
       }
 
       // ✅ Info block (Special tool → Tightening sequence → Extra notes)
-      const hasInfoBlock = (
-        (Array.isArray(item.special_tools) && item.special_tools.length) ||
-        !!item.tightening_seq ||
-        (Array.isArray(item.extra_notes) && item.extra_notes.length)
-      );
+      const hasToolDataForInfo = Array.isArray(item.special_tools) && item.special_tools.some(t=>{
+        const toolName = (t?.special_tool_name ?? t?.name ?? "").toString().trim();
+        const toolNum  = (t?.special_tool_number ?? t?.number ?? t?.tool_number ?? "").toString().trim();
+        return !!(toolName || toolNum);
+      });
+      const hasSeqDataForInfo  = !!(item.tightening_seq && String(item.tightening_seq).trim());
+      const hasNoteDataForInfo = Array.isArray(item.extra_notes) && item.extra_notes.some(n=>String(n||"").trim());
 
-      if (hasInfoBlock){
-        html += `<div class="infoBlock">`;
+      const hasInfoBlock = (hasToolDataForInfo || hasSeqDataForInfo || hasNoteDataForInfo);
+
+
+if (hasInfoBlock){
+        html += `<div class="infoBlock" id="infoBlock" style="display:none;">`;
 
         // 1) Special tool
         if (Array.isArray(item.special_tools) && item.special_tools.length){
           const toolLines = item.special_tools.map(t=>{
-            if (t.number && t.name) return `${t.number} — ${t.name}`;
-            if (t.number) return `${t.number}`;
-            if (t.name) return `${t.name}`;
+            const toolName = (t?.special_tool_name ?? t?.name ?? "").toString().trim();
+            const toolNum  = (t?.special_tool_number ?? t?.number ?? t?.tool_number ?? "").toString().trim();
+
+            // Screen exposure rules:
+            // - name+number: "name - number"
+            // - name only: "name"
+            // - number only: "number"
+            // - neither: do not show this row
+            if (toolName && toolNum) return `${toolName} - ${toolNum}`;
+            if (toolName) return `${toolName}`;
+            if (toolNum) return `${toolNum}`;
             return "";
           }).filter(Boolean);
 
@@ -851,10 +891,60 @@
       // ❌ 기존 하단 notes 섹션은 삭제 (요청사항)
 
       resultBody.className = "";
+            const spoken = buildSpokenAnswerParts(item);
+
+      // infoBlock 존재 여부(이미 위에서 계산한 hasInfoBlock 그대로 써도 됨)
+      const hasToolData = Array.isArray(item.special_tools) && item.special_tools.some(t=>{
+        const toolName = (t?.special_tool_name ?? t?.name ?? "").toString().trim();
+        const toolNum  = (t?.special_tool_number ?? t?.number ?? t?.tool_number ?? "").toString().trim();
+        return !!(toolName || toolNum);
+      });
+      const hasSeqData  = !!(item.tightening_seq && String(item.tightening_seq).trim());
+      const hasNoteData = Array.isArray(item.extra_notes) && item.extra_notes.some(n=>String(n||"").trim());
+
+      const hasInfoToRead = (hasToolData || hasSeqData || hasNoteData);
+
+if (hasInfoToRead){
+        // Add Yes/No gate UI (inserted into DOM)
+        html += `
+          <div class="moreInfoBar" id="moreInfoBar">
+            <div class="moreInfoText">Read additional info?</div>
+            <div class="moreInfoBtns">
+              <button class="moreBtn" type="button" id="moreYes">Yes</button>
+              <button class="moreBtn" type="button" id="moreNo">No</button>
+            </div>
+          </div>
+        `;
+      }
+
+      resultBody.className = "";
       resultBody.innerHTML = html;
 
-      speak(buildSpokenAnswer(item));
-    }
+      if (hasInfoToRead){
+        speak(`${spoken.base} Do you want me to read the additional info?`);
+
+        const yesBtn = document.getElementById("moreYes");
+        const noBtn  = document.getElementById("moreNo");
+
+        if (yesBtn) yesBtn.addEventListener("click", ()=>{
+          // reveal infoBlock on screen (optional, but consistent with the Yes gate)
+          const ib = document.getElementById("infoBlock");
+          if (ib) ib.style.display = "";
+          speak(spoken.info);
+        });
+
+        if (noBtn) noBtn.addEventListener("click", ()=>{
+          // hide the gate bar after decision
+          const bar = document.getElementById("moreInfoBar");
+          if (bar) bar.remove();
+          stopSpeak();
+        });
+      } else {
+        // no extra info: just speak base
+        speak(spoken.base);
+      }
+
+
 
     function renderAmbiguous(cands, info){
       resultBody.className = "";
