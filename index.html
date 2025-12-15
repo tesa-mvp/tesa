@@ -605,6 +605,14 @@
       window.speechSynthesis.speak(u);
     }
 
+    function speakNumbersDigitByDigit(text){
+      if (text == null) return "";
+      const s = String(text);
+
+      // 문자열 안의 연속 숫자(\d+)만 찾아서 "2 4 3" 형태로 변환
+      return s.replace(/\d+/g, (num) => num.split("").join(" "));
+    }
+
 function buildSpokenAnswerParts(item){
   if (!item) return { base:"No matching fastener found.", info:"" };
 
@@ -664,14 +672,28 @@ function buildSpokenAnswerParts(item){
   }
 
   // ---- Chemistry (values only) ----
-  const chemVals = [];
-  if (item.threadlock) chemVals.push(String(item.threadlock));
-  const lubeSpoken = item.lubrication_symbol || item.lubrication;
-  if (lubeSpoken) chemVals.push(String(lubeSpoken));
-  if (item.sealant) chemVals.push(String(item.sealant));
-  if (chemVals.length){
-    baseParts.push(`Apply ${chemVals.join(", ")}.`);
-  }
+    const chemVals = [];
+
+    // threadlock: 숫자만 digit-by-digit
+    if (item.threadlock) {
+      chemVals.push(speakNumbersDigitByDigit(item.threadlock));
+    }
+
+    // lubrication: symbol 그대로 (변경 없음)
+    const lubeSpoken = item.lubrication_symbol || item.lubrication;
+    if (lubeSpoken) {
+      chemVals.push(String(lubeSpoken));
+    }
+
+    // sealant: 숫자만 digit-by-digit
+    if (item.sealant) {
+      chemVals.push(speakNumbersDigitByDigit(item.sealant));
+    }
+
+    if (chemVals.length) {
+      baseParts.push(`Apply ${chemVals.join(", ")}.`);
+    }
+
 
   // ---- Info block (spoken only when user says YES) ----
   // Special tools speaking rules:
