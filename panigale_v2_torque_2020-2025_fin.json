@@ -943,7 +943,7 @@
       "group": "Frame",
       "component_name": "Rear brake master cylinder bracket bolt",
       "tightening_type": "multi_step",
-      "threadlock": "Loctite 222",
+      "threadlock": "Loctite 222 to M8 only",
       "threadlock_symbol": "LOCK 1",
       "common_name": [
         "rear brake master cylider bracket",
@@ -966,7 +966,7 @@
         }
       ],
       "extra_notes": [
-        "Loctite 222 to M8 only, Bolts to foot peg holder"
+        "Bolts to foot peg holder"
       ],
       "sample_questions": [
         "What is the tightening torque for Rear brake master cylinder bracket bolt?",
