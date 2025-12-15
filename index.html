@@ -157,6 +157,13 @@
     .send:active{transform:scale(.98)}
     .send svg{width:18px;height:18px}
 
+    /* step list shown in the headline area (no top divider) */
+    .stepList.inline{
+      margin-top: 8px;
+      padding-top: 0;
+      border-top: none;
+    }
+
     /* Result card */
     .resultTop{
       display:flex;
@@ -668,64 +675,54 @@
       if (item.lubrication) chemItems.push({k:"Lubrication", v:item.lubrication});
       if (item.sealant)     chemItems.push({k:"Sealant", v:item.sealant});
 
-      // ----- Meta pills (keep high value, chemistry moved out) -----
-      const pills = [];
-      if (item.group) pills.push(`Group: ${item.group}`);
-      if (item.thread_spec) pills.push(`Thread: ${item.thread_spec}`);
-      if (item.replace_new_part === true) pills.push("Use new part");
-      if (info && typeof info.bestScore === "number") pills.push(`Score: ${info.bestScore}`);
-
       // ----- Normalize torque_steps into display rows -----
-      // We will detect two types:
-      // 1) Bolt-size variants: step labels look like M8 / M6 / M10 ...
-      // 2) True tightening sequence: Step 1 / Step 2 / etc (or any other sequence labels)
       const hasSteps = Array.isArray(item.torque_steps) && item.torque_steps.length > 0;
 
       const rows = [];
       if (hasSteps){
         item.torque_steps.forEach((s, idx) => {
           const rawLabel = (s.step != null ? String(s.step) : String(idx + 1)).trim();
-          // Build a value string
           const parts = [];
           if (s.torque_nm != null) parts.push(`${s.torque_nm} Nm`);
           if (s.angle_deg != null) parts.push(`+ ${s.angle_deg}°`);
           const value = parts.length ? parts.join(" ") : (s.raw || "Follow manual");
-
           rows.push({ label: rawLabel, value });
         });
       }
 
-      // Bolt-size variant detection: ALL labels must match M<number> (case-insensitive)
+      // Bolt-size variant detection: ALL labels must match M<number>
       const isBoltSizeVariant =
         rows.length > 0 &&
         rows.every(r => /^m\d+$/i.test(r.label));
 
-      // ----- Single torque vs steps headline line -----
-      // If bolt-size variants, don't show big "Multi-step" at all.
-      // If true multi-step (sequence), show a subtle headline and list.
       const hasSingle = (item.torque_nm_single != null);
 
-      // Decide headline torque display
+      // ----- Meta pills (Group / Type / Thread / Use new / Score) -----
+      const pills = [];
+      if (item.group) pills.push(`Group: ${item.group}`);
+      if (item.thread_spec) pills.push(`Thread: ${item.thread_spec}`);
+
+      // ✅ Type pill: single / multi
+      if (rows.length) pills.push("Type: multi");
+      else if (hasSingle) pills.push("Type: single");
+
+      if (item.replace_new_part === true) pills.push("Use new part");
+      if (info && typeof info.bestScore === "number") pills.push(`Score: ${info.bestScore}`);
+
+      // ----- Headline (single only) -----
       let headlineBig = "—";
       let headlineUnit = "";
-      let headlineSub = "Not specified";
+      let headlineSub = "";
 
-      if (isBoltSizeVariant){
-        headlineBig = "Mixed fasteners";
-        headlineUnit = "";
-        headlineSub = "By bolt size (see below)";
-      } else if (hasSteps){
-        headlineBig = "Multi-step";
-        headlineUnit = "";
-        headlineSub = "See tightening steps below";
-      } else if (hasSingle){
+      if (hasSingle){
         headlineBig = `${item.torque_nm_single}`;
         headlineUnit = "Nm";
         headlineSub = "Single torque";
       } else {
-        headlineBig = "—";
+        // multi-step일 때는 headline 자체를 안 쓰고 step list를 위에 표시할 거라 빈 값 유지
+        headlineBig = "";
         headlineUnit = "";
-        headlineSub = "Not specified in this dataset";
+        headlineSub = "";
       }
 
       // ----- Tools + extra notes -----
@@ -742,14 +739,46 @@
       // ----- Build HTML -----
       let html = `
         <div class="partName">${escapeHtml(name)}</div>
-
-        <div class="torqueBig">
-          ${escapeHtml(headlineBig)}${headlineUnit ? `<span class="torqueUnit">${escapeHtml(headlineUnit)}</span>` : ""}
-        </div>
-        <div class="subLine">${escapeHtml(headlineSub)}</div>
       `;
 
-      // Chemistry emphasized directly under headline
+      // ✅ multi-step: single 토크가 나오는 "상단 공간"에 step list를 보여줌
+      if (rows.length){
+        const sectionTitle = isBoltSizeVariant ? "Torque by bolt size" : "Tightening steps";
+
+        html += `<div class="stepList" style="margin-top:8px;padding-top:0;border-top:none;">`;
+        html += `<div class="note"><b>${escapeHtml(sectionTitle)}</b></div>`;
+
+        rows.forEach(r => {
+          let tag = r.label;
+
+          if (!isBoltSizeVariant){
+            if (/^\d+$/.test(tag)) tag = `Step ${tag}`;
+            else if (/^step\s*\d+$/i.test(tag)) {
+              const m = tag.match(/(\d+)/);
+              if (m) tag = `Step ${m[1]}`;
+            }
+          }
+
+          html += `
+            <div class="stepRow">
+              <div class="stepTag">${escapeHtml(tag)}</div>
+              <div class="stepVal">${escapeHtml(r.value)}</div>
+            </div>
+          `;
+        });
+
+        html += `</div>`;
+      } else {
+        // ✅ single: 기존처럼 큰 숫자 토크 표시
+        html += `
+          <div class="torqueBig">
+            ${escapeHtml(headlineBig)}${headlineUnit ? `<span class="torqueUnit">${escapeHtml(headlineUnit)}</span>` : ""}
+          </div>
+          ${headlineSub ? `<div class="subLine">${escapeHtml(headlineSub)}</div>` : ""}
+        `;
+      }
+
+      // Chemistry emphasized directly under headline/steps
       if (chemItems.length){
         html += `<div class="chemLine">` + chemItems.map(ci => (
           `<div class="chemItem"><span class="chemKey">${escapeHtml(ci.k)}:</span> ${escapeHtml(ci.v)}</div>`
@@ -763,42 +792,7 @@
         )).join("") + `</div>`;
       }
 
-      // Rows list:
-      // - bolt-size variants: label is "M8" and value is "10 Nm" (NO "STEP" prefix)
-      // - sequence steps: label becomes "Step 1" etc (normalize if numeric)
-      if (rows.length){
-        const sectionTitle = isBoltSizeVariant ? "Torque by bolt size" : "Tightening steps";
-        html += `<div class="stepList">`;
-
-        // Optional section intro line (small)
-        html += `<div class="note"><b>${escapeHtml(sectionTitle)}</b></div>`;
-
-        rows.forEach(r => {
-          let tag = r.label;
-
-          if (!isBoltSizeVariant){
-            // For non-bolt-size, make it look like steps if label is numeric
-            if (/^\d+$/.test(tag)) tag = `Step ${tag}`;
-            else if (/^step\s*\d+$/i.test(tag)) {
-              // Already "Step X"
-              const m = tag.match(/(\d+)/);
-              if (m) tag = `Step ${m[1]}`;
-            }
-          }
-          // For bolt-size variant, keep tag as "M8" only.
-
-          html += `
-            <div class="stepRow">
-              <div class="stepTag">${escapeHtml(tag)}</div>
-              <div class="stepVal">${escapeHtml(r.value)}</div>
-            </div>
-          `;
-        });
-
-        html += `</div>`;
-      }
-
-      // Notes area (tools + extra notes) — only if present
+      // Notes area (tools + extra notes)
       const hasNotes = toolLines.length || extraNotes.length;
       if (hasNotes){
         html += `<div class="notes">`;
