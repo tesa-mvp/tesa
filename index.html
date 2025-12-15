@@ -845,7 +845,7 @@ function buildSpokenAnswerParts(item){
 
 
 if (hasInfoBlock){
-        html += `<div class="infoBlock" id="infoBlock" style="display:none;">`;
+        html += `<div class="infoBlock" id="infoBlock">`;
 
         // 1) Special tool
         if (Array.isArray(item.special_tools) && item.special_tools.length){
@@ -930,9 +930,6 @@ if (hasInfoToRead){
         const noBtn  = document.getElementById("moreNo");
 
         if (yesBtn) yesBtn.addEventListener("click", ()=>{
-          // reveal infoBlock on screen (optional, but consistent with the Yes gate)
-          const ib = document.getElementById("infoBlock");
-          if (ib) ib.style.display = "";
           speak(spoken.info);
         });
 
