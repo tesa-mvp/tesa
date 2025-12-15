@@ -2881,6 +2881,7 @@
       "threadlock": "Loctite 648, 128455 (LOCK 5)",
       "lubrication": "SHELL Retinax HDX2 (GREASE B)",
       "sealant": "THREE BOND 1215 (SEAL)",
+      "thread_spec": "M5x1.25",
       "common_name": [
         "test single",
         "test"
@@ -2910,6 +2911,7 @@
       "threadlock": "Loctite 648, 128455 (LOCK 5)",
       "lubrication": "SHELL Retinax HDX2 (GREASE B)",
       "sealant": "THREE BOND 1215 (SEAL)",
+      "thread_spec": "M5x1.25",
       "common_name": [
         "test multi",
         "test"
