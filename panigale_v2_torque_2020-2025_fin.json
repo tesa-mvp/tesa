@@ -10,7 +10,8 @@
       "group": "engine_oil_system",
       "component_name": "Engine oil drain plug",
       "tightening_type": "single",
-      "sealant": "THREE BOND 1215 (SEAL)",
+      "sealant": "THREE BOND 1215",
+      "sealant_symbol": "SEAL",
       "common_name": [
         "oil drain",
         "oil drain plug",
@@ -55,14 +56,12 @@
       "group": "engine_head",
       "component_name": "Head cover bolt",
       "tightening_type": "single",
+      "tightening_seq": "Center-out/Criss-cross pattern",
       "common_name": [
         "head cover",
         "valve cover"
       ],
       "torque_nm_single": 13,
-      "extra_notes": [
-        "Center-out/Criss-cross pattern"
-      ],
       "sample_questions": [
         "What is the tightening torque for Head cover bolt?",
         "What is the torque for Head cover bolt?",
@@ -124,7 +123,8 @@
       "group": "fuel_tank_drain",
       "component_name": "Fuel tank drain union",
       "tightening_type": "single",
-      "sealant": "Loctite 577 (LOCK 6)",
+      "sealant": "Loctite 577",
+      "sealant_symbol": "LOCK 6",
       "common_name": [
         "fuel tank drain",
         "tank drain"
@@ -147,7 +147,8 @@
       "group": "fuel_tank_quick_coupling",
       "component_name": "Fuel tank quick coupling",
       "tightening_type": "single",
-      "sealant": "Loctite 577 (LOCK 6)",
+      "sealant": "Loctite 577",
+      "sealant_symbol": "LOCK 6",
       "common_name": [
         "fuel line joint"
       ],
@@ -169,7 +170,8 @@
       "group": "fuel_tank_mount_front",
       "component_name": "Fuel tank front bolt",
       "tightening_type": "single",
-      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2",
+      "lubrication_symbol": "GREASE B",
       "common_name": [
         "tank front bolt"
       ],
@@ -279,7 +281,8 @@
       "group": "intake_throttle_body",
       "component_name": "Throttle body bolt",
       "tightening_type": "single",
-      "threadlock": "Loctite 222 (LOCK 1)",
+      "threadlock": "Loctite 222",
+      "threadlock_symbol": "LOCK 1",
       "common_name": [
         "throttle body"
       ],
@@ -301,7 +304,8 @@
       "group": "brake_front_caliper",
       "component_name": "Front brake caliper bolt",
       "tightening_type": "multi_step",
-      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2",
+      "lubrication_symbol": "GREASE B",
       "common_name": [
         "front caliper",
         "front caliper bolt",
@@ -336,7 +340,8 @@
       "group": "brake_rear_caliper",
       "component_name": "Rear brake caliper bolt",
       "tightening_type": "single",
-      "lubrication": "ROCOL-DRY MOLY PASTE (GREASE M)",
+      "lubrication": "ROCOL-DRY MOLY PASTE",
+      "lubrication_symbol": "GREASE M",
       "common_name": [
         "rear caliper",
         "rear caliper bolt",
@@ -360,16 +365,15 @@
       "group": "swingarm_eccentric",
       "component_name": "Eccentric hub pinch bolt",
       "tightening_type": "single",
-      "lubrication": "ROCOL — DRY MOLY PASTE (GREASE M)",
+      "lubrication": "ROCOL-DRY MOLY PASTE",
+      "lubrication_symbol": "GREASE M",
+      "tightening_seq": "1 - 2 - 1",
       "common_name": [
         "eccentric hub",
         "swingarm pinch bolt",
         "chain adjust pinch bolt"
       ],
       "torque_nm_single": 20,
-      "extra_notes": [
-        "seq: 1 - 2 - 1"
-      ],
       "sample_questions": [
         "What is the tightening torque for Eccentric hub pinch bolt?",
         "What is the torque for Eccentric hub pinch bolt?",
@@ -387,7 +391,8 @@
       "group": "steering_head",
       "component_name": "Steering head ring nut",
       "tightening_type": "single",
-      "lubrication": "SHELL Retinax HD2 (GREASE D)",
+      "lubrication": "SHELL Retinax HD2",
+      "lubrication_symbol": "GREASE D",
       "common_name": [
         "steering stem",
         "steering head",
@@ -416,7 +421,8 @@
       "group": "suspension_front_triple",
       "component_name": "Top triple clamp pinch bolt",
       "tightening_type": "single",
-      "lubrication": "SHELL Retinax HD2 (GREASE D)",
+      "lubrication": "SHELL Retinax HD2",
+      "lubrication_symbol": "GREASE D",
       "common_name": [
         "top clamp pinch bolt",
         "upper clamp pinch bolt",
@@ -441,7 +447,8 @@
       "group": "brake_rear_disc",
       "component_name": "Rear brake disc bolt",
       "tightening_type": "single",
-      "threadlock": "Loctite 270 (LOCK 3)",
+      "threadlock": "Loctite 270",
+      "threadlock_symbol": "LOCK 3",
       "common_name": [
         "rear disc bolt",
         "rear disc rotor bolt",
@@ -470,7 +477,8 @@
       "group": "rear_wheel_phonic_wheel",
       "component_name": "Rear phonic wheel bolt",
       "tightening_type": "single",
-      "threadlock": "Loctite 270 (LOCK 3)",
+      "threadlock": "Loctite 270",
+      "threadlock_symbol": "LOCK 3",
       "common_name": [
         "rear phonic wheel bolt",
         "rear speed ring bolt",
@@ -497,7 +505,8 @@
       "group": "rear_wheel_axle",
       "component_name": "Rear wheel shaft nut",
       "tightening_type": "single",
-      "lubrication": "ROCOL-DRY MOLY PASTE (GREASE M)",
+      "lubrication": "ROCOL-DRY MOLY PASTE",
+      "lubrication_symbol": "GREASE M",
       "common_name": [
         "rear wheel nut",
         "rear wheel"
@@ -658,7 +667,8 @@
       "group": "Engine",
       "component_name": "Generator bolt to case cover",
       "tightening_type": "single",
-      "threadlock": "Loctite 243 (LOCK 2)",
+      "threadlock": "Loctite 243",
+      "threadlock_symbol": "LOCK 2",
       "common_name": [
         "generator",
         "stator",
@@ -725,7 +735,8 @@
       "group": "Engine",
       "component_name": "Gear position sensor bolt",
       "tightening_type": "single",
-      "threadlock": "Loctite 243 (LOCK 2)",
+      "threadlock": "Loctite 243",
+      "threadlock_symbol": "LOCK 2",
       "common_name": [
         "gear position sensor"
       ],
@@ -765,7 +776,8 @@
       "group": "Frame",
       "component_name": "Front axle nut",
       "tightening_type": "single",
-      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2",
+      "lubrication_symbol": "GREASE B",
       "common_name": [
         "front wheel axle",
         "front axle nut"
@@ -788,14 +800,12 @@
       "group": "Frame",
       "component_name": "Front axle pinch bolt",
       "tightening_type": "single",
+      "tightening_seq": "1 - 2 - 1",
       "common_name": [
         "front wheel axle pinch",
         "front wheel shaft pinch"
       ],
       "torque_nm_single": 19,
-      "extra_notes": [
-        "seq: 1 - 2 - 1"
-      ],
       "sample_questions": [
         "What is the tightening torque for Front axle pinch bolt?",
         "What is the torque for Front axle pinch bolt?",
@@ -813,14 +823,12 @@
       "group": "Frame",
       "component_name": "Front brake master cylinder bolt",
       "tightening_type": "single",
+      "tightening_seq": "1(UP) - 2- 1",
       "common_name": [
         "front brake master cylinder",
         "front brake cylinder"
       ],
       "torque_nm_single": 10,
-      "extra_notes": [
-        "seq: 1(UP) - 2 - 1"
-      ],
       "sample_questions": [
         "What is the tightening torque for Front brake master cylinder bolt?",
         "What is the torque for Front brake master cylinder bolt?",
@@ -838,6 +846,7 @@
       "group": "Frame",
       "component_name": "Front brake disc bolt",
       "tightening_type": "single",
+      "tightening_seq": "Criss-cross pattern",
       "common_name": [
         "front brake disc",
         "front brake disc rotor",
@@ -845,9 +854,6 @@
         "front disc rotor"
       ],
       "torque_nm_single": 30,
-      "extra_notes": [
-        "Criss-cross pattern"
-      ],
       "sample_questions": [
         "What is the tightening torque for Front brake disc bolt?",
         "What is the torque for Front brake disc bolt?",
@@ -865,7 +871,8 @@
       "group": "Frame",
       "component_name": "Rear brake master cylinder rod bolt",
       "tightening_type": "single",
-      "threadlock": "Loctite 243 (LOCK 2)",
+      "threadlock": "Loctite 243",
+      "threadlock_symbol": "LOCK 2",
       "common_name": [
         "rear brake master cylinder rod",
         "rear brake rod",
@@ -889,8 +896,10 @@
       "group": "Frame",
       "component_name": "Rear brake lever bolt",
       "tightening_type": "single",
-      "threadlock": "Loctite 243 (LOCK 2)",
-      "lubrication": "SHELL Retinax HD2 (GREASE D)",
+      "threadlock": "Loctite 243",
+      "threadlock_symbol": "LOCK 2",
+      "lubrication": "SHELL Retinax HDX2",
+      "lubrication_symbol": "GREASE B",
       "common_name": [
         "rear brake lever",
         "rear brake pedal"
@@ -934,7 +943,8 @@
       "group": "Frame",
       "component_name": "Rear brake master cylinder bracket bolt",
       "tightening_type": "multi_step",
-      "threadlock": "M8: Loctite 222 (LOCK 1)",
+      "threadlock": "Loctite 222",
+      "threadlock_symbol": "LOCK 1",
       "common_name": [
         "rear brake master cylider bracket",
         "rear brake master cylinder holder",
@@ -956,7 +966,7 @@
         }
       ],
       "extra_notes": [
-        "to foot peg holder"
+        "Loctite 222 to M8 only, Bolts to foot peg holder"
       ],
       "sample_questions": [
         "What is the tightening torque for Rear brake master cylinder bracket bolt?",
@@ -975,7 +985,8 @@
       "group": "Frame",
       "component_name": "Rear brake master cylinder bolt",
       "tightening_type": "single",
-      "threadlock": "Loctite 243 (LOCK 2)",
+      "threadlock": "Loctite 243",
+      "threadlock_symbol": "LOCK 2",
       "common_name": [
         "rear brake master cylinder",
         "rear brake cylinder"
@@ -998,7 +1009,8 @@
       "group": "Frame",
       "component_name": "Heel guard bolt",
       "tightening_type": "single",
-      "threadlock": "Loctite 243 (LOCK 2)",
+      "threadlock": "Loctite 243",
+      "threadlock_symbol": "LOCK 2",
       "common_name": [
         "heel guard"
       ],
@@ -1042,7 +1054,8 @@
       "group": "Frame",
       "component_name": "ABS control unit support bolt",
       "tightening_type": "single",
-      "threadlock": "Loctite 243 (LOCK 2)",
+      "threadlock": "Loctite 243",
+      "threadlock_symbol": "LOCK 2",
       "common_name": [
         "ABS bracket",
         "ABS support",
@@ -1069,7 +1082,8 @@
       "group": "Frame",
       "component_name": "Handlebar clamp bolt",
       "tightening_type": "single",
-      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2",
+      "lubrication_symbol": "GREASE B",
       "common_name": [
         "handlebar clamp"
       ],
@@ -1091,14 +1105,12 @@
       "group": "Frame",
       "component_name": "LH handlbar switch bolt",
       "tightening_type": "single",
+      "tightening_seq": "1 - 2 - 1",
       "common_name": [
         "left handlebar switch",
         "leftside handlebar switch"
       ],
       "torque_nm_single": 8,
-      "extra_notes": [
-        "seq: 1 - 2 - 1"
-      ],
       "sample_questions": [
         "What is the tightening torque for LH handlbar switch bolt?",
         "What is the torque for LH handlbar switch bolt?",
@@ -1116,13 +1128,11 @@
       "group": "Frame",
       "component_name": "Clutch master cylinder bolt",
       "tightening_type": "single",
+      "tightening_seq": "1(UP) - 2- 1",
       "common_name": [
         "clutch master cylinder"
       ],
       "torque_nm_single": 10,
-      "extra_notes": [
-        "seq: 1(UP) - 2 - 1"
-      ],
       "sample_questions": [
         "What is the tightening torque for Clutch master cylinder bolt?",
         "What is the torque for Clutch master cylinder bolt?",
@@ -1161,7 +1171,8 @@
       "group": "Frame",
       "component_name": "Steering damper bolt",
       "tightening_type": "single",
-      "threadlock": "Loctite 222 (LOCK 1)",
+      "threadlock": "Loctite 222",
+      "threadlock_symbol": "LOCK 1",
       "common_name": [
         "steering damper",
         "steering dampener"
@@ -1184,7 +1195,8 @@
       "group": "Frame",
       "component_name": "Gear change linkage bolt",
       "tightening_type": "single",
-      "threadlock": "Loctite 243 (LOCK 2)",
+      "threadlock": "Loctite 243",
+      "threadlock_symbol": "LOCK 2",
       "common_name": [
         "gear change linkage",
         "gear change rod",
@@ -1192,7 +1204,7 @@
       ],
       "torque_nm_single": 10,
       "extra_notes": [
-        "to foot peg holder"
+        "Bolt to foot peg holder"
       ],
       "sample_questions": [
         "What is the tightening torque for Gear change linkage bolt?",
@@ -1211,8 +1223,10 @@
       "group": "Frame",
       "component_name": "Gearchange lever bolt",
       "tightening_type": "single",
-      "threadlock": "Loctite 243 (LOCK 2)",
-      "lubrication": "SHELL Retinax HD2 (GREASE D)",
+      "threadlock": "Loctite 243",
+      "threadlock_symbol": "LOCK 2",
+      "lubrication": "SHELL Retinax HD2",
+      "lubrication_symbol": "GREASE D",
       "common_name": [
         "gear change lever",
         "gear change pedal",
@@ -1237,15 +1251,14 @@
       "group": "Frame",
       "component_name": "Lower triple clamp pinch bolt",
       "tightening_type": "single",
-      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2",
+      "lubrication_symbol": "GREASE B",
+      "tightening_seq": "1(DOWN) - 2 - 3 - 2 - 1",
       "common_name": [
         "lower triple clamp pinch",
         "fork pinch bolt"
       ],
       "torque_nm_single": 8,
-      "extra_notes": [
-        "seq: 1(DOWN) - 2 - 3 - 2 - 1"
-      ],
       "sample_questions": [
         "What is the tightening torque for Lower triple clamp pinch bolt?",
         "What is the torque for Lower triple clamp pinch bolt?",
@@ -1263,7 +1276,8 @@
       "group": "Frame",
       "component_name": "Rear shock bolt",
       "tightening_type": "single",
-      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2",
+      "lubrication_symbol": "GREASE B",
       "common_name": [
         "shock bolt",
         "rear shock",
@@ -1271,7 +1285,7 @@
       ],
       "torque_nm_single": 45,
       "extra_notes": [
-        "to shock support on engine, to shock rocker arm"
+        "Bolts to shock support on engine, shock rocker arm"
       ],
       "sample_questions": [
         "What is the tightening torque for Rear shock bolt?",
@@ -1290,15 +1304,15 @@
       "group": "Frame",
       "component_name": "Rear shock rocker arm bolt",
       "tightening_type": "single",
-      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
-      "thread_spec": "Torx",
+      "lubrication": "SHELL Retinax HDX2",
+      "lubrication_symbol": "GREASE B",
       "common_name": [
         "shock rocker arm",
         "rear suspension rocker arm"
       ],
       "torque_nm_single": 60,
       "extra_notes": [
-        "to swingarm support"
+        "Bolt (Torx) to swingarm support"
       ],
       "sample_questions": [
         "What is the tightening torque for Rear shock rocker arm bolt?",
@@ -1317,7 +1331,8 @@
       "group": "Frame",
       "component_name": "Rear shock linkage bolt",
       "tightening_type": "single",
-      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2",
+      "lubrication_symbol": "GREASE B",
       "common_name": [
         "rear shock linkage",
         "shock linkage",
@@ -1325,7 +1340,7 @@
       ],
       "torque_nm_single": 45,
       "extra_notes": [
-        "to shock rocker arm, to swing arm"
+        "Bolts to shock rocker arm, swing arm"
       ],
       "sample_questions": [
         "What is the tightening torque for Rear shock linkage bolt?",
@@ -1344,7 +1359,8 @@
       "group": "Frame",
       "component_name": "Swing arm shaft",
       "tightening_type": "single",
-      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2",
+      "lubrication_symbol": "GREASE B",
       "common_name": [
         "swing arm",
         "swing arm bolt"
@@ -1367,7 +1383,8 @@
       "group": "Engine",
       "component_name": "Front sprocket bolt",
       "tightening_type": "single",
-      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2",
+      "lubrication_symbol": "GREASE B",
       "common_name": [
         "front sprocket"
       ],
@@ -1410,13 +1427,14 @@
       "group": "Frame",
       "component_name": "Swing arm support bolt",
       "tightening_type": "single",
-      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2",
+      "lubrication_symbol": "GREASE B",
       "common_name": [
         "swing arm support"
       ],
       "torque_nm_single": 25,
       "extra_notes": [
-        "to engine, through side stand bracket"
+        "Bolts to engine through side stand bracket"
       ],
       "sample_questions": [
         "What is the tightening torque for Swing arm support bolt?",
@@ -1435,7 +1453,8 @@
       "group": "Frame",
       "component_name": "Swing arm shaft pinch bolt",
       "tightening_type": "single",
-      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2",
+      "lubrication_symbol": "GREASE B",
       "common_name": [
         "swing arm support pinch bolt"
       ],
@@ -1457,7 +1476,8 @@
       "group": "Frame",
       "component_name": "Quick shfat sensor bolt",
       "tightening_type": "single",
-      "threadlock": "Loctite 222 (LOCK 1)",
+      "threadlock": "Loctite 222",
+      "threadlock_symbol": "LOCK 1",
       "common_name": [
         "quick shift sensor",
         "quick shifter"
@@ -1480,7 +1500,8 @@
       "group": "Frame",
       "component_name": "Rear sprocket stud-bolt",
       "tightening_type": "single",
-      "threadlock": "Loctite 243 (LOCK 2)",
+      "threadlock": "Loctite 243",
+      "threadlock_symbol": "LOCK 2",
       "common_name": [
         "rear sprocket stud"
       ],
@@ -1502,14 +1523,13 @@
       "group": "Frame",
       "component_name": "Rear sprocket nut",
       "tightening_type": "single",
-      "threadlock": "Loctite 243 (LOCK 2)",
+      "threadlock": "Loctite 243",
+      "threadlock_symbol": "LOCK 2",
+      "tightening_seq": "Criss-cross pattern",
       "common_name": [
         "rear sprocket"
       ],
       "torque_nm_single": 55,
-      "extra_notes": [
-        "Criss-cross pattern"
-      ],
       "sample_questions": [
         "What is the tightening torque for Rear sprocket nut?",
         "What is the torque for Rear sprocket nut?",
@@ -1543,9 +1563,6 @@
           "raw": "10Nm"
         }
       ],
-      "extra_notes": [
-        "M8: to sub frame"
-      ],
       "sample_questions": [
         "What is the tightening torque for Passenger foot peg plate bolt?",
         "What is the torque for Passenger foot peg plate bolt?",
@@ -1563,8 +1580,10 @@
       "group": "Frame",
       "component_name": "Side stand bolt",
       "tightening_type": "single",
-      "threadlock": "Loctite 243 (LOCK 2)",
-      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
+      "threadlock": "Loctite 243",
+      "threadlock_symbol": "LOCK 2",
+      "lubrication": "SHELL Retinax HDX2",
+      "lubrication_symbol": "GREASE B",
       "common_name": [
         "side stand",
         "quick stand"
@@ -1587,7 +1606,8 @@
       "group": "Frame",
       "component_name": "Ignition switch support bolt",
       "tightening_type": "single",
-      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2",
+      "lubrication_symbol": "GREASE B",
       "common_name": [
         "iginition switch support",
         "ignition switch bracket",
@@ -1612,7 +1632,8 @@
       "group": "Frame",
       "component_name": "Dashbaord support bolt",
       "tightening_type": "single",
-      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2",
+      "lubrication_symbol": "GREASE B",
       "common_name": [
         "dashboard bracket",
         "dashboard support"
@@ -1640,7 +1661,7 @@
       ],
       "torque_nm_single": 25,
       "extra_notes": [
-        "to sub frame"
+        "Bolts to sub frame"
       ],
       "sample_questions": [
         "What is the tightening torque for Tail section bolt?",
@@ -1659,7 +1680,8 @@
       "group": "Frame",
       "component_name": "Sub frame bolt to main frame",
       "tightening_type": "single",
-      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2",
+      "lubrication_symbol": "GREASE B",
       "common_name": [
         "sub frame to main frame",
         "sub frame"
@@ -1682,7 +1704,8 @@
       "group": "Frame",
       "component_name": "Sub frame bolt to cylinder head",
       "tightening_type": "single",
-      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2",
+      "lubrication_symbol": "GREASE B",
       "common_name": [
         "sub frame to engine",
         "sub frame to cylinder head",
@@ -1727,15 +1750,17 @@
       "group": "Frame",
       "component_name": "Fuel tank bolt",
       "tightening_type": "single",
-      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
-      "sealant": "Loctite 577 (LOCK 6)",
+      "lubrication": "SHELL Retinax HDX2",
+      "lubrication_symbol": "GREASE B",
+      "sealant": "Loctite 577",
+      "sealant_symbol": "LOCK 6",
       "common_name": [
         "fuel tank",
         "gas tank"
       ],
       "torque_nm_single": 10,
       "extra_notes": [
-        "Front bolts: GREASE B, Rear bolt: LOCK 6"
+        "GREASE B to front bolts, Loctite 577 to rear bolt"
       ],
       "sample_questions": [
         "What is the tightening torque for Fuel tank bolt?",
@@ -1754,7 +1779,9 @@
       "group": "Frame",
       "component_name": "Fuel pump bolt",
       "tightening_type": "single",
-      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2",
+      "lubrication_symbol": "GREASE B",
+      "tightening_seq": "Criss-cross pattern",
       "common_name": [
         "fuel pump",
         "fuel tank flange",
@@ -1763,9 +1790,6 @@
         "fuel level sensor"
       ],
       "torque_nm_single": 6,
-      "extra_notes": [
-        "Criss-cross pattern"
-      ],
       "sample_questions": [
         "What is the tightening torque for Fuel pump bolt?",
         "What is the torque for Fuel pump bolt?",
@@ -1783,7 +1807,8 @@
       "group": "Engine",
       "component_name": "Secondary air valve cover bolt",
       "tightening_type": "single",
-      "threadlock": "Loctite 243 (LOCK 2)",
+      "threadlock": "Loctite 243",
+      "threadlock_symbol": "LOCK 2",
       "common_name": [
         "secondary air system",
         "secondary air valve",
@@ -1831,7 +1856,8 @@
       "group": "Engine",
       "component_name": "Canister support bolt",
       "tightening_type": "single",
-      "threadlock": "Loctite 243 (LOCK 2)",
+      "threadlock": "Loctite 243",
+      "threadlock_symbol": "LOCK 2",
       "common_name": [
         "canister",
         "canister support",
@@ -1856,7 +1882,8 @@
       "group": "Frame",
       "component_name": "Main frame nut",
       "tightening_type": "single",
-      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2",
+      "lubrication_symbol": "GREASE B",
       "common_name": [
         "main frame",
         "front frame"
@@ -1879,7 +1906,8 @@
       "group": "Engine",
       "component_name": "Starter motor cable bolt",
       "tightening_type": "single",
-      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2",
+      "lubrication_symbol": "GREASE B",
       "common_name": [
         "starter motor cable",
         "starter cable"
@@ -1925,16 +1953,15 @@
       "group": "Engine",
       "component_name": "Flywheel bolt to rotor",
       "tightening_type": "single",
-      "threadlock": "Loctite 648, 128455 (LOCK 5)",
+      "threadlock": "Loctite 648, 128455",
+      "threadlock_symbol": "LOCK 5",
+      "tightening_seq": "Criss-cross pattern",
       "common_name": [
         "flywheel",
         "flywheel to rotor",
         "flywheel rotor"
       ],
       "torque_nm_single": 13,
-      "extra_notes": [
-        "Criss-cross pattern"
-      ],
       "sample_questions": [
         "What is the tightening torque for Flywheel bolt to rotor?",
         "What is the torque for Flywheel bolt to rotor?",
@@ -1958,7 +1985,7 @@
       ],
       "torque_nm_single": 190,
       "extra_notes": [
-        "to crankshaft"
+        "Nut to crankshaft"
       ],
       "sample_questions": [
         "What is the tightening torque for Flywheel nut?",
@@ -1977,7 +2004,8 @@
       "group": "Engine",
       "component_name": "Clutch hub nut",
       "tightening_type": "single",
-      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2",
+      "lubrication_symbol": "GREASE B",
       "common_name": [
         "clutch hub",
         "clutch nut"
@@ -2006,7 +2034,8 @@
       "group": "Engine",
       "component_name": "Clutch pressure plate bolt",
       "tightening_type": "single",
-      "lubrication": "SHELL Advance 4T Ultra (MOTOR OIL)",
+      "lubrication": "SHELL Advance 4T Ultra",
+      "lubrication_symbol": "MOTOR OIL",
       "common_name": [
         "clutch pressure plate",
         "pressure plate"
@@ -2029,14 +2058,12 @@
       "group": "Engine",
       "component_name": "Clutch inspection cover bolt",
       "tightening_type": "single",
+      "tightening_seq": "Criss-cross pattern",
       "common_name": [
         "clutch inspection cover",
         "clutch cover"
       ],
       "torque_nm_single": 10,
-      "extra_notes": [
-        "Criss-cross pattern"
-      ],
       "sample_questions": [
         "What is the tightening torque for Clutch inspection cover bolt?",
         "What is the torque for Clutch inspection cover bolt?",
@@ -2054,7 +2081,8 @@
       "group": "Engine",
       "component_name": "Clutch noise dampening sheet bolt",
       "tightening_type": "single",
-      "threadlock": "Loctite 243 (LOCK 2)",
+      "threadlock": "Loctite 243",
+      "threadlock_symbol": "LOCK 2",
       "common_name": [
         "clutch noise dampening sheet",
         "clutch noise damper",
@@ -2086,7 +2114,7 @@
       ],
       "torque_nm_single": 13,
       "extra_notes": [
-        "Only doulbe-ended stud: Loctite 243 (LOCK 2)"
+        "Loctite 243 to doulbe-ended studs only"
       ],
       "sample_questions": [
         "What is the tightening torque for Clutch cover bolt?",
@@ -2105,7 +2133,8 @@
       "group": "Engine",
       "component_name": "Primary drive gear bolt",
       "tightening_type": "single",
-      "lubrication": "SHELL Advance 4T Ultra (MOTOR OIL)",
+      "lubrication": "SHELL Advance 4T Ultra",
+      "lubrication_symbol": "MOTOR OIL",
       "common_name": [
         "primary drive gear",
         "primary gear",
@@ -2129,13 +2158,11 @@
       "group": "Engine",
       "component_name": "Water pump bolt",
       "tightening_type": "single",
+      "tightening_seq": "Criss-cross pattern",
       "common_name": [
         "water pump"
       ],
       "torque_nm_single": 13,
-      "extra_notes": [
-        "Criss-cross pattern"
-      ],
       "sample_questions": [
         "What is the tightening torque for Water pump bolt?",
         "What is the torque for Water pump bolt?",
@@ -2153,7 +2180,8 @@
       "group": "Engine",
       "component_name": "Water pump idle gear bolt",
       "tightening_type": "single",
-      "threadlock": "Loctite 243 (LOCK 2)",
+      "threadlock": "Loctite 243",
+      "threadlock_symbol": "LOCK 2",
       "common_name": [
         "water pump gear",
         "water pump idle gear"
@@ -2206,7 +2234,7 @@
       ],
       "torque_nm_single": 13,
       "extra_notes": [
-        "LEFT-HAND THREAD"
+        "Left-hand thread"
       ],
       "sample_questions": [
         "What is the tightening torque for Oil pump idle gear bolt?",
@@ -2225,15 +2253,14 @@
       "group": "Engine",
       "component_name": "Heat exchanger bolt",
       "tightening_type": "single",
-      "threadlock": "Loctite 243 (LOCK 2)",
+      "threadlock": "Loctite 243",
+      "threadlock_symbol": "LOCK 2",
+      "tightening_seq": "Criss-cross pattern",
       "common_name": [
         "heat exchanger",
         "oil heat exchanger"
       ],
       "torque_nm_single": 13,
-      "extra_notes": [
-        "Criss-cross pattern"
-      ],
       "sample_questions": [
         "What is the tightening torque for Heat exchanger bolt?",
         "What is the torque for Heat exchanger bolt?",
@@ -2251,7 +2278,8 @@
       "group": "Engine",
       "component_name": "Gear stopper lever bolt",
       "tightening_type": "single",
-      "threadlock": "Loctite 243 (LOCK 2)",
+      "threadlock": "Loctite 243",
+      "threadlock_symbol": "LOCK 2",
       "common_name": [
         "gear stopper",
         "gear stopper lever",
@@ -2276,7 +2304,8 @@
       "group": "Engine",
       "component_name": "Gearbox drum bolt",
       "tightening_type": "single",
-      "threadlock": "Loctite 243 (LOCK 2)",
+      "threadlock": "Loctite 243",
+      "threadlock_symbol": "LOCK 2",
       "common_name": [
         "gearbox drum",
         "gearbox drum flange",
@@ -2328,7 +2357,8 @@
       "group": "Engine",
       "component_name": "Mesh filter bolt",
       "tightening_type": "single",
-      "threadlock": "Loctite 243 (LOCK 2)",
+      "threadlock": "Loctite 243",
+      "threadlock_symbol": "LOCK 2",
       "common_name": [
         "mesh filter",
         "oil mesh filter",
@@ -2352,13 +2382,11 @@
       "group": "Engine",
       "component_name": "Oil sump bolt",
       "tightening_type": "single",
+      "tightening_seq": "Criss-cross pattern",
       "common_name": [
         "oil sump"
       ],
       "torque_nm_single": 13,
-      "extra_notes": [
-        "Criss-cross pattern"
-      ],
       "sample_questions": [
         "What is the tightening torque for Oil sump bolt?",
         "What is the torque for Oil sump bolt?",
@@ -2376,7 +2404,8 @@
       "group": "Engine",
       "component_name": "Camshaft gear bolt",
       "tightening_type": "single",
-      "threadlock": "Loctite 243 (LOCK 2)",
+      "threadlock": "Loctite 243",
+      "threadlock_symbol": "LOCK 2",
       "common_name": [
         "camshaft gear"
       ],
@@ -2398,7 +2427,8 @@
       "group": "Engine",
       "component_name": "Decompressor nut",
       "tightening_type": "single",
-      "threadlock": "Loctite 243 (LOCK 2)",
+      "threadlock": "Loctite 243",
+      "threadlock_symbol": "LOCK 2",
       "common_name": [
         "decompressor"
       ],
@@ -2420,7 +2450,8 @@
       "group": "Engine",
       "component_name": "Camshaft impeller bolt",
       "tightening_type": "single",
-      "threadlock": "Loctite 243 (LOCK 2)",
+      "threadlock": "Loctite 243",
+      "threadlock_symbol": "LOCK 2",
       "common_name": [
         "camshaft impeller"
       ],
@@ -2442,7 +2473,9 @@
       "group": "Engine",
       "component_name": "Camshaft cap bolt",
       "tightening_type": "multi_step",
-      "lubrication": "SHELL Advance 4T Ultra (MOTOR OIL)",
+      "lubrication": "SHELL Advance 4T Ultra",
+      "lubrication_symbol": "MOTOR OIL",
+      "tightening_seq": "Center-out pattern",
       "common_name": [
         "camshaft cap",
         "camshaft support"
@@ -2458,9 +2491,6 @@
           "torque_nm": 22.5,
           "raw": "22.5Nm"
         }
-      ],
-      "extra_notes": [
-        "Center-out pattern"
       ],
       "sample_questions": [
         "What is the tightening torque for Camshaft cap bolt?",
@@ -2506,7 +2536,8 @@
       "group": "Engine",
       "component_name": "Rocker arm shaft plug",
       "tightening_type": "single",
-      "threadlock": "Loctite 243 (LOCK 2)",
+      "threadlock": "Loctite 243",
+      "threadlock_symbol": "LOCK 2",
       "common_name": [
         "rocker arm plug"
       ],
@@ -2528,7 +2559,8 @@
       "group": "Engine",
       "component_name": "Rocker arm shaft retainer plate bolt",
       "tightening_type": "single",
-      "threadlock": "Loctite 243 (LOCK 2)",
+      "threadlock": "Loctite 243",
+      "threadlock_symbol": "LOCK 2",
       "common_name": [
         "rocker arm shaft plate",
         "rocker arm shaft retainer plate",
@@ -2574,7 +2606,8 @@
       "group": "Engine",
       "component_name": "Timing chain guide special bolt",
       "tightening_type": "single",
-      "lubrication": "SHELL Alvania R3 (GREASE A)",
+      "lubrication": "SHELL Alvania R3",
+      "lubrication_symbol": "GREASE A",
       "common_name": [
         "timing chain guide",
         "timing chain slider",
@@ -2642,7 +2675,8 @@
       "group": "Engine",
       "component_name": "Cylinder head stud nut - 12-point",
       "tightening_type": "multi_step",
-      "lubrication": "SHELL Retinax LX2 (GREASE C)",
+      "lubrication": "SHELL Retinax LX2",
+      "lubrication_symbol": "GREASE C",
       "thread_spec": "M10",
       "common_name": [
         "cylinder head nut",
@@ -2682,7 +2716,8 @@
       "group": "Engine",
       "component_name": "Cylinder head stud nut - 6-point",
       "tightening_type": "single",
-      "lubrication": "SHELL Retinax LX2 (GREASE C)",
+      "lubrication": "SHELL Retinax LX2",
+      "lubrication_symbol": "GREASE C",
       "thread_spec": "M6",
       "common_name": [
         "cylinder head nut",
@@ -2727,7 +2762,8 @@
       "group": "Engine",
       "component_name": "Cylinder head stud",
       "tightening_type": "single",
-      "threadlock": "Loctite 648, 128455 (LOCK 5)",
+      "threadlock": "Loctite 648, 128455",
+      "threadlock_symbol": "LOCK 5",
       "common_name": [
         "cylinder head stud",
         "head stud"
@@ -2750,7 +2786,8 @@
       "group": "Engine",
       "component_name": "Starter motor bolt",
       "tightening_type": "single",
-      "threadlock": "Loctite 243 (LOCK 2)",
+      "threadlock": "Loctite 243",
+      "threadlock_symbol": "LOCK 2",
       "common_name": [
         "starter motor"
       ],
@@ -2772,7 +2809,8 @@
       "group": "Engine",
       "component_name": "Crankcase bolt - M8",
       "tightening_type": "multi_step",
-      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2",
+      "lubrication_symbol": "GREASE B",
       "common_name": [
         "crankcase",
         "engine case",
@@ -2832,7 +2870,8 @@
       "group": "engine_internal",
       "component_name": "Connecting rod bolt",
       "tightening_type": "multi_step",
-      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2",
+      "lubrication_symbol": "GREASE B",
       "common_name": [
         "connecting rod"
       ],
@@ -2878,24 +2917,24 @@
       "group": "test",
       "component_name": "Test single - All info",
       "tightening_type": "single",
-      "threadlock": "Loctite 648, 128455 (LOCK 5)",
-      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
-      "sealant": "THREE BOND 1215 (SEAL)",
+      "threadlock": "Loctite 648, 128455",
+      "threadlock_symbol": "LOCK 5",
+      "lubrication": "SHELL Retinax HDX2",
+      "lubrication_symbol": "GREASE B",
+      "sealant": "THREE BOND 1215",
+      "sealant_symbol": "SEAL",
       "thread_spec": "M5x1.25",
+      "tightening_seq": "Criss-cross pattern",
       "common_name": [
         "test single",
         "test"
       ],
       "torque_nm_single": 25,
-      "replace_new_part": true,
       "special_tools": [
         {
           "number": "88713.3467",
           "name": "Valve collet fitting tool"
         }
-      ],
-      "extra_notes": [
-        "Criss-cross pattern"
       ],
       "sample_questions": [
         "What is the tightening torque for Test single - All info?",
@@ -2904,15 +2943,19 @@
       ]
     },
     {
-      "id": "test_multi",
+      "id": "test_multi_step",
       "system": "frame",
       "group": "test",
-      "component_name": "Test multi - All info",
+      "component_name": "Test multi-step - All info",
       "tightening_type": "multi_step",
-      "threadlock": "Loctite 648, 128455 (LOCK 5)",
-      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
-      "sealant": "THREE BOND 1215 (SEAL)",
+      "threadlock": "Loctite 648, 128455",
+      "threadlock_symbol": "LOCK 5",
+      "lubrication": "SHELL Retinax HDX2",
+      "lubrication_symbol": "GREASE B",
+      "sealant": "THREE BOND 1215",
+      "sealant_symbol": "SEAL",
       "thread_spec": "M5x1.25",
+      "tightening_seq": "Criss-cross pattern",
       "common_name": [
         "test multi",
         "test"
@@ -2934,18 +2977,56 @@
           "raw": "67Nm"
         }
       ],
-      "replace_new_part": true,
       "special_tools": [
         {
           "number": "88713.3467",
           "name": "Valve collet fitting tool"
         }
       ],
-      "extra_notes": [
-        "Criss-cross pattern"
+      "sample_questions": [
+        "What are the tightening steps for Test multi-step - All info?",
+        "What is the torque procedure for test multi?",
+        "How do I tighten the test multi?"
+      ]
+    },
+    {
+      "id": "test_multi_size",
+      "system": "frame",
+      "group": "test",
+      "component_name": "Test multi-size - All info",
+      "tightening_type": "multi_step",
+      "threadlock": "Loctite 648, 128455",
+      "threadlock_symbol": "LOCK 5",
+      "lubrication": "SHELL Retinax HDX2",
+      "lubrication_symbol": "GREASE B",
+      "sealant": "THREE BOND 1215",
+      "sealant_symbol": "SEAL",
+      "thread_spec": "M5x1.25",
+      "tightening_seq": "Criss-cross pattern",
+      "common_name": [
+        "test multi",
+        "test"
+      ],
+      "torque_steps": [
+        {
+          "step": "M8",
+          "torque_nm": 25,
+          "raw": "25Nm"
+        },
+        {
+          "step": "M6",
+          "torque_nm": 10,
+          "raw": "10Nm"
+        }
+      ],
+      "special_tools": [
+        {
+          "number": "88713.3467",
+          "name": "Valve collet fitting tool"
+        }
       ],
       "sample_questions": [
-        "What are the tightening steps for Test multi - All info?",
+        "What are the tightening steps for Test multi-size - All info?",
         "What is the torque procedure for test multi?",
         "How do I tighten the test multi?"
       ]
