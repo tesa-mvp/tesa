@@ -793,9 +793,19 @@
       }
 
       // ✅ NEW: tools + notes block sits BETWEEN torque/steps and chemistry line
-      const hasInfoBlock = (toolLines.length || extraNotes.length);
+      const hasInfoBlock = (
+        toolLines.length ||
+        extraNotes.length ||
+        item.replace_new_part === true
+      );
+
       if (hasInfoBlock){
         html += `<div class="infoBlock">`;
+
+        // ⚠️ New parts required
+        if (item.replace_new_part === true){
+          html += `<div class="infoLine"><span class="infoKey">⚠</span> New parts required.</div>`;
+        }
 
         if (toolLines.length){
           html += `<div class="infoLine"><span class="infoKey">Special tool:</span> ${escapeHtml(toolLines.join(", "))}</div>`;
