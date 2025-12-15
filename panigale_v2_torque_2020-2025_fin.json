@@ -1979,12 +1979,14 @@
       "group": "Engine",
       "component_name": "Flywheel nut",
       "tightening_type": "single",
-      "lubrication": "Thread: MOTOR OIL, Under head: GREASE D",
+      "lubrication": "SHELL Advance 4T Ultra;SHELL Retinax HD2",
+      "lubrication_symbol": "MOTOR OIL;GREASE D",
       "common_name": [
         "flywheel"
       ],
       "torque_nm_single": 190,
       "extra_notes": [
+        "MOTOR OIL to thread, GREASE D to under head",
         "Nut to crankshaft"
       ],
       "sample_questions": [
