@@ -313,6 +313,12 @@
       color: var(--text);
       line-height: 1.15;
     }
+    /* Multi-step: emphasize values slightly */
+    .stepList.multi .stepVal{
+      font-size: 18px;   /* 기존 16px → 살짝 키움 */
+      font-weight: 900;  /* 가독성 강화 (선택) */
+    }
+
 
     /* Candidate chooser (safety rail #3) */
     .candidates{
@@ -748,7 +754,7 @@
 
       // ✅ multi-step: single 토크가 나오는 "상단 공간"에 step list를 보여줌
       if (rows.length){
-        html += `<div class="stepList" style="margin-top:8px;padding-top:0;border-top:none;">`;
+        html += `<div class="stepList multi" style="margin-top:8px;padding-top:0;border-top:none;">`;
 
         rows.forEach(r => {
           let tag = r.label;
