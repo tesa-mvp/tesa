@@ -169,7 +169,7 @@
       "group": "fuel_tank_mount_front",
       "component_name": "Fuel tank front bolt",
       "tightening_type": "single",
-      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
       "common_name": [
         "tank front bolt"
       ],
@@ -301,7 +301,7 @@
       "group": "brake_front_caliper",
       "component_name": "Front brake caliper bolt",
       "tightening_type": "multi_step",
-      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
       "common_name": [
         "front caliper",
         "front caliper bolt",
@@ -765,7 +765,7 @@
       "group": "Frame",
       "component_name": "Front axle nut",
       "tightening_type": "single",
-      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
       "common_name": [
         "front wheel axle",
         "front axle nut"
@@ -1069,7 +1069,7 @@
       "group": "Frame",
       "component_name": "Handlebar clamp bolt",
       "tightening_type": "single",
-      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
       "common_name": [
         "handlebar clamp"
       ],
@@ -1237,7 +1237,7 @@
       "group": "Frame",
       "component_name": "Lower triple clamp pinch bolt",
       "tightening_type": "single",
-      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
       "common_name": [
         "lower triple clamp pinch",
         "fork pinch bolt"
@@ -1263,7 +1263,7 @@
       "group": "Frame",
       "component_name": "Rear shock bolt",
       "tightening_type": "single",
-      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
       "common_name": [
         "shock bolt",
         "rear shock",
@@ -1290,7 +1290,7 @@
       "group": "Frame",
       "component_name": "Rear shock rocker arm bolt",
       "tightening_type": "single",
-      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
       "thread_spec": "Torx",
       "common_name": [
         "shock rocker arm",
@@ -1317,7 +1317,7 @@
       "group": "Frame",
       "component_name": "Rear shock linkage bolt",
       "tightening_type": "single",
-      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
       "common_name": [
         "rear shock linkage",
         "shock linkage",
@@ -1344,7 +1344,7 @@
       "group": "Frame",
       "component_name": "Swing arm shaft",
       "tightening_type": "single",
-      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
       "common_name": [
         "swing arm",
         "swing arm bolt"
@@ -1367,7 +1367,7 @@
       "group": "Engine",
       "component_name": "Front sprocket bolt",
       "tightening_type": "single",
-      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
       "common_name": [
         "front sprocket"
       ],
@@ -1410,7 +1410,7 @@
       "group": "Frame",
       "component_name": "Swing arm support bolt",
       "tightening_type": "single",
-      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
       "common_name": [
         "swing arm support"
       ],
@@ -1435,7 +1435,7 @@
       "group": "Frame",
       "component_name": "Swing arm shaft pinch bolt",
       "tightening_type": "single",
-      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
       "common_name": [
         "swing arm support pinch bolt"
       ],
@@ -1564,7 +1564,7 @@
       "component_name": "Side stand bolt",
       "tightening_type": "single",
       "threadlock": "Loctite 243 (LOCK 2)",
-      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
       "common_name": [
         "side stand",
         "quick stand"
@@ -1587,7 +1587,7 @@
       "group": "Frame",
       "component_name": "Ignition switch support bolt",
       "tightening_type": "single",
-      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
       "common_name": [
         "iginition switch support",
         "ignition switch bracket",
@@ -1612,7 +1612,7 @@
       "group": "Frame",
       "component_name": "Dashbaord support bolt",
       "tightening_type": "single",
-      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
       "common_name": [
         "dashboard bracket",
         "dashboard support"
@@ -1659,7 +1659,7 @@
       "group": "Frame",
       "component_name": "Sub frame bolt to main frame",
       "tightening_type": "single",
-      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
       "common_name": [
         "sub frame to main frame",
         "sub frame"
@@ -1682,7 +1682,7 @@
       "group": "Frame",
       "component_name": "Sub frame bolt to cylinder head",
       "tightening_type": "single",
-      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
       "common_name": [
         "sub frame to engine",
         "sub frame to cylinder head",
@@ -1727,7 +1727,7 @@
       "group": "Frame",
       "component_name": "Fuel tank bolt",
       "tightening_type": "single",
-      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
       "sealant": "Loctite 577 (LOCK 6)",
       "common_name": [
         "fuel tank",
@@ -1754,7 +1754,7 @@
       "group": "Frame",
       "component_name": "Fuel pump bolt",
       "tightening_type": "single",
-      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
       "common_name": [
         "fuel pump",
         "fuel tank flange",
@@ -1856,7 +1856,7 @@
       "group": "Frame",
       "component_name": "Main frame nut",
       "tightening_type": "single",
-      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
       "common_name": [
         "main frame",
         "front frame"
@@ -1879,7 +1879,7 @@
       "group": "Engine",
       "component_name": "Starter motor cable bolt",
       "tightening_type": "single",
-      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
       "common_name": [
         "starter motor cable",
         "starter cable"
@@ -1977,7 +1977,7 @@
       "group": "Engine",
       "component_name": "Clutch hub nut",
       "tightening_type": "single",
-      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
       "common_name": [
         "clutch hub",
         "clutch nut"
@@ -2772,7 +2772,7 @@
       "group": "Engine",
       "component_name": "Crankcase bolt - M8",
       "tightening_type": "multi_step",
-      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
       "common_name": [
         "crankcase",
         "engine case",
@@ -2832,7 +2832,7 @@
       "group": "engine_internal",
       "component_name": "Connecting rod bolt",
       "tightening_type": "multi_step",
-      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
       "common_name": [
         "connecting rod"
       ],
@@ -2879,7 +2879,7 @@
       "component_name": "Test single - All info",
       "tightening_type": "single",
       "threadlock": "Loctite 648, 128455 (LOCK 5)",
-      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
       "sealant": "THREE BOND 1215 (SEAL)",
       "common_name": [
         "test single",
@@ -2908,7 +2908,7 @@
       "component_name": "Test multi - All info",
       "tightening_type": "multi_step",
       "threadlock": "Loctite 648, 128455 (LOCK 5)",
-      "lubrication": "SHELL Gadius S2 V220 AD 2, Retinax HDX2 (GREASE B)",
+      "lubrication": "SHELL Retinax HDX2 (GREASE B)",
       "sealant": "THREE BOND 1215 (SEAL)",
       "common_name": [
         "test multi",
