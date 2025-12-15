@@ -639,7 +639,7 @@ function buildSpokenAnswerParts(item){
       else if (s.raw) baseParts.push(`${size}: ${s.raw}.`);
     });
   } else if (hasSteps){
-    baseParts.push(`Tightening procedure.`);
+    // baseParts.push(`Tightening procedure.`); // removed per spec
     item.torque_steps.forEach((step, idx) => {
       let label = (step.step != null ? String(step.step) : String(idx + 1)).trim();
       if (/^\d+$/.test(label)) label = `Step ${label}`;
@@ -670,7 +670,7 @@ function buildSpokenAnswerParts(item){
   if (lubeSpoken) chemVals.push(String(lubeSpoken));
   if (item.sealant) chemVals.push(String(item.sealant));
   if (chemVals.length){
-    baseParts.push(`${chemVals.join(", ")}.`);
+    baseParts.push(`Apply ${chemVals.join(", ")}.`);
   }
 
   // ---- Info block (spoken only when user says YES) ----
@@ -924,7 +924,7 @@ if (hasInfoToRead){
       resultBody.innerHTML = html;
 
       if (hasInfoToRead){
-        speak(`${spoken.base} Do you want me to read the additional info?`);
+        speak(`${spoken.base} Read additional info?`);
 
         const yesBtn = document.getElementById("moreYes");
         const noBtn  = document.getElementById("moreNo");
