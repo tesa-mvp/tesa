@@ -632,6 +632,66 @@ function getSpecialTools(item){
   return out.filter(t => t.special_tool_name || t.special_tool_number);
 }
 
+
+
+// -------------------------
+// Torque step helpers
+// -------------------------
+function getTorqueStepsParsed(item){
+  // Accept: array of step objects OR string like "Step1: 2Nm;\nStep2: 45Nm"
+  const v = item?.torque_steps ?? item?.torqueDisplay ?? item?.torque_display;
+  if (v == null) return [];
+
+  // Array form: [{step, torque_nm, angle_deg, raw}, ...]
+  if (Array.isArray(v)){
+    return v.map((s, idx) => {
+      const label = (s?.step != null ? String(s.step) : String(idx + 1)).trim();
+      const torqueNm = (s?.torque_nm != null && !Number.isNaN(Number(s.torque_nm))) ? Number(s.torque_nm) : null;
+      const angleDeg = (s?.angle_deg != null && !Number.isNaN(Number(s.angle_deg))) ? Number(s.angle_deg) : null;
+      const raw = (s?.raw != null ? String(s.raw) : "").trim();
+
+      const parts = [];
+      if (torqueNm != null) parts.push(`${torqueNm} Nm`);
+      if (angleDeg != null) parts.push(`+ ${angleDeg}°`);
+      const value = parts.length ? parts.join(" ") : (raw || "Follow manual");
+
+      return { label, value, torque_nm: torqueNm, angle_deg: angleDeg, raw: raw || value };
+    }).filter(x => x && x.value);
+  }
+
+  // String form
+  const s = String(v).trim();
+  if (!s) return [];
+
+  const parts = s.split(/\r?\n|;/g).map(p => p.trim()).filter(Boolean);
+  const out = [];
+  for (let i=0; i<parts.length; i++){
+    const p = parts[i];
+    const m = p.match(/^([^:]+)\s*:\s*(.+)$/);
+    const label = (m ? m[1] : String(i + 1)).trim();
+    const value = (m ? m[2] : p).trim();
+
+    // Best-effort parse for speaking
+    let torqueNm = null;
+    let angleDeg = null;
+
+    const mNm = value.match(/(\d+(?:\.\d+)?)\s*Nm\b/i);
+    if (mNm) torqueNm = Number(mNm[1]);
+
+    const mDeg = value.match(/(?:\+\s*)?(\d+(?:\.\d+)?)\s*(?:°|deg(?:rees)?)\b/i);
+    if (mDeg) angleDeg = Number(mDeg[1]);
+
+    out.push({
+      label,
+      value,
+      torque_nm: (torqueNm != null && !Number.isNaN(torqueNm)) ? torqueNm : null,
+      angle_deg: (angleDeg != null && !Number.isNaN(angleDeg)) ? angleDeg : null,
+      raw: value
+    });
+  }
+  return out;
+}
+
 function scoreItem(queryLower, qSig, item){
       let textParts = [];
       if (item.component_name) textParts.push(item.component_name);
@@ -723,13 +783,14 @@ function buildSpokenAnswerParts(item){
   if (!item) return { base:"No matching fastener found.", info:"" };
 
   const name = item.component_name || "this fastener";
-  const hasSteps = Array.isArray(item.torque_steps) && item.torque_steps.length > 0;
+  const _stepsParsed = getTorqueStepsParsed(item);
+  const hasSteps = _stepsParsed.length > 0;
 
   // Detect bolt-size variants: ALL step labels are like M8, M6, M10...
   let isBoltSizeVariant = false;
   if (hasSteps){
-    const labels = item.torque_steps.map((s, idx) => {
-      const raw = (s.step != null ? String(s.step) : String(idx + 1)).trim();
+    const labels = _stepsParsed.map((s, idx) => {
+      const raw = (s.label != null ? String(s.label) : String(idx + 1)).trim();
       return raw;
     });
     isBoltSizeVariant = labels.length > 0 && labels.every(l => /^m\d+$/i.test(l));
@@ -744,8 +805,8 @@ function buildSpokenAnswerParts(item){
   // ---- Torque / steps ----
   if (hasSteps && isBoltSizeVariant){
     baseParts.push(`Torque by size.`);
-    item.torque_steps.forEach((s, idx) => {
-      const size = (s.step != null ? String(s.step) : String(idx + 1)).trim().toUpperCase();
+    _stepsParsed.forEach((s, idx) => {
+      const size = (s.label != null ? String(s.label) : String(idx + 1)).trim().toUpperCase();
       const seg = [];
       if (s.torque_nm != null) seg.push(`${s.torque_nm} newton meters`);
       if (s.angle_deg != null) seg.push(`plus ${s.angle_deg} degrees`);
@@ -754,8 +815,8 @@ function buildSpokenAnswerParts(item){
     });
   } else if (hasSteps){
     // baseParts.push(`Tightening procedure.`); // removed per spec
-    item.torque_steps.forEach((step, idx) => {
-      let label = (step.step != null ? String(step.step) : String(idx + 1)).trim();
+    _stepsParsed.forEach((step, idx) => {
+      let label = (step.label != null ? String(step.label) : String(idx + 1)).trim();
       if (/^\d+$/.test(label)) label = `Step ${label}`;
       else if (/^step\s*\d+$/i.test(label)){
         const m = label.match(/(\d+)/);
@@ -860,18 +921,12 @@ function buildSpokenAnswerParts(item){
       if (item.sealant)     chemItems.push({k:"Sealant", v:item.sealant});
 
       // ----- Steps normalize -----
-      const hasSteps = Array.isArray(item.torque_steps) && item.torque_steps.length > 0;
-      const rows = [];
-      if (hasSteps){
-        item.torque_steps.forEach((s, idx) => {
-          const rawLabel = (s.step != null ? String(s.step) : String(idx + 1)).trim();
-          const parts = [];
-          if (s.torque_nm != null) parts.push(`${s.torque_nm} Nm`);
-          if (s.angle_deg != null) parts.push(`+ ${s.angle_deg}°`);
-          const value = parts.length ? parts.join(" ") : (s.raw || "Follow manual");
-          rows.push({ label: rawLabel, value });
-        });
-      }
+      const _stepsParsedScreen = getTorqueStepsParsed(item);
+      const rows = _stepsParsedScreen.map((s, idx) => {
+        const rawLabel = (s.label != null ? String(s.label) : String(idx + 1)).trim();
+        const value = (s.value != null ? String(s.value) : (s.raw || "Follow manual"));
+        return { label: rawLabel, value };
+      });
 
       const isBoltSizeVariant =
         rows.length > 0 &&
