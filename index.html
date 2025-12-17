@@ -407,6 +407,14 @@
       background: rgba(7,9,16,.35);
     }
 
+
+/* === Font size unification (added) === */
+.info-line,
+.item-label {
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
 </style>
 </head>
 
@@ -1037,7 +1045,7 @@ function buildSpokenAnswerParts(item){
 
       // Chemistry line (threadlock/lube/sealant)
       if (chemItems.length){
-        html += `<div class="chemLine">` + chemItems.map(ci => (
+        html += `<div class="chemLine info-line">` + chemItems.map(ci => (
           `<div class="chemItem"><span class="chemKey">${escapeHtml(ci.k)}:</span> ${escapeHtml(ci.v)}</div>`
         )).join("") + `</div>`;
       }
