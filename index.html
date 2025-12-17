@@ -688,19 +688,26 @@ function normalizeSizeLabel(label){
 }
 
 function extractNmNumber(text){
-  // Returns string number (as entered) or null
+  // Returns string number ONLY when an explicit "Nm" unit is present.
+  // Prevents angle-only steps like "100°" from being treated as "100 Nm".
   const s = String(text ?? "");
-  // Look for a number that is followed by optional space and "Nm"
   const m = s.match(/(-?\d+(?:\.\d+)?)\s*nm\b/i);
-  if (m) return m[1];
-  // Fallback: first number if "Nm" not present but looks like "25" only
-  const m2 = s.match(/(-?\d+(?:\.\d+)?)/);
-  return m2 ? m2[1] : null;
+  return m ? m[1] : null;
 }
 
 function formatTorqueValueHtml(valueText){
-  const num = extractNmNumber(valueText);
-  if (!num) return escapeHtml(String(valueText ?? ""));
+  const s = String(valueText ?? "");
+
+  // Angle-only step (e.g., "100°") should display degrees, not Nm.
+  const deg = s.match(/(-?\d+(?:\.\d+)?)\s*°/);
+  const hasNm = /\bnm\b/i.test(s);
+
+  if (deg && !hasNm){
+    return `<span class="stepNum">${escapeHtml(deg[1])}</span><span class="stepUnit">°</span>`;
+  }
+
+  const num = extractNmNumber(s);
+  if (!num) return escapeHtml(s);
   return `<span class="stepNum">${escapeHtml(num)}</span><span class="stepUnit">Nm</span>`;
 }
 
