@@ -598,6 +598,16 @@ function splitList(val){
     .filter(Boolean);
 }
 
+
+function getExtraNotesList(item){
+  const v = item?.extra_notes;
+  if (v == null) return [];
+  if (Array.isArray(v)) return v.map(x => String(x ?? "").trim()).filter(Boolean);
+  const s = String(v).trim();
+  return s ? [s] : [];
+}
+
+
 function getSpecialTools(item){
   // Preferred: array of objects [{special_tool_name, special_tool_number}, ...]
   if (Array.isArray(item?.special_tools)){
@@ -820,11 +830,13 @@ function buildSpokenAnswerParts(item){
   }
 
   // Note: read value only
-  if (Array.isArray(item.extra_notes) && item.extra_notes.length){
-    item.extra_notes.forEach(note => {
+  const _notes = getExtraNotesList(item);
+  if (_notes.length){
+    _notes.forEach(note => {
       const n = String(note || "").trim();
       if (!n) return;
-      infoParts.push(n.endsWith(".") ? n : (n + "."));
+      // add a period if it doesn't already end in ., ?, !
+      infoParts.push(/[.?!]$/.test(n) ? n : (n + "."));
     });
   }
 
@@ -900,7 +912,7 @@ function buildSpokenAnswerParts(item){
           else if (toolNum) toolLines.push(`${toolNum}`);
         });
       }
-      const extraNotes = Array.isArray(item.extra_notes) ? item.extra_notes : [];
+      const extraNotes = getExtraNotesList(item);
 
       // ----- Build HTML -----
       let html = `<div class="partName">${escapeHtml(name)}</div>`;
@@ -955,7 +967,7 @@ function buildSpokenAnswerParts(item){
       const _toolsForInfo = getSpecialTools(item);
       const hasToolDataForInfo = _toolsForInfo.length > 0;
       const hasSeqDataForInfo  = !!(item.tightening_seq && String(item.tightening_seq).trim());
-      const hasNoteDataForInfo = Array.isArray(item.extra_notes) && item.extra_notes.some(n => String(n || "").trim());
+      const hasNoteDataForInfo = getExtraNotesList(item).length > 0;
       const hasInfoBlock = (hasToolDataForInfo || hasSeqDataForInfo || hasNoteDataForInfo);
 
 if (hasInfoBlock){
@@ -984,8 +996,9 @@ if (hasInfoBlock){
         }
 
         // 3) Extra notes
-        if (Array.isArray(item.extra_notes) && item.extra_notes.length){
-          item.extra_notes.forEach(n=>{
+        const _notesForScreen = getExtraNotesList(item);
+        if (_notesForScreen.length){
+          _notesForScreen.forEach(n=>{
             html += `<div class="infoLine"><span class="infoKey">Note:</span> ${escapeHtml(n)}</div>`;
           });
         }
@@ -1030,7 +1043,7 @@ if (hasInfoBlock){
       const hasInfoToRead =
         (getSpecialTools(item).length > 0) ||
         (!!(item.tightening_seq && String(item.tightening_seq).trim())) ||
-        (Array.isArray(item.extra_notes) && item.extra_notes.some(n => String(n || "").trim()));
+        (getExtraNotesList(item).length > 0);
 
 if (hasInfoToRead){
         // Add Yes/No gate UI (inserted into DOM)
