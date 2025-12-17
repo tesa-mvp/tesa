@@ -1116,6 +1116,7 @@ if (hasInfoBlock){
       // ❌ 기존 하단 notes 섹션은 삭제 (요청사항)
 
       resultBody.className = "";
+      resultBody.innerHTML = html;
       const spoken = buildSpokenAnswerParts(item);
 
       // Info-gate removed: speak everything in one pass
