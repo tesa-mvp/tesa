@@ -598,6 +598,66 @@ function splitList(val){
     .filter(Boolean);
 }
 
+// --- Torque helpers (support tightening_type + string/array torque_steps) ---
+function parseTorqueStepsText(text){
+  // Accept separators: newline or semicolon. Preserve user-entered content as much as possible.
+  return String(text)
+    .split(/\r?\n|;/)
+    .map(s => s.trim())
+    .filter(Boolean);
+}
+
+function getTorqueStepsRows(item){
+  // Returns rows for UI in the form [{label, value}] for multi-step; [] otherwise.
+  const tt = (item && item.tightening_type ? String(item.tightening_type).trim().toLowerCase() : "");
+  if (tt !== "multi_step") return [];
+
+  // If torque_steps is an array of objects (structured), keep existing behavior.
+  if (Array.isArray(item.torque_steps) && item.torque_steps.length){
+    return item.torque_steps.map((s, idx) => {
+      const rawLabel = (s.step != null ? String(s.step) : String(idx + 1)).trim();
+      const parts = [];
+      if (s.torque_nm != null) parts.push(`${s.torque_nm} Nm`);
+      if (s.angle_deg != null) parts.push(`+ ${s.angle_deg}°`);
+      const value = parts.length ? parts.join(" ") : (s.raw || "Follow manual");
+      return { label: rawLabel, value };
+    });
+  }
+
+  // If torque_steps is a string, parse lines into rows.
+  if (item.torque_steps != null && String(item.torque_steps).trim()){
+    const lines = parseTorqueStepsText(item.torque_steps);
+    return lines.map((line, idx) => {
+      // If the line already has a label (e.g., "Step 1: 5 Nm"), keep it.
+      const parts = line.split(":");
+      if (parts.length >= 2){
+        const label = parts.shift().trim();
+        const value = parts.join(":").trim();
+        return { label: label || String(idx + 1), value: value || "Follow manual" };
+      }
+      return { label: String(idx + 1), value: line };
+    });
+  }
+
+  return [];
+}
+
+function getTorqueStepsForSpeech(item){
+  // Returns an array of objects compatible with the speech builder:
+  // [{ step, torque_nm?, angle_deg?, raw? }]
+  const tt = (item && item.tightening_type ? String(item.tightening_type).trim().toLowerCase() : "");
+  if (tt !== "multi_step") return [];
+
+  if (Array.isArray(item.torque_steps) && item.torque_steps.length){
+    return item.torque_steps;
+  }
+  if (item.torque_steps != null && String(item.torque_steps).trim()){
+    const lines = parseTorqueStepsText(item.torque_steps);
+    return lines.map((line, idx) => ({ step: String(idx + 1), raw: line }));
+  }
+  return [];
+}
+
 
 function getExtraNotesList(item){
   const v = item?.extra_notes;
@@ -723,13 +783,13 @@ function buildSpokenAnswerParts(item){
   if (!item) return { base:"No matching fastener found.", info:"" };
 
   const name = item.component_name || "this fastener";
-  const hasSteps = Array.isArray(item.torque_steps) && item.torque_steps.length > 0;
-  const treatAsSingleSteps = hasSteps && item.multi_step !== true && item.torque_steps.length === 1;
+  const stepsForSpeech = getTorqueStepsForSpeech(item);
+  const hasSteps = stepsForSpeech.length > 0;
 
   // Detect bolt-size variants: ALL step labels are like M8, M6, M10...
   let isBoltSizeVariant = false;
   if (hasSteps){
-    const labels = item.torque_steps.map((s, idx) => {
+    const labels = stepsForSpeech.map((s, idx) => {
       const raw = (s.step != null ? String(s.step) : String(idx + 1)).trim();
       return raw;
     });
@@ -745,7 +805,7 @@ function buildSpokenAnswerParts(item){
   // ---- Torque / steps ----
   if (hasSteps && isBoltSizeVariant){
     baseParts.push(`Torque by size.`);
-    item.torque_steps.forEach((s, idx) => {
+    stepsForSpeech.forEach((s, idx) => {
       const size = (s.step != null ? String(s.step) : String(idx + 1)).trim().toUpperCase();
       const seg = [];
       if (s.torque_nm != null) seg.push(`${s.torque_nm} newton meters`);
@@ -753,22 +813,9 @@ function buildSpokenAnswerParts(item){
       if (seg.length) baseParts.push(`${size}: ${seg.join(", ")}.`);
       else if (s.raw) baseParts.push(`${size}: ${s.raw}.`);
     });
-    } else if (treatAsSingleSteps) {
-    const s = item.torque_steps[0] || {};
-    if (s.torque_nm != null && s.angle_deg != null){
-      baseParts.push(`${s.torque_nm} newton meters, then add ${s.angle_deg} degrees.`);
-    } else if (s.torque_nm != null){
-      baseParts.push(`${s.torque_nm} newton meters.`);
-    } else if (s.angle_deg != null){
-      baseParts.push(`Add ${s.angle_deg} degrees.`);
-    } else if (s.raw){
-      baseParts.push(`${s.raw}.`);
-    } else {
-      baseParts.push(`Torque is not specified in this dataset.`);
-    }
   } else if (hasSteps){
     // baseParts.push(`Tightening procedure.`); // removed per spec
-    item.torque_steps.forEach((step, idx) => {
+    stepsForSpeech.forEach((step, idx) => {
       let label = (step.step != null ? String(step.step) : String(idx + 1)).trim();
       if (/^\d+$/.test(label)) label = `Step ${label}`;
       else if (/^step\s*\d+$/i.test(label)){
@@ -873,19 +920,8 @@ function buildSpokenAnswerParts(item){
 
       if (item.sealant)     chemItems.push({k:"Sealant", v:item.sealant});
 
-      // ----- Steps normalize -----
-      const hasSteps = Array.isArray(item.torque_steps) && item.torque_steps.length > 0;
-      const rows = [];
-      if (hasSteps){
-        item.torque_steps.forEach((s, idx) => {
-          const rawLabel = (s.step != null ? String(s.step) : String(idx + 1)).trim();
-          const parts = [];
-          if (s.torque_nm != null) parts.push(`${s.torque_nm} Nm`);
-          if (s.angle_deg != null) parts.push(`+ ${s.angle_deg}°`);
-          const value = parts.length ? parts.join(" ") : (s.raw || "Follow manual");
-          rows.push({ label: rawLabel, value });
-        });
-      }
+      // ----- Steps normalize (by tightening_type) -----
+      const rows = getTorqueStepsRows(item);
 
       const isBoltSizeVariant =
         rows.length > 0 &&
@@ -897,8 +933,9 @@ function buildSpokenAnswerParts(item){
       const pills = [];
 
       // Type
-      if (rows.length) pills.push("Type: multi");
-      else if (hasSingle) pills.push("Type: single");
+      const tt = (item.tightening_type ? String(item.tightening_type).toLowerCase() : "");
+      if (tt === "multi_step") pills.push("Type: multi");
+      else if (tt === "single" || hasSingle) pills.push("Type: single");
 
       // Thread
       if (item.thread_spec) pills.push(`Thread: ${item.thread_spec}`);
@@ -932,7 +969,7 @@ function buildSpokenAnswerParts(item){
       let html = `<div class="partName">${escapeHtml(name)}</div>`;
 
       // ✅ multi-step: show steps in the single-torque area
-      if (rows.length && (isBoltSizeVariant || item.multi_step === true || rows.length > 1)) {
+      if (rows.length){
         html += `<div class="stepList multi" style="margin-top:8px;padding-top:0;border-top:none;">`;
 
         rows.forEach(r => {
@@ -962,11 +999,6 @@ function buildSpokenAnswerParts(item){
             <div class="torqueBig">
               ${escapeHtml(String(item.torque_nm_single))}<span class="torqueUnit">Nm</span>
             </div>
-          `;
-        } else if (rows.length === 1) {
-          // Single-step data sometimes comes in torque_steps; show the value without a Step tag.
-          html += `
-            <div class="torqueBig">${escapeHtml(String(rows[0].value || "—"))}</div>
           `;
         } else {
           html += `
