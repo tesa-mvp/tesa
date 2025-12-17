@@ -845,93 +845,95 @@ function buildSpokenAnswerParts(item){
   if (!item) return { base:"No matching fastener found.", info:"" };
 
   const name = item.component_name || "this fastener";
-  const stepsForSpeech = getTorqueStepsForSpeech(item);
-  const hasSteps = stepsForSpeech.length > 0;
-
-  // Detect bolt-size variants: ALL step labels are like M8, M6, M10...
-  let isBoltSizeVariant = false;
-  if (hasSteps){
-    const labels = stepsForSpeech.map((s, idx) => {
-      const raw = (s.step != null ? String(s.step) : String(idx + 1)).trim();
-      return raw;
-    });
-    isBoltSizeVariant = labels.length > 0 && labels.every(l => /^m\d+$/i.test(l));
-  }
+  const tt = (item.tightening_type ? String(item.tightening_type).trim().toLowerCase() : "");
 
   const baseParts = [];
   const infoParts = [];
 
-  // partName: speak name only
+  // Part name first
   baseParts.push(`${name}.`);
 
-  // ---- Torque / steps ----
-  if (hasSteps && isBoltSizeVariant){
-    baseParts.push(`Torque by size.`);
-    stepsForSpeech.forEach((s, idx) => {
-      const size = (s.step != null ? String(s.step) : String(idx + 1)).trim().toUpperCase();
-      const seg = [];
-      if (s.torque_nm != null) seg.push(`${s.torque_nm} newton meters`);
-      if (s.angle_deg != null) seg.push(`plus ${s.angle_deg} degrees`);
-      if (seg.length) baseParts.push(`${size}: ${seg.join(", ")}.`);
-      else if (s.raw) baseParts.push(`${size}: ${s.raw}.`);
-    });
-  } else if (hasSteps){
-    // baseParts.push(`Tightening procedure.`); // removed per spec
-    stepsForSpeech.forEach((step, idx) => {
-      let label = (step.step != null ? String(step.step) : String(idx + 1)).trim();
-      if (/^\d+$/.test(label)) label = `Step ${label}`;
-      else if (/^step\s*\d+$/i.test(label)){
-        const m = label.match(/(\d+)/);
-        if (m) label = `Step ${m[1]}`;
+  // -----------------------
+  // Torque / tightening
+  // -----------------------
+  if (tt === "multi_step"){
+    const rows = getTorqueStepsRows(item);
+    const caseType = classifyTorqueStepsRows(rows);
+
+    if (rows.length){
+      if (caseType === "multi_size"){
+        baseParts.push("Torque by size.");
+        rows.forEach(r=>{
+          const size = normalizeSizeLabel(r.label);
+          const nm = extractNmNumber(r.value);
+          const degMatch = String(r.value ?? "").match(/(\d+(?:\.\d+)?)\s*°/);
+          const deg = degMatch ? degMatch[1] : null;
+
+          if (nm && deg){
+            baseParts.push(`${size}. ${nm} newton meters, plus ${deg} degrees.`);
+          } else if (nm){
+            baseParts.push(`${size}. ${nm} newton meters.`);
+          } else {
+            baseParts.push(`${size}. ${String(r.value ?? "").trim()}.`);
+          }
+        });
+      } else {
+        // Multi-Step case
+        rows.forEach(r=>{
+          const stepTag = normalizeStepLabel(r.label); // STEP1
+          const stepNumMatch = stepTag.match(/STEP(\d+)/i);
+          const stepNum = stepNumMatch ? stepNumMatch[1] : "";
+          const nm = extractNmNumber(r.value);
+          const degMatch = String(r.value ?? "").match(/(\d+(?:\.\d+)?)\s*°/);
+          const deg = degMatch ? degMatch[1] : null;
+
+          const spokenLabel = stepNum ? `Step ${stepNum}` : "Step";
+          if (nm && deg){
+            baseParts.push(`${spokenLabel}. ${nm} newton meters, then add ${deg} degrees.`);
+          } else if (nm){
+            baseParts.push(`${spokenLabel}. ${nm} newton meters.`);
+          } else {
+            baseParts.push(`${spokenLabel}. ${String(r.value ?? "").trim()}.`);
+          }
+        });
       }
-      if (step.torque_nm != null && step.angle_deg != null){
-        baseParts.push(`${label}. ${step.torque_nm} newton meters, then add ${step.angle_deg} degrees.`);
-      } else if (step.torque_nm != null){
-        baseParts.push(`${label}. ${step.torque_nm} newton meters.`);
-      } else if (step.angle_deg != null){
-        baseParts.push(`${label}. Add ${step.angle_deg} degrees.`);
-      } else if (step.raw){
-        baseParts.push(`${label}. ${step.raw}.`);
-      }
-    });
-  } else if (item.torque_nm_single != null){
-    baseParts.push(`${item.torque_nm_single} newton meters.`);
+    } else {
+      baseParts.push("Torque is not specified in this dataset.");
+    }
   } else {
-    baseParts.push(`Torque is not specified in this dataset.`);
+    // Single (or unknown → treat like single)
+    if (item.torque_nm_single != null && String(item.torque_nm_single).trim() !== ""){
+      baseParts.push(`${item.torque_nm_single} newton meters.`);
+    } else {
+      baseParts.push("Torque is not specified in this dataset.");
+    }
   }
 
-  // ---- Chemistry (values only) ----
-    const chemVals = [];
+  // -----------------------
+  // Chemistry (values only)
+  // -----------------------
+  const chemVals = [];
 
-    // threadlock: 숫자만 digit-by-digit
-    if (item.threadlock) {
-      chemVals.push(speakNumbersDigitByDigit(item.threadlock));
-    }
+  if (item.threadlock) {
+    chemVals.push(speakNumbersDigitByDigit(item.threadlock));
+  }
+  const lubeSpoken = item.lubrication_symbol || item.lubrication;
+  if (lubeSpoken) {
+    chemVals.push(String(lubeSpoken));
+  }
+  if (item.sealant) {
+    chemVals.push(speakNumbersDigitByDigit(item.sealant));
+  }
+  if (chemVals.length) {
+    baseParts.push(`Apply ${chemVals.join(", ")}.`);
+  }
 
-    // lubrication: symbol 그대로 (변경 없음)
-    const lubeSpoken = item.lubrication_symbol || item.lubrication;
-    if (lubeSpoken) {
-      chemVals.push(String(lubeSpoken));
-    }
-
-    // sealant: 숫자만 digit-by-digit
-    if (item.sealant) {
-      chemVals.push(speakNumbersDigitByDigit(item.sealant));
-    }
-
-    if (chemVals.length) {
-      baseParts.push(`Apply ${chemVals.join(", ")}.`);
-    }
-
-
-  // ---- Info block (spoken only when user says YES) ----
-  // Special tools speaking rules:
-  // - name+number OR name only: "<name> is required."
-  // - number only: "Special tool <number> is required."
-  // - neither: say nothing
-  const _tools = getSpecialTools(item);
-  if (_tools.length){
-    _tools.forEach(t => {
+  // -----------------------
+  // Info block (spoken only when user says YES)
+  // -----------------------
+  const tools = getSpecialTools(item);
+  if (tools.length){
+    tools.forEach(t => {
       const toolName = (t?.special_tool_name ?? "").toString().trim();
       const toolNum  = (t?.special_tool_number ?? "").toString().trim();
 
@@ -943,22 +945,16 @@ function buildSpokenAnswerParts(item){
     });
   }
 
-
-  // Sequence: read value only
   if (item.tightening_seq){
-    infoParts.push(String(item.tightening_seq).trim().endsWith(".")
-      ? String(item.tightening_seq).trim()
-      : `${String(item.tightening_seq).trim()}.`
-    );
+    const seq = String(item.tightening_seq).trim();
+    if (seq) infoParts.push(/[.?!]$/.test(seq) ? seq : (seq + "."));
   }
 
-  // Note: read value only
-  const _notes = getExtraNotesList(item);
-  if (_notes.length){
-    _notes.forEach(note => {
+  const notes = getExtraNotesList(item);
+  if (notes.length){
+    notes.forEach(note => {
       const n = String(note || "").trim();
       if (!n) return;
-      // add a period if it doesn't already end in ., ?, !
       infoParts.push(/[.?!]$/.test(n) ? n : (n + "."));
     });
   }
@@ -968,6 +964,8 @@ function buildSpokenAnswerParts(item){
     info: infoParts.join(" ")
   };
 }
+
+
 
     function renderResult(item, info){
       const name = item.component_name || "Unknown fastener";
@@ -1034,8 +1032,9 @@ function buildSpokenAnswerParts(item){
       if (rows.length){
         html += `<div class="stepList multi" style="margin-top:8px;padding-top:0;border-top:none;">`;
 
+        const caseType = classifyTorqueStepsRows(rows);
+
         rows.forEach(r => {
-          const caseType = classifyTorqueStepsRows(rows);
           let tag = r.label;
 
           if (caseType === "multi_size"){
