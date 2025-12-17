@@ -334,30 +334,6 @@
       color:#c2d5ff;
     }
 
-
-    .moreInfoBar{
-      margin-top:10px;
-      padding:10px 12px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(7,9,16,.55);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-    }
-    .moreInfoText{font-size:12px;color:#d7d8df;line-height:1.25}
-    .moreInfoBtns{display:flex;gap:8px}
-    .moreBtn{
-      padding:7px 10px;border-radius:999px;
-      border:1px solid var(--border);
-      background:rgba(9,11,18,.85);
-      color:var(--text);
-      font-size:11px;
-      cursor:pointer;
-    }
-    .moreBtn:hover{border-color:rgba(79,140,255,.6)}
-
     /* Tools + Notes block (between torque/steps and chemistry line) */
     .infoBlock{
       margin-top: 10px;
@@ -709,22 +685,6 @@ function formatTorqueValueHtml(valueText){
   const num = extractNmNumber(s);
   if (!num) return escapeHtml(s);
   return `<span class="stepNum">${escapeHtml(num)}</span><span class="stepUnit">Nm</span>`;
-}
-
-function getTorqueStepsForSpeech(item){
-  // Returns an array of objects compatible with the speech builder:
-  // [{ step, torque_nm?, angle_deg?, raw? }]
-  const tt = (item && item.tightening_type ? String(item.tightening_type).trim().toLowerCase() : "");
-  if (tt !== "multi_step") return [];
-
-  if (Array.isArray(item.torque_steps) && item.torque_steps.length){
-    return item.torque_steps;
-  }
-  if (item.torque_steps != null && String(item.torque_steps).trim()){
-    const lines = parseTorqueStepsText(item.torque_steps);
-    return lines.map((line, idx) => ({ step: String(idx + 1), raw: line }));
-  }
-  return [];
 }
 
 
