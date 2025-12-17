@@ -1534,7 +1534,8 @@
       "extra_notes": null,
       "item_number": "M8: Item #13, M6: Item F",
       "ref_images": [
-        "bolt_rear_brake_cylinder_bracket_1.png"
+        "bolt_rear_brake_cylinder_bracket_1.png",
+        "bolt_rear_brake_cylinder_bracket_2.png"
       ],
       "sample_questions": "What is the tightening torque for Rear brake master cylinder bracket bolt?; What is the torque for Rear brake master cylinder bracket bolt?; Torque spec for Rear brake master cylinder bracket bolt?; Rear brake master cylinder bracket bolt tightening torque?; Rear brake master cylinder bracket bolt torque?; How tight should I torque the Rear brake master cylinder bracket bolt?; What's the torque spec on the Rear brake master cylinder bracket bolt?; Give me the torque for Rear brake master cylinder bracket bolt.",
       "partName": "Rear brake master cylinder bracket bolt",
