@@ -952,15 +952,11 @@ function buildSpokenAnswerParts(item){
       }
 
       // ✅ Info block (Special tool → Tightening sequence → Extra notes)
-            const hasToolDataForInfo = getSpecialTools(item).length > 0;
-        const toolNum  = (t?.special_tool_number ?? t?.number ?? t?.tool_number ?? "").toString().trim();
-        return !!(toolName || toolNum);
-      });
+      const _toolsForInfo = getSpecialTools(item);
+      const hasToolDataForInfo = _toolsForInfo.length > 0;
       const hasSeqDataForInfo  = !!(item.tightening_seq && String(item.tightening_seq).trim());
-      const hasNoteDataForInfo = Array.isArray(item.extra_notes) && item.extra_notes.some(n=>String(n||"").trim());
-
+      const hasNoteDataForInfo = Array.isArray(item.extra_notes) && item.extra_notes.some(n => String(n || "").trim());
       const hasInfoBlock = (hasToolDataForInfo || hasSeqDataForInfo || hasNoteDataForInfo);
-
 
 if (hasInfoBlock){
         html += `<div class="infoBlock" id="infoBlock">`;
@@ -1028,17 +1024,13 @@ if (hasInfoBlock){
       // ❌ 기존 하단 notes 섹션은 삭제 (요청사항)
 
       resultBody.className = "";
-            const spoken = buildSpokenAnswerParts(item);
+      const spoken = buildSpokenAnswerParts(item);
 
-      // infoBlock 존재 여부(이미 위에서 계산한 hasInfoBlock 그대로 써도 됨)
-            const hasToolData = getSpecialTools(item).length > 0;
-        const toolNum  = (t?.special_tool_number ?? t?.number ?? t?.tool_number ?? "").toString().trim();
-        return !!(toolName || toolNum);
-      });
-      const hasSeqData  = !!(item.tightening_seq && String(item.tightening_seq).trim());
-      const hasNoteData = Array.isArray(item.extra_notes) && item.extra_notes.some(n=>String(n||"").trim());
-
-      const hasInfoToRead = (hasToolData || hasSeqData || hasNoteData);
+      // Determine whether there is additional info worth reading (gate)
+      const hasInfoToRead =
+        (getSpecialTools(item).length > 0) ||
+        (!!(item.tightening_seq && String(item.tightening_seq).trim())) ||
+        (Array.isArray(item.extra_notes) && item.extra_notes.some(n => String(n || "").trim()));
 
 if (hasInfoToRead){
         // Add Yes/No gate UI (inserted into DOM)
