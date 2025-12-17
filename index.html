@@ -312,12 +312,28 @@
       letter-spacing: -0.01em;
       color: var(--text);
       line-height: 1.15;
+      display:flex;
+      align-items:baseline;
+      gap:6px;
     }
     /* Multi-step: emphasize values slightly */
     .stepList.multi .stepVal{
       font-size: 20px;   /* 기존 16px → 살짝 키움 */
       font-weight: 900;  /* 가독성 강화 (선택) */
     }
+
+    .stepNum{
+      font-size:34px;
+      font-weight:800;
+      letter-spacing:-.02em;
+      line-height:1;
+    }
+    .stepUnit{
+      font-size:14px;
+      font-weight:700;
+      color:#c2d5ff;
+    }
+
 
     .moreInfoBar{
       margin-top:10px;
@@ -640,6 +656,52 @@ function getTorqueStepsRows(item){
   }
 
   return [];
+}
+
+// --- Multi-step vs Multi-size classification (string torque_steps) ---
+function classifyTorqueStepsRows(rows){
+  // Returns "multi_step" or "multi_size" (default multi_step)
+  if (!Array.isArray(rows) || !rows.length) return "multi_step";
+  const labels = rows.map(r => String(r?.label ?? "").trim());
+  const allSize = labels.length > 0 && labels.every(l => /^m\d+$/i.test(l));
+  if (allSize) return "multi_size";
+
+  const allStep = labels.length > 0 && labels.every(l => /^step\s*\d+$/i.test(l) || /^step\d+$/i.test(l) || /^\d+$/.test(l));
+  if (allStep) return "multi_step";
+
+  // Mixed/unknown → treat as multi_step (safer)
+  return "multi_step";
+}
+
+function normalizeStepLabel(label){
+  let s = String(label ?? "").trim();
+  if (!s) return "";
+  // "1" -> "STEP1", "Step 1" -> "STEP1", "Step1" -> "STEP1"
+  const m = s.match(/(\d+)/);
+  if (m) return `STEP${m[1]}`;
+  return s.toUpperCase();
+}
+
+function normalizeSizeLabel(label){
+  const s = String(label ?? "").trim();
+  return s ? s.toUpperCase() : "";
+}
+
+function extractNmNumber(text){
+  // Returns string number (as entered) or null
+  const s = String(text ?? "");
+  // Look for a number that is followed by optional space and "Nm"
+  const m = s.match(/(-?\d+(?:\.\d+)?)\s*nm\b/i);
+  if (m) return m[1];
+  // Fallback: first number if "Nm" not present but looks like "25" only
+  const m2 = s.match(/(-?\d+(?:\.\d+)?)/);
+  return m2 ? m2[1] : null;
+}
+
+function formatTorqueValueHtml(valueText){
+  const num = extractNmNumber(valueText);
+  if (!num) return escapeHtml(String(valueText ?? ""));
+  return `<span class="stepNum">${escapeHtml(num)}</span><span class="stepUnit">Nm</span>`;
 }
 
 function getTorqueStepsForSpeech(item){
@@ -973,20 +1035,20 @@ function buildSpokenAnswerParts(item){
         html += `<div class="stepList multi" style="margin-top:8px;padding-top:0;border-top:none;">`;
 
         rows.forEach(r => {
+          const caseType = classifyTorqueStepsRows(rows);
           let tag = r.label;
 
-          if (!isBoltSizeVariant){
-            if (/^\d+$/.test(tag)) tag = `Step ${tag}`;
-            else if (/^step\s*\d+$/i.test(tag)) {
-              const m = tag.match(/(\d+)/);
-              if (m) tag = `Step ${m[1]}`;
-            }
+          if (caseType === "multi_size"){
+            tag = normalizeSizeLabel(tag);
+          } else {
+            // multi_step
+            tag = normalizeStepLabel(tag);
           }
 
           html += `
             <div class="stepRow">
               <div class="stepTag">${escapeHtml(tag)}</div>
-              <div class="stepVal">${escapeHtml(r.value)}</div>
+              <div class="stepVal">${formatTorqueValueHtml(r.value)}</div>
             </div>
           `;
         });
