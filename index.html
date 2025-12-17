@@ -531,31 +531,98 @@
     }
 
     async function loadTorqueData(){
-      try{
-        setStatus("Loading dataset…", true, false);
-        const res = await fetch(DATASET_FILE, { cache: "no-store" });
-        if (!res.ok){
-          throw new Error(`HTTP ${res.status} while fetching ${DATASET_FILE}`);
-        }
-        const data = await res.json();
 
-        bikeMeta = {
-          manufacturer: data.manufacturer,
-          model: data.model,
-          year_start: data.year_start,
-          year_end: data.year_end
-        };
-        torqueData = Array.isArray(data.torque_data) ? data.torque_data : [];
+try{
+  setStatus("Loading dataset…", true, false);
+  const res = await fetch(DATASET_FILE, { cache: "no-store" });
+  if (!res.ok){
+    throw new Error(`HTTP ${res.status} while fetching ${DATASET_FILE}`);
+  }
+  const data = await res.json();
 
-        badgeEl.innerHTML = `<span class="dot"></span>${bikeMeta.manufacturer} ${bikeMeta.model} · ${bikeMeta.year_start}–${bikeMeta.year_end}`;
-        setStatus(`Ready. (${torqueData.length} items)`, true, false);
-      } catch (e){
-        console.error(e);
-        setStatus("Failed to load dataset. Use a local server (python http.server).", true, true);
-      }
+  // Support both schemas:
+  // (A) legacy: { manufacturer, model, year_start, year_end, torque_data: [...] }
+  // (B) current: { dataset: { make, model, years:{from,to} }, items:[...] }
+  const meta = extractDatasetMeta(data);
+  bikeMeta = meta;
+  torqueData = Array.isArray(meta.items) ? meta.items : [];
+
+  const make = meta.make || "Unknown";
+  const model = meta.model || "Model";
+  const yFrom = meta.year_from ?? "";
+  const yTo   = meta.year_to ?? "";
+
+  badgeEl.innerHTML = `<span class="dot"></span>${escapeHtml(make)} ${escapeHtml(model)} · ${escapeHtml(String(yFrom))}–${escapeHtml(String(yTo))}`;
+  setStatus(`Ready. (${torqueData.length} items)`, true, false);
+} catch (e){
+  console.error(e);
+  setStatus("Failed to load dataset. Use a local server (python http.server).", true, true);
+}
     }
 
-    function scoreItem(queryLower, qSig, item){
+
+    
+// -------------------------
+// Schema helpers
+// -------------------------
+function extractDatasetMeta(data){
+  // Current schema
+  if (data && typeof data === "object" && data.dataset && Array.isArray(data.items)){
+    const ds = data.dataset || {};
+    const years = ds.years || {};
+    return {
+      make: ds.make ?? ds.manufacturer ?? ds.brand ?? "Unknown",
+      model: ds.model ?? "Model",
+      year_from: years.from ?? years.start ?? ds.year_start ?? "",
+      year_to: years.to ?? years.end ?? ds.year_end ?? "",
+      items: data.items
+    };
+  }
+
+  // Legacy schema
+  return {
+    make: data?.manufacturer ?? data?.make ?? "Unknown",
+    model: data?.model ?? "Model",
+    year_from: data?.year_start ?? data?.year_from ?? "",
+    year_to: data?.year_end ?? data?.year_to ?? "",
+    items: Array.isArray(data?.torque_data) ? data.torque_data : []
+  };
+}
+
+function splitList(val){
+  if (val == null) return [];
+  if (Array.isArray(val)) return val.map(x => String(x ?? "").trim()).filter(Boolean);
+  return String(val)
+    .split(/[;,]+/)
+    .map(s => s.trim())
+    .filter(Boolean);
+}
+
+function getSpecialTools(item){
+  // Preferred: array of objects [{special_tool_name, special_tool_number}, ...]
+  if (Array.isArray(item?.special_tools)){
+    return item.special_tools.map(t => ({
+      special_tool_name: (t?.special_tool_name ?? t?.name ?? "").toString().trim(),
+      special_tool_number: (t?.special_tool_number ?? t?.number ?? t?.tool_number ?? "").toString().trim()
+    })).filter(t => t.special_tool_name || t.special_tool_number);
+  }
+
+  // Current dataset fields: special_tool_numbers / special_tool_name (strings)
+  const nums = splitList(item?.special_tool_numbers ?? item?.special_tool_number ?? item?.tool_number);
+  const names = splitList(item?.special_tool_name ?? item?.special_tool_names ?? item?.tool_name);
+
+  const out = [];
+  const n = Math.max(nums.length, names.length);
+  for (let i=0; i<n; i++){
+    out.push({
+      special_tool_name: names[i] || "",
+      special_tool_number: nums[i] || ""
+    });
+  }
+  return out.filter(t => t.special_tool_name || t.special_tool_number);
+}
+
+function scoreItem(queryLower, qSig, item){
       let textParts = [];
       if (item.component_name) textParts.push(item.component_name);
       if (Array.isArray(item.common_name)) textParts.push(item.common_name.join(" "));
@@ -729,10 +796,11 @@ function buildSpokenAnswerParts(item){
   // - name+number OR name only: "<name> is required."
   // - number only: "Special tool <number> is required."
   // - neither: say nothing
-  if (Array.isArray(item.special_tools) && item.special_tools.length){
-    item.special_tools.forEach(t => {
-      const toolName = (t?.special_tool_name ?? t?.name ?? "").toString().trim();
-      const toolNum  = (t?.special_tool_number ?? t?.number ?? t?.tool_number ?? "").toString().trim();
+  const _tools = getSpecialTools(item);
+  if (_tools.length){
+    _tools.forEach(t => {
+      const toolName = (t?.special_tool_name ?? "").toString().trim();
+      const toolNum  = (t?.special_tool_number ?? "").toString().trim();
 
       if (toolName){
         infoParts.push(`${toolName} is required.`);
@@ -817,16 +885,16 @@ function buildSpokenAnswerParts(item){
 
       // ----- Special tools + Extra notes (new block) -----
       const toolLines = [];
-      if (Array.isArray(item.special_tools) && item.special_tools.length){
-        item.special_tools.forEach(t=>{
-          const toolName = (t?.special_tool_name ?? t?.name ?? "").toString().trim();
-          const toolNum  = (t?.special_tool_number ?? t?.number ?? t?.tool_number ?? "").toString().trim();
+      const _toolsForScreen = getSpecialTools(item);
+      if (_toolsForScreen.length){
+        _toolsForScreen.forEach(t=>{
+          const toolName = (t?.special_tool_name ?? "").toString().trim();
+          const toolNum  = (t?.special_tool_number ?? "").toString().trim();
 
           // Screen exposure rules:
           // - name+number: "name - number"
           // - name only: "name"
           // - number only: "number"
-          // - neither: do not show
           if (toolName && toolNum) toolLines.push(`${toolName} - ${toolNum}`);
           else if (toolName) toolLines.push(`${toolName}`);
           else if (toolNum) toolLines.push(`${toolNum}`);
@@ -884,8 +952,7 @@ function buildSpokenAnswerParts(item){
       }
 
       // ✅ Info block (Special tool → Tightening sequence → Extra notes)
-      const hasToolDataForInfo = Array.isArray(item.special_tools) && item.special_tools.some(t=>{
-        const toolName = (t?.special_tool_name ?? t?.name ?? "").toString().trim();
+            const hasToolDataForInfo = getSpecialTools(item).length > 0;
         const toolNum  = (t?.special_tool_number ?? t?.number ?? t?.tool_number ?? "").toString().trim();
         return !!(toolName || toolNum);
       });
@@ -899,16 +966,11 @@ if (hasInfoBlock){
         html += `<div class="infoBlock" id="infoBlock">`;
 
         // 1) Special tool
-        if (Array.isArray(item.special_tools) && item.special_tools.length){
-          const toolLines = item.special_tools.map(t=>{
-            const toolName = (t?.special_tool_name ?? t?.name ?? "").toString().trim();
-            const toolNum  = (t?.special_tool_number ?? t?.number ?? t?.tool_number ?? "").toString().trim();
-
-            // Screen exposure rules:
-            // - name+number: "name - number"
-            // - name only: "name"
-            // - number only: "number"
-            // - neither: do not show this row
+        const _toolsInfo = getSpecialTools(item);
+        if (_toolsInfo.length){
+          const toolLines = _toolsInfo.map(t=>{
+            const toolName = (t?.special_tool_name ?? "").toString().trim();
+            const toolNum  = (t?.special_tool_number ?? "").toString().trim();
             if (toolName && toolNum) return `${toolName} - ${toolNum}`;
             if (toolName) return `${toolName}`;
             if (toolNum) return `${toolNum}`;
@@ -969,8 +1031,7 @@ if (hasInfoBlock){
             const spoken = buildSpokenAnswerParts(item);
 
       // infoBlock 존재 여부(이미 위에서 계산한 hasInfoBlock 그대로 써도 됨)
-      const hasToolData = Array.isArray(item.special_tools) && item.special_tools.some(t=>{
-        const toolName = (t?.special_tool_name ?? t?.name ?? "").toString().trim();
+            const hasToolData = getSpecialTools(item).length > 0;
         const toolNum  = (t?.special_tool_number ?? t?.number ?? t?.tool_number ?? "").toString().trim();
         return !!(toolName || toolNum);
       });
