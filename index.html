@@ -386,7 +386,36 @@
     }
     .candBtn:hover{border-color:rgba(79,140,255,.6)}
     .candSub{display:block;margin-top:4px;font-size:11px;color:var(--sub)}
-  </style>
+  
+    .itemNumber{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(7,9,16,.45);
+      font-size:12px;
+      line-height:1.35;
+    }
+    .itemNumber .itemLabel{
+      color: var(--muted);
+      font-weight:700;
+      margin-right:6px;
+    }
+    .refImages{
+      margin-top:10px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .refImage{
+      width:100%;
+      max-width:100%;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(7,9,16,.35);
+    }
+
+</style>
 </head>
 
 <body>
@@ -904,6 +933,27 @@ if (hasInfoBlock){
         }
 
         html += `</div>`;
+      }
+
+
+      // ----- Item number + reference images (between infoBlock and pills) -----
+      const itemNumber = (item?.item_number ?? "").toString().trim();
+      if (itemNumber){
+        html += `<div class="itemNumber"><span class="itemLabel">Item:</span>${escapeHtml(itemNumber)}</div>`;
+      }
+
+      let refImgs = [];
+      if (Array.isArray(item?.ref_images)) {
+        refImgs = item.ref_images;
+      } else if (typeof item?.ref_image === "string") {
+        refImgs = item.ref_image.split(";");
+      }
+      refImgs = (refImgs || []).map(x => (x ?? "").toString().trim()).filter(Boolean);
+
+      if (refImgs.length){
+        html += `<div class="refImages">` +
+          refImgs.map(fn => `<img class="refImage" src="images/${encodeURIComponent(fn)}" alt="Reference image">`).join("") +
+          `</div>`;
       }
 
       // Meta pills
