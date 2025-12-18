@@ -678,7 +678,11 @@
     let modelRecognition = null;
     let modelListening = false;
 
-    function initModelSpeech(){
+
+    // =========================
+// Voice: Small MIC (model switch only)
+// =========================
+function initModelSpeech(){
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SpeechRecognition){
         if (modelMicBtn) modelMicBtn.disabled = true;
@@ -895,14 +899,22 @@
 });
     }
 
-    function updateBadge(make, model, yearsLabel){
+
+    // =========================
+// Model badge + bottom sheet UI
+// =========================
+function updateBadge(make, model, yearsLabel){
       badgeEl.classList.add("clickable");
       const y = yearsLabel ? (" · " + escapeHtml(String(yearsLabel))) : "";
       badgeEl.innerHTML = `<span class="dot"></span>${escapeHtml(String(make))} ${escapeHtml(String(model))}${y}`;
     }
 
-    
-    async function loadModelIndex(){
+
+
+    // =========================
+// Model list (index.json) loading
+// =========================
+async function loadModelIndex(){
       const tried = [];
       const bust = `v=${Date.now()}`;
 
@@ -930,8 +942,12 @@
       throw new Error("index.json not found");
     }
 
-    
-    async function setCurrentModel(modelId, datasetFile, opts={}){
+
+
+    // =========================
+// Dataset switching
+// =========================
+async function setCurrentModel(modelId, datasetFile, opts={}){
       CURRENT_MODEL_ID = modelId || null;
       CURRENT_DATASET_FILE = datasetFile || null;
 
@@ -966,8 +982,12 @@
       }
     }
 
-    
-    async function initApp(){
+
+
+    // =========================
+// App bootstrap
+// =========================
+async function initApp(){
       // Make badge interactive (tap to open sheet) even before fully ready.
       badgeEl.classList.add("clickable");
 
@@ -1049,7 +1069,7 @@ try{
     }
 
 
-    
+
 // -------------------------
 // Schema helpers
 // -------------------------
@@ -1713,7 +1733,11 @@ if (hasInfoToRead){
       });
     }
 
-    function escapeHtml(s){
+
+    // =========================
+// Utilities
+// =========================
+function escapeHtml(s){
       return String(s ?? "")
         .replaceAll("&","&amp;")
         .replaceAll("<","&lt;")
@@ -1743,7 +1767,11 @@ if (hasInfoToRead){
     // =========================
     // Query handler (uses safety rails)
     // =========================
-    function handleQuery(raw){
+
+    // =========================
+// Torque query + rendering
+// =========================
+function handleQuery(raw){
       const q = String(raw || "").trim();
       const nq = normalizeQuery(q);
       if (!q){
@@ -1820,7 +1848,7 @@ if (hasInfoToRead){
       stopSpeak();
     });
 
-    
+
 
 
     // Model badge tap -> open selector
@@ -1854,7 +1882,11 @@ if (hasInfoToRead){
       });
     }
 // Speech recognition (desktop chrome)
-    function initSpeech(){
+
+    // =========================
+// Voice: Big MIC (torque query only)
+// =========================
+function initSpeech(){
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SpeechRecognition){
         micBig.disabled = true;
