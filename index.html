@@ -1655,42 +1655,10 @@ if (hasInfoBlock){
         (!!(item.tightening_seq && String(item.tightening_seq).trim())) ||
         (getExtraNotesList(item).length > 0);
 
-if (hasInfoToRead){
-        // Add Yes/No gate UI (inserted into DOM)
-        html += `
-          <div class="moreInfoBar" id="moreInfoBar">
-            <div class="moreInfoText">Read additional info?</div>
-            <div class="moreInfoBtns">
-              <button class="moreBtn" type="button" id="moreYes">Yes</button>
-              <button class="moreBtn" type="button" id="moreNo">No</button>
-            </div>
-          </div>
-        `;
-      }
-
       resultBody.className = "";
       resultBody.innerHTML = html;
 
-      if (hasInfoToRead){
-        speak(`${spoken.base} Read additional info?`);
-
-        const yesBtn = document.getElementById("moreYes");
-        const noBtn  = document.getElementById("moreNo");
-
-        if (yesBtn) yesBtn.addEventListener("click", ()=>{
-          speak(spoken.info);
-        });
-
-        if (noBtn) noBtn.addEventListener("click", ()=>{
-          // hide the gate bar after decision
-          const bar = document.getElementById("moreInfoBar");
-          if (bar) bar.remove();
-          stopSpeak();
-        });
-      } else {
-        // no extra info: just speak base
         speak(spoken.base);
-      }
 
     }
 
