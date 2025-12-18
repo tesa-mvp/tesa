@@ -931,6 +931,9 @@
       // After dataset load, re-apply badge from CURRENT_MODEL_DISPLAY (prevents any accidental overrides)
       if (CURRENT_MODEL_DISPLAY){
         updateBadge(CURRENT_MODEL_DISPLAY.make, CURRENT_MODEL_DISPLAY.label, CURRENT_MODEL_DISPLAY.years_label);
+
+      // Reset UI to initial screen when switching dataset
+      renderEmpty("Waiting for your question.");
       }
 
       // Optional small voice confirmation (MVP-friendly)
