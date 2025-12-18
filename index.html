@@ -892,8 +892,7 @@
     function updateBadge(make, model, yearsLabel){
       badgeEl.classList.add("clickable");
       const y = yearsLabel ? ` · ${yearsLabel}` : "";
-      badgeEl.innerHTML = `<span class="dot"></span>${escapeHtml(make)} ${escapeHtml(model)}${escapeHtml(y)}`;
-    }
+}
 
     async function loadModelIndex(){
       try{
