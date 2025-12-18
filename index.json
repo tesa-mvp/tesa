@@ -14,7 +14,7 @@
             "to": 2025
           },
           "years_label": "2020–2025",
-          "file": "datasets/ducati_panigale-v2_2020-2025/dataset.json",
+          "file": "ducati_panigale-v2_2020-2025.json",
           "aliases": [
             "ducati panigale v2",
             "panigale v2",
@@ -30,7 +30,7 @@
             "to": 2024
           },
           "years_label": "2018–2024",
-          "file": "datasets/ducati_panigale-v4s_2018-2024/dataset.json",
+          "file": "ducati_panigale-v4s_2018-2024.json",
           "aliases": [
             "ducati panigale v4s",
             "panigale v4s",

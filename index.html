@@ -639,9 +639,6 @@
     let INDEX_FILE_USED = null;
     let CURRENT_MODEL_ID = null;
     let CURRENT_DATASET_FILE = null;
-
-    let CURRENT_DATASET_BASE = "./"; // directory of current dataset.json
-    let CURRENT_IMAGES_BASE = "images/"; // resolved from dataset base
     let CURRENT_MODEL_DISPLAY = null; // {make, label, years_label}
 
     const GENERIC_WORDS = [
@@ -1048,17 +1045,6 @@ try{
   if (!/^https?:\/\//i.test(fileToLoad) && !fileToLoad.startsWith("./") && !fileToLoad.startsWith("/") ){
     fileToLoad = "./" + fileToLoad;
   }
-  // Derive dataset base paths (for images, etc.)
-  try{
-    const slash = fileToLoad.lastIndexOf("/");
-    CURRENT_DATASET_BASE = (slash >= 0) ? fileToLoad.slice(0, slash+1) : "./";
-    if (!CURRENT_DATASET_BASE) CURRENT_DATASET_BASE = "./";
-    CURRENT_IMAGES_BASE = CURRENT_DATASET_BASE + "images/";
-  } catch(_){
-    CURRENT_DATASET_BASE = "./";
-    CURRENT_IMAGES_BASE = "images/";
-  }
-
   const res = await fetch(fileToLoad, { cache: "no-store" });
   if (!res.ok){
     throw new Error(`HTTP ${res.status} while fetching ${fileToLoad}`);
@@ -1648,7 +1634,7 @@ if (hasInfoBlock){
 
       if (refImgs.length){
         html += `<div class="refImages">` +
-          refImgs.map(fn => `<img class="refImage" src="${CURRENT_IMAGES_BASE}${encodeURIComponent(fn)}" alt="Reference image">`).join("") +
+          refImgs.map(fn => `<img class="refImage" src="images/${encodeURIComponent(fn)}" alt="Reference image">`).join("") +
           `</div>`;
       }
 
