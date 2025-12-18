@@ -635,7 +635,7 @@
     // =========================
     // Data + Safety rails
     // =========================
-    const INDEX_FILE = "index.json";
+    const INDEX_FILE = "./index.json";
     let CURRENT_MODEL_ID = null;
     let CURRENT_DATASET_FILE = null;
     let CURRENT_MODEL_DISPLAY = null; // {make, label, years_label}
@@ -938,7 +938,11 @@
       }
     }
 
+    
     async function initApp(){
+      // Make badge interactive (tap to open sheet) even before fully ready.
+      badgeEl.classList.add("clickable");
+
       // model list
       await loadModelIndex();
 
@@ -951,10 +955,16 @@
         throw new Error("No models found in index.json");
       }
 
+      // Populate sheet UI immediately
       renderSheet();
+
+      // Switch to default model (loads dataset + applies badge)
       await setCurrentModel(def.id, def.file, {speakConfirm:false});
 
-      setStatus(`Ready. (${torqueData.length} items)`, true, false);
+      // Ensure badge reflects selected model (defensive)
+      if (CURRENT_MODEL_DISPLAY){
+        updateBadge(CURRENT_MODEL_DISPLAY.make, CURRENT_MODEL_DISPLAY.label, CURRENT_MODEL_DISPLAY.years_label);
+      }
     }
 
     function setStatus(text, active=false, isError=false){
@@ -1850,7 +1860,7 @@ if (hasInfoToRead){
     // Init
     renderEmpty("Waiting for your first question.");
     setStatus("");
-    initApp().catch(()=>{});
+    initApp().catch((e)=>{ console.error(e); setStatus("Model list failed to load (index.json 404?) — torque search may still work if a dataset was already loaded. Check Network tab.", true, true); });
   </script>
 </body>
 </html>
