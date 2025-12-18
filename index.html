@@ -761,6 +761,13 @@
 
       const models = flattenModels(modelIndex);
 
+      // If the utterance contains an explicit V-token like "v4" or "v4s",
+      // prefer models that contain that token (prevents generic "panigale" from hijacking).
+      const vTokenMatch = q.match(/\bv\d+s?\b/i);
+      const vToken = vTokenMatch ? vTokenMatch[0].toLowerCase() : "";
+
+      const GENERIC = new Set(["ducati","panigale","yamaha","kawasaki","ktm","honda","bmw","suzuki","aprilia"]);
+
       let best = null;
       let bestScore = -1;
       let secondScore = -1;
@@ -771,32 +778,50 @@
         const make = String(m.make || "").toLowerCase().trim();
         const label = String(m.label || "").toLowerCase().trim();
 
-        // Label variants
         if (label) candidates.push(...modelAliasVariants(label));
-
-        // Make + label variants
         if (make && label) candidates.push(...modelAliasVariants((make + " " + label).trim()));
-
-        // Alias variants from index.json
         (m.aliases || []).forEach(aRaw=>{
           const a = String(aRaw || "").toLowerCase().trim();
           if (!a) return;
           candidates.push(...modelAliasVariants(a));
         });
-
-        // Also add compact make+label token
         if (make && label){
           candidates.push((make + label).replace(/\s+/g,"").trim());
         }
 
         let localBest = -1;
+
         for (const a of candidates){
-          // match if command contains alias OR alias contains command (handles short input like "v4s")
-          if (q.includes(a) || a.includes(q)){
-            // Score: prefer longer, more specific hits
-            const score = 100 + Math.min(a.length, 60);
-            if (score > localBest) localBest = score;
+          const aa = String(a || "").toLowerCase().trim();
+          if (!aa) continue;
+
+          const qCompact = q.replace(/\s+/g,"");
+          const aCompact = aa.replace(/\s+/g,"");
+
+          // Must hit somehow
+          const hit = q.includes(aa) || aa.includes(q) || (qCompact.includes(aCompact) && aCompact.length >= 3);
+          if (!hit) continue;
+
+          // If we have an explicit vToken in utterance, require the alias to include it
+          // (either spaced or compact), otherwise skip.
+          if (vToken){
+            const vTokenCompact = vToken.replace(/\s+/g,"");
+            if (!(aa.includes(vToken) || aCompact.includes(vTokenCompact))) continue;
           }
+
+          let score = 100 + Math.min(aa.length, 60);
+
+          // Bonus for explicit V-token matches (more specific)
+          if (vToken && (aa.includes(vToken) || aCompact.includes(vToken.replace(/\s+/g,"")))) score += 120;
+
+          // Bonus if alias contains digits (usually model/years)
+          if (/\d/.test(aa)) score += 25;
+
+          // Penalty for overly-generic aliases like "panigale" or "ducati"
+          if (GENERIC.has(aa)) score -= 80;
+          if (!/\d/.test(aa) && aa.length <= 10) score -= 20;
+
+          if (score > localBest) localBest = score;
         }
 
         if (localBest > bestScore){
@@ -809,12 +834,7 @@
       }
 
       if (!best || bestScore < 0) return { status:"NO_MATCH" };
-
-      // Ambiguous if top scores tie closely (simple MVP rule)
-      if (secondScore === bestScore){
-        return { status:"AMBIGUOUS" };
-      }
-
+      if (secondScore === bestScore) return { status:"AMBIGUOUS" };
       return { status:"OK", model: best, query: q };
     }
 
