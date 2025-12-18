@@ -1634,7 +1634,7 @@ if (hasInfoBlock){
 
       if (refImgs.length){
         html += `<div class="refImages">` +
-          refImgs.map(fn => `<img class="refImage" src="images/${encodeURIComponent(fn)}" alt="Reference image">`).join("") +
+          refImgs.map(fn => `<img class="refImage" src="${getRefImageUrl(fn)}" alt="Reference image">`).join("") +
           `</div>`;
       }
 
@@ -1689,12 +1689,7 @@ if (hasInfoToRead){
         });
       } else {
         // no extra info: just speak base
-      // Speak: always include info block (special tools / sequence / notes) since info gate is removed
-      const toSpeak = (spoken.info && String(spoken.info).trim())
-        ? (spoken.base + " " + spoken.info)
-        : spoken.base;
-
-      speak(toSpeak);
+        speak(spoken.base);
       }
 
     }
@@ -1739,6 +1734,21 @@ if (hasInfoToRead){
 
 
     // =========================
+
+function getRefImageUrl(filename){
+      const fn = (filename ?? "").toString().trim();
+      if (!fn) return "";
+      // If dataset already provides a full/relative path, respect it.
+      if (/^https?:\/\//i.test(fn) || fn.startsWith("/") || fn.startsWith("./")) return fn;
+
+      // Build base from CURRENT_DATASET_FILE (e.g. datasets/<model>/dataset.json -> datasets/<model>/images/)
+      const df = (CURRENT_DATASET_FILE ?? "").toString();
+      const slash = df.lastIndexOf("/");
+      const baseDir = (slash >= 0) ? df.slice(0, slash + 1) : "";
+      const imgBase = baseDir + "images/";
+      return imgBase + encodeURIComponent(fn);
+    }
+
 // Utilities
 // =========================
 function escapeHtml(s){
