@@ -778,6 +778,107 @@
       return { status:"OK", model: best, query: q };
     }
 
+    // === Big MIC: allow "Model, component" in one utterance ===
+    function bestAliasHitForModel(model, normalizedText){
+      const candidates = [];
+      const make = String(model.make || "").toLowerCase().trim();
+      const label = String(model.label || "").toLowerCase().trim();
+
+      if (label) candidates.push(label);
+      if (make && label) candidates.push((make + " " + label).trim());
+      (model.aliases || []).forEach(a=>{
+        const aa = String(a || "").toLowerCase().trim();
+        if (aa) candidates.push(aa);
+      });
+
+      let best = "";
+      for (const a of candidates){
+        if (!a) continue;
+        if (normalizedText.includes(a)){
+          if (a.length > best.length) best = a;
+        } else if (a.includes(normalizedText) && normalizedText.length >= 2){
+          // user said a shortened form like "v4s"
+          if (normalizedText.length > best.length) best = normalizedText;
+        }
+      }
+      return best;
+    }
+
+    function stripModelFromUtterance(originalText, model){
+      let s = String(originalText || "").toLowerCase();
+      s = s.replace(/[“”"']/g, "");
+      s = s.replace(/[,;:]/g, " ");
+      s = s.replace(/\s+/g, " ").trim();
+
+      // Remove action words; user might say "switch to ..."
+      s = s.replace(/^hey\s+tesa\s*/i, "");
+      s = s.replace(/^(switch|change|set|use)\s+(model\s+)?(to\s+)?/i, "");
+      s = s.replace(/^model\s+(to\s+)?/i, "");
+
+      const hit = bestAliasHitForModel(model, s);
+      if (hit){
+        const esc = hit.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const reHit = new RegExp("(^|\\s)"+esc+"(\\s|$)", "i");
+        s = s.replace(reHit, " ");
+      }
+
+      // Remove make token if it remains
+      const mk = String(model.make || "").toLowerCase().trim();
+      if (mk){
+        const escM = mk.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const reMake = new RegExp("(^|\\s)"+escM+"(\\s|$)", "i");
+        s = s.replace(reMake, " ");
+      }
+
+      // Cleanup filler words at start
+      s = s.replace(/^\s*(the|a|an)\s+/i, "");
+      s = s.replace(/\s+/g, " ").trim();
+      return s;
+    }
+
+    async function handleBigMicUtterance(transcript){
+      const picked = pickModelByVoice(transcript);
+
+      // If the model list isn't available, just treat as a torque query.
+      if (picked.status === "NO_INDEX"){
+        questionInput.value = transcript;
+        handleQuery(transcript);
+        return;
+      }
+
+      // Ambiguous model mention -> open selector
+      if (picked.status === "AMBIGUOUS"){
+        setStatus("Multiple model matches. Tap to select.", true, true);
+        speak("Multiple model matches. Please tap to select.");
+        renderSheet();
+        openSheet();
+        return;
+      }
+
+      // Model mentioned -> switch model first, then run query if any.
+      if (picked.status === "OK" && picked.model){
+        const model = picked.model;
+        const remainder = stripModelFromUtterance(transcript, model);
+
+        await setCurrentModel(model.id, model.file, {speakConfirm:true});
+
+        // Model only (no component): stop here.
+        if (!remainder){
+          speak("What part?");
+          return;
+        }
+
+        questionInput.value = remainder;
+        handleQuery(remainder);
+        return;
+      }
+
+      // No model mention -> normal torque query on current dataset.
+      questionInput.value = transcript;
+      handleQuery(transcript);
+    }
+
+
     async function handleModelVoice(transcript){
       const picked = pickModelByVoice(transcript);
 
@@ -1881,7 +1982,7 @@ if (hasInfoToRead){
       recognition.onresult = (ev)=>{
         const t = ev.results[0][0].transcript;
         questionInput.value = t;
-        handleQuery(t);
+        handleBigMicUtterance(t);
       };
     }
 
