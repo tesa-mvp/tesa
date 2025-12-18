@@ -954,6 +954,8 @@
 
       // Reset UI to initial screen when switching dataset
       renderEmpty("Waiting for your question.");
+      // Clear typed fallback input
+      if (questionInput) questionInput.value = "";
       // Reset fallback text input as well
       if (fallbackInput) fallbackInput.value = "";
       }
