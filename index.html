@@ -561,7 +561,7 @@
       <div class="badgeRow">
       <div class="badge" id="modelBadge">
         <span class="dot"></span>
-        Loading model…
+        Loading…
       </div>
       <button id="modelMicBtn" class="micMini" type="button" aria-label="Switch model by voice" title="Switch model by voice">
         <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -953,6 +953,13 @@
 
       if (!def){
         throw new Error("No models found in index.json");
+
+      // Defensive: re-apply badge shortly after init (prevents stale "Loading model…" UI)
+      setTimeout(()=>{
+        if (CURRENT_MODEL_DISPLAY){
+          updateBadge(CURRENT_MODEL_DISPLAY.make, CURRENT_MODEL_DISPLAY.label, CURRENT_MODEL_DISPLAY.years_label);
+        }
+      }, 200);
       }
 
       // Populate sheet UI immediately
@@ -984,8 +991,12 @@
 
 try{
   setStatus("Loading dataset…", true, false);
-  const fileToLoad = datasetFile || CURRENT_DATASET_FILE;
+  let fileToLoad = datasetFile || CURRENT_DATASET_FILE;
   if (!fileToLoad){ throw new Error("No dataset selected"); }
+  // Normalize relative path for GitHub Pages
+  if (!/^https?:\/\//i.test(fileToLoad) && !fileToLoad.startsWith("./") && !fileToLoad.startsWith("/") ){
+    fileToLoad = "./" + fileToLoad;
+  }
   const res = await fetch(fileToLoad, { cache: "no-store" });
   if (!res.ok){
     throw new Error(`HTTP ${res.status} while fetching ${fileToLoad}`);
