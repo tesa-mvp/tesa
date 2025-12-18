@@ -723,35 +723,7 @@
       // normalize punctuation/spaces
       s = s.replace(/[“”"']/g, "");
       s = s.replace(/\s+/g, " ").trim();
-      // Normalize "V4 S" -> "V4S"
-      s = s.replace(/\bv(\d+)\s+s\b/g, "v$1s");
       return s;
-    }
-
-    function modelAliasVariants(a){
-      // Return a set of variants for robust voice matching:
-      // "v4 s" <-> "v4s", remove spaces/hyphens, etc.
-      const out = new Set();
-      const base = String(a || "").toLowerCase().trim();
-      if (!base) return [];
-      out.add(base);
-
-      const spaced = base.replace(/\s+/g, " ").trim();
-      if (spaced) out.add(spaced);
-
-      const noPunct = spaced.replace(/[-_]/g, " ").replace(/\s+/g, " ").trim();
-      if (noPunct) out.add(noPunct);
-
-      const compact = noPunct.replace(/\s+/g, "");
-      if (compact) out.add(compact);
-
-      // Special: "v4 s" -> "v4s"
-      const vSpaceS = noPunct.replace(/\bv(\d+)\s+s\b/g, "v$1s");
-      if (vSpaceS) out.add(vSpaceS);
-      const vSpaceSCompact = vSpaceS.replace(/\s+/g, "");
-      if (vSpaceSCompact) out.add(vSpaceSCompact);
-
-      return Array.from(out);
     }
 
     function pickModelByVoice(text){
@@ -761,67 +733,30 @@
 
       const models = flattenModels(modelIndex);
 
-      // If the utterance contains an explicit V-token like "v4" or "v4s",
-      // prefer models that contain that token (prevents generic "panigale" from hijacking).
-      const vTokenMatch = q.match(/\bv\d+s?\b/i);
-      const vToken = vTokenMatch ? vTokenMatch[0].toLowerCase() : "";
-
-      const GENERIC = new Set(["ducati","panigale","yamaha","kawasaki","ktm","honda","bmw","suzuki","aprilia"]);
-
       let best = null;
       let bestScore = -1;
       let secondScore = -1;
 
       for (const m of models){
         const candidates = [];
-
         const make = String(m.make || "").toLowerCase().trim();
         const label = String(m.label || "").toLowerCase().trim();
 
-        if (label) candidates.push(...modelAliasVariants(label));
-        if (make && label) candidates.push(...modelAliasVariants((make + " " + label).trim()));
-        (m.aliases || []).forEach(aRaw=>{
-          const a = String(aRaw || "").toLowerCase().trim();
-          if (!a) return;
-          candidates.push(...modelAliasVariants(a));
+        if (label) candidates.push(label);
+        if (make && label) candidates.push((make + " " + label).trim());
+        (m.aliases || []).forEach(a=>{
+          const aa = String(a || "").toLowerCase().trim();
+          if (aa) candidates.push(aa);
         });
-        if (make && label){
-          candidates.push((make + label).replace(/\s+/g,"").trim());
-        }
 
         let localBest = -1;
-
         for (const a of candidates){
-          const aa = String(a || "").toLowerCase().trim();
-          if (!aa) continue;
-
-          const qCompact = q.replace(/\s+/g,"");
-          const aCompact = aa.replace(/\s+/g,"");
-
-          // Must hit somehow
-          const hit = q.includes(aa) || aa.includes(q) || (qCompact.includes(aCompact) && aCompact.length >= 3);
-          if (!hit) continue;
-
-          // If we have an explicit vToken in utterance, require the alias to include it
-          // (either spaced or compact), otherwise skip.
-          if (vToken){
-            const vTokenCompact = vToken.replace(/\s+/g,"");
-            if (!(aa.includes(vToken) || aCompact.includes(vTokenCompact))) continue;
+          // match if command contains alias OR alias contains command (handles short input like "v4s")
+          if (q.includes(a) || a.includes(q)){
+            // Score: prefer longer, more specific hits
+            const score = 100 + Math.min(a.length, 60);
+            if (score > localBest) localBest = score;
           }
-
-          let score = 100 + Math.min(aa.length, 60);
-
-          // Bonus for explicit V-token matches (more specific)
-          if (vToken && (aa.includes(vToken) || aCompact.includes(vToken.replace(/\s+/g,"")))) score += 120;
-
-          // Bonus if alias contains digits (usually model/years)
-          if (/\d/.test(aa)) score += 25;
-
-          // Penalty for overly-generic aliases like "panigale" or "ducati"
-          if (GENERIC.has(aa)) score -= 80;
-          if (!/\d/.test(aa) && aa.length <= 10) score -= 20;
-
-          if (score > localBest) localBest = score;
         }
 
         if (localBest > bestScore){
@@ -834,116 +769,14 @@
       }
 
       if (!best || bestScore < 0) return { status:"NO_MATCH" };
-      if (secondScore === bestScore) return { status:"AMBIGUOUS" };
+
+      // Ambiguous if top scores tie closely (simple MVP rule)
+      if (secondScore === bestScore){
+        return { status:"AMBIGUOUS" };
+      }
+
       return { status:"OK", model: best, query: q };
     }
-
-    // === Big MIC: allow "Model, component" in one utterance ===
-        function bestAliasHitForModel(model, normalizedText){
-      const candidates = [];
-      const make = String(model.make || "").toLowerCase().trim();
-      const label = String(model.label || "").toLowerCase().trim();
-
-      if (label) candidates.push(...modelAliasVariants(label));
-      if (make && label) candidates.push(...modelAliasVariants((make + " " + label).trim()));
-      (model.aliases || []).forEach(aRaw=>{
-        const a = String(aRaw || "").toLowerCase().trim();
-        if (!a) return;
-        candidates.push(...modelAliasVariants(a));
-      });
-
-      // prefer the longest alias that appears in the utterance
-      let best = "";
-      const u = String(normalizedText || "");
-      const uCompact = u.replace(/\s+/g,"");
-      for (const a of candidates){
-        if (!a) continue;
-        const aCompact = a.replace(/\s+/g,"");
-        const hit = u.includes(a) || (uCompact.includes(aCompact) && aCompact.length >= 3);
-        if (hit && a.length > best.length) best = a;
-      }
-      return best;
-    }
-
-    function stripModelFromUtterance(originalText, model){
-      let s = String(originalText || "").toLowerCase();
-      s = s.replace(/[“”"']/g, "");
-      s = s.replace(/[,;:]/g, " ");
-      s = s.replace(/\s+/g, " ").trim();
-
-      s = s.replace(/\bv(\d+)\s+s\b/g, "v$1s");
-
-      // Remove action words; user might say "switch to ..."
-      s = s.replace(/^hey\s+tesa\s*/i, "");
-      s = s.replace(/^(switch|change|set|use)\s+(model\s+)?(to\s+)?/i, "");
-      s = s.replace(/^model\s+(to\s+)?/i, "");
-
-      const hit = bestAliasHitForModel(model, s);
-      if (hit){
-        const esc = hit.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-        const reHit = new RegExp("(^|\\s)"+esc+"(\\s|$)", "i");
-        s = s.replace(reHit, " ");
-      }
-
-      // Remove make token if it remains
-      const mk = String(model.make || "").toLowerCase().trim();
-      if (mk){
-        const escM = mk.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-        const reMake = new RegExp("(^|\\s)"+escM+"(\\s|$)", "i");
-        s = s.replace(reMake, " ");
-      }
-
-      // Cleanup filler words at start
-      s = s.replace(/^\s*(the|a|an)\s+/i, "");
-      s = s.replace(/\s+/g, " ").trim();
-      s = s.replace(/^(s|ess)\s+/i, "");
-
-      return s;
-    }
-
-    async function handleBigMicUtterance(transcript){
-      const picked = pickModelByVoice(transcript);
-
-      // If the model list isn't available, just treat as a torque query.
-      if (picked.status === "NO_INDEX"){
-        questionInput.value = transcript;
-        handleQuery(transcript);
-        return;
-      }
-
-      // Ambiguous model mention -> open selector
-      if (picked.status === "AMBIGUOUS"){
-        setStatus("Multiple model matches. Tap to select.", true, true);
-        speak("Multiple model matches. Please tap to select.");
-        renderSheet();
-        openSheet();
-        return;
-      }
-
-      // Model mentioned -> switch model first, then run query if any.
-      if (picked.status === "OK" && picked.model){
-        const model = picked.model;
-        const remainder = stripModelFromUtterance(transcript, model);
-        const cleanedRemainder = remainder.replace(/^(s|ess)\s+/i,"").trim();
-
-        await setCurrentModel(model.id, model.file, {speakConfirm:true});
-
-        // Model only (no component): stop here.
-        if (!cleanedRemainder){
-          speak("What part?");
-          return;
-        }
-
-        questionInput.value = cleanedRemainder;
-        handleQuery(cleanedRemainder);
-        return;
-      }
-
-      // No model mention -> normal torque query on current dataset.
-      questionInput.value = transcript;
-      handleQuery(transcript);
-    }
-
 
     async function handleModelVoice(transcript){
       const picked = pickModelByVoice(transcript);
@@ -2048,7 +1881,7 @@ if (hasInfoToRead){
       recognition.onresult = (ev)=>{
         const t = ev.results[0][0].transcript;
         questionInput.value = t;
-        handleBigMicUtterance(t);
+        handleQuery(t);
       };
     }
 
