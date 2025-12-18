@@ -334,6 +334,30 @@
       color:#c2d5ff;
     }
 
+
+    .moreInfoBar{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(7,9,16,.55);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .moreInfoText{font-size:12px;color:#d7d8df;line-height:1.25}
+    .moreInfoBtns{display:flex;gap:8px}
+    .moreBtn{
+      padding:7px 10px;border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(9,11,18,.85);
+      color:var(--text);
+      font-size:11px;
+      cursor:pointer;
+    }
+    .moreBtn:hover{border-color:rgba(79,140,255,.6)}
+
     /* Tools + Notes block (between torque/steps and chemistry line) */
     .infoBlock{
       margin-top: 10px;
@@ -408,15 +432,118 @@
     }
 
 
-/* === Font size unification v2 (override) ===
-   Make chemistry lines, info lines (Special tool / Sequence / Note), and Item label the same size.
-*/
-.chemItem,
-.infoLine,
-.itemNumber{
-  font-size: 13px !important;
-  line-height: 1.35 !important;
-}
+    /* === Model selector sheet (MVP) === */
+    .sheetOverlay{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.55);
+      display:none;
+      align-items:flex-end;
+      justify-content:center;
+      z-index:999;
+      padding:14px;
+    }
+    .sheetOverlay.show{display:flex}
+    .sheet{
+      width:100%;
+      max-width:760px;
+      border-radius:20px 20px 18px 18px;
+      border:1px solid var(--border);
+      background:linear-gradient(145deg,var(--panel),var(--panel2));
+      box-shadow:0 18px 55px rgba(0,0,0,.75);
+      overflow:hidden;
+    }
+    .sheetHeader{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:12px 14px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .sheetTitle{
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.09em;
+      color:var(--sub);
+      font-weight:800;
+    }
+    .sheetClose{
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(9,11,18,.85);
+      color:var(--text);
+      font-size:11px;
+      padding:7px 10px;
+      cursor:pointer;
+    }
+    .sheetClose:hover{border-color:rgba(79,140,255,.6)}
+    .sheetBody{
+      padding:10px 10px 12px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      max-height:62vh;
+      overflow:auto;
+    }
+    .makeLabel{
+      margin-top:6px;
+      padding:6px 6px 0;
+      font-size:11px;
+      color:var(--muted);
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+    .modelBtn{
+      width:100%;
+      text-align:left;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(7,9,16,.55);
+      color:var(--text);
+      padding:10px 12px;
+      cursor:pointer;
+      font-size:12px;
+      line-height:1.25;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .modelBtn:hover{border-color:rgba(79,140,255,.6)}
+    .modelBtn .right{
+      flex:0 0 auto;
+      font-size:11px;
+      color:var(--sub);
+      white-space:nowrap;
+    }
+    .modelBtn.active{
+      border-color:rgba(39,228,159,.55);
+      box-shadow:0 0 0 2px rgba(39,228,159,.12) inset;
+    }
+    .badge.clickable{cursor:pointer}
+    .badge.clickable:hover{border-color:rgba(79,140,255,.6)}
+
+
+    /* Small mic button next to model badge */
+    .badgeRow{display:flex;align-items:center;gap:8px}
+    .micMini{
+      width:34px;height:34px;border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(9,11,18,.85);
+      color:var(--text);
+      cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      transition:transform .08s ease, border-color .12s ease, opacity .12s ease;
+    }
+    .micMini:hover{border-color:rgba(79,140,255,.6)}
+    .micMini:active{transform:scale(.98)}
+    .micMini[disabled]{opacity:.35;cursor:not-allowed}
+    .micMini.listening{
+      border-color:rgba(39,228,159,.55);
+      box-shadow:0 0 0 2px rgba(39,228,159,.12) inset;
+    }
+    .micMini svg{width:16px;height:16px}
 
 </style>
 </head>
@@ -431,10 +558,18 @@
           <div class="t2">Tech Spec Assitant</div>
         </div>
       </div>
+      <div class="badgeRow">
       <div class="badge" id="modelBadge">
         <span class="dot"></span>
         Loading model…
       </div>
+      <button id="modelMicBtn" class="micMini" type="button" aria-label="Switch model by voice" title="Switch model by voice">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3z"/>
+          <path fill="currentColor" d="M17 11a1 1 0 1 0-2 0 3 3 0 0 1-6 0 1 1 0 1 0-2 0 5.002 5.002 0 0 0 4 4.9V18H9a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2h-2v-2.1A5.002 5.002 0 0 0 17 11z"/>
+        </svg>
+      </button>
+    </div>
     </header>
 
     <!-- Voice-first input -->
@@ -483,11 +618,26 @@
     </section>
   </div>
 
+
+  <!-- Model selector (tap the model badge) -->
+  <div id="sheetOverlay" class="sheetOverlay" role="dialog" aria-modal="true" aria-label="Select model">
+    <div class="sheet">
+      <div class="sheetHeader">
+        <div class="sheetTitle">Select model</div>
+        <button id="sheetClose" class="sheetClose" type="button">Close</button>
+      </div>
+      <div id="sheetBody" class="sheetBody"></div>
+    </div>
+  </div>
+
+
   <script>
     // =========================
     // Data + Safety rails
     // =========================
-    const DATASET_FILE = "ducati_panigale-v2_2020-2025.json";
+    const INDEX_FILE = "index.json";
+    let CURRENT_MODEL_ID = null;
+    let CURRENT_DATASET_FILE = null;
 
     const GENERIC_WORDS = [
       "bolt","bolts","screw","screws","nut","nuts","washer","washers",
@@ -520,6 +670,288 @@
     const repeatBtn = document.getElementById("repeatBtn");
     const stopBtn = document.getElementById("stopBtn");
 
+    const modelMicBtn = document.getElementById("modelMicBtn");
+
+    // Model voice switch (separate recognition session)
+    let modelRecognition = null;
+    let modelListening = false;
+
+    function initModelSpeech(){
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition){
+        if (modelMicBtn) modelMicBtn.disabled = true;
+        return null;
+      }
+      const r = new SpeechRecognition();
+      r.lang = "en-US";
+      r.interimResults = false;
+      r.maxAlternatives = 1;
+
+      r.onstart = ()=>{
+        modelListening = true;
+        if (modelMicBtn) modelMicBtn.classList.add("listening");
+        setStatus("Listening for model…", true, false);
+      };
+      r.onerror = (ev)=>{
+        modelListening = false;
+        if (modelMicBtn) modelMicBtn.classList.remove("listening");
+        setStatus("Model voice error: " + ev.error, true, true);
+      };
+      r.onend = ()=>{
+        modelListening = false;
+        if (modelMicBtn) modelMicBtn.classList.remove("listening");
+        // If we were listening specifically for model, go back to ready
+        if (statusLine && statusLine.textContent && statusLine.textContent.startsWith("Listening for model")){
+          setStatus("Ready.", true, false);
+        }
+      };
+      r.onresult = (ev)=>{
+        const t = ev.results[0][0].transcript || "";
+        handleModelVoice(t);
+      };
+      return r;
+    }
+
+    function normalizeModelCommand(text){
+      let s = String(text || "").toLowerCase().trim();
+      // common prefixes
+      s = s.replace(/^hey\s+tesa[, ]*/i, "");
+      s = s.replace(/^(switch|change|set|use)\s+(model\s+)?(to\s+)?/i, "");
+      s = s.replace(/^model\s+(to\s+)?/i, "");
+      // normalize punctuation/spaces
+      s = s.replace(/[“”"']/g, "");
+      s = s.replace(/\s+/g, " ").trim();
+      return s;
+    }
+
+    function pickModelByVoice(text){
+      if (!modelIndex) return { status:"NO_INDEX" };
+      const q = normalizeModelCommand(text);
+      if (!q) return { status:"EMPTY" };
+
+      const models = flattenModels(modelIndex);
+
+      let best = null;
+      let bestScore = -1;
+      let secondScore = -1;
+
+      for (const m of models){
+        const candidates = [];
+        const make = String(m.make || "").toLowerCase().trim();
+        const label = String(m.label || "").toLowerCase().trim();
+
+        if (label) candidates.push(label);
+        if (make && label) candidates.push((make + " " + label).trim());
+        (m.aliases || []).forEach(a=>{
+          const aa = String(a || "").toLowerCase().trim();
+          if (aa) candidates.push(aa);
+        });
+
+        let localBest = -1;
+        for (const a of candidates){
+          // match if command contains alias OR alias contains command (handles short input like "v4s")
+          if (q.includes(a) || a.includes(q)){
+            // Score: prefer longer, more specific hits
+            const score = 100 + Math.min(a.length, 60);
+            if (score > localBest) localBest = score;
+          }
+        }
+
+        if (localBest > bestScore){
+          secondScore = bestScore;
+          bestScore = localBest;
+          best = m;
+        } else if (localBest > secondScore){
+          secondScore = localBest;
+        }
+      }
+
+      if (!best || bestScore < 0) return { status:"NO_MATCH" };
+
+      // Ambiguous if top scores tie closely (simple MVP rule)
+      if (secondScore === bestScore){
+        return { status:"AMBIGUOUS" };
+      }
+
+      return { status:"OK", model: best, query: q };
+    }
+
+    async function handleModelVoice(transcript){
+      const picked = pickModelByVoice(transcript);
+
+      if (picked.status === "NO_INDEX"){
+        setStatus("Model list not loaded yet.", true, true);
+        speak("Model list is not loaded yet.");
+        return;
+      }
+      if (picked.status === "EMPTY"){
+        setStatus("Say a model name, like V4S.", true, true);
+        speak("Please say a model name, for example V4 S.");
+        openSheet();
+        return;
+      }
+      if (picked.status === "NO_MATCH"){
+        setStatus("No model match. Tap to select.", true, true);
+        speak("I couldn't find that model. Please tap to select.");
+        renderSheet();
+        openSheet();
+        return;
+      }
+      if (picked.status === "AMBIGUOUS"){
+        setStatus("Multiple model matches. Tap to select.", true, true);
+        speak("Multiple model matches. Please tap to select.");
+        renderSheet();
+        openSheet();
+        return;
+      }
+
+      // OK
+      const m = picked.model;
+      setStatus("Switching model…", true, false);
+      await setCurrentModel(m.id, m.file, {speakConfirm:true});
+    }
+
+
+    // Model index + selector UI
+    const sheetOverlay = document.getElementById("sheetOverlay");
+    const sheetBody = document.getElementById("sheetBody");
+    const sheetClose = document.getElementById("sheetClose");
+
+    let modelIndex = null; // loaded from INDEX_FILE
+
+    function openSheet(){
+      if (!sheetOverlay) return;
+      sheetOverlay.classList.add("show");
+    }
+    function closeSheet(){
+      if (!sheetOverlay) return;
+      sheetOverlay.classList.remove("show");
+    }
+
+    function flattenModels(idx){
+      const out = [];
+      const mfgs = Array.isArray(idx?.manufacturers) ? idx.manufacturers : [];
+      mfgs.forEach(mfg=>{
+        const make = mfg?.make || mfg?.make_id || "Unknown";
+        const make_id = mfg?.make_id || String(make).toLowerCase();
+        const models = Array.isArray(mfg?.models) ? mfg.models : [];
+        models.forEach(m=>{
+          out.push({
+            make,
+            make_id,
+            id: m?.id,
+            label: m?.label || m?.model || m?.name || "Model",
+            years_label: m?.years_label || (m?.years ? `${m.years.from}–${m.years.to}` : ""),
+            file: m?.file,
+            aliases: Array.isArray(m?.aliases) ? m.aliases : []
+          });
+        });
+      });
+      return out.filter(x=>x.id && x.file);
+    }
+
+    function renderSheet(){
+      if (!sheetBody || !modelIndex) return;
+      const models = flattenModels(modelIndex);
+
+      // group by make
+      const byMake = {};
+      for (const m of models){
+        byMake[m.make] = byMake[m.make] || [];
+        byMake[m.make].push(m);
+      }
+
+      let html = "";
+      Object.keys(byMake).sort().forEach(make=>{
+        html += `<div class="makeLabel">${escapeHtml(make)}</div>`;
+        byMake[make].forEach(m=>{
+          const active = (m.id === CURRENT_MODEL_ID) ? "active" : "";
+          const right = m.years_label ? `<span class="right">${escapeHtml(m.years_label)}</span>` : "";
+          html += `
+            <button class="modelBtn ${active}" type="button" data-model-id="${escapeHtml(m.id)}" data-file="${escapeHtml(m.file)}">
+              <span><strong>${escapeHtml(m.label)}</strong></span>
+              ${right}
+            </button>
+          `;
+        });
+      });
+
+      sheetBody.innerHTML = html;
+
+      // bind clicks
+      sheetBody.querySelectorAll(".modelBtn").forEach(btn=>{
+        btn.addEventListener("click", async ()=>{
+          const id = btn.getAttribute("data-model-id");
+          const file = btn.getAttribute("data-file");
+          await setCurrentModel(id, file, {speakConfirm:true});
+          closeSheet();
+        });
+      });
+    }
+
+    function updateBadge(make, model, yearsLabel){
+      badgeEl.classList.add("clickable");
+      const y = yearsLabel ? ` · ${yearsLabel}` : "";
+      badgeEl.innerHTML = `<span class="dot"></span>${escapeHtml(make)} ${escapeHtml(model)}${escapeHtml(y)}`;
+    }
+
+    async function loadModelIndex(){
+      try{
+        setStatus("Loading model list…", true, false);
+        const res = await fetch(INDEX_FILE, { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status} while fetching ${INDEX_FILE}`);
+        modelIndex = await res.json();
+        return modelIndex;
+      } catch(e){
+        console.error(e);
+        setStatus("Failed to load index.json (model list).", true, true);
+        throw e;
+      }
+    }
+
+    async function setCurrentModel(modelId, datasetFile, opts={}){
+      CURRENT_MODEL_ID = modelId || null;
+      CURRENT_DATASET_FILE = datasetFile || null;
+
+      // Find display info from index.json if available
+      const models = modelIndex ? flattenModels(modelIndex) : [];
+      const m = models.find(x=>x.id === CURRENT_MODEL_ID) || null;
+
+      if (m){
+        updateBadge(m.make, m.label, m.years_label);
+      } else {
+        // fallback badge
+        updateBadge("Model", (CURRENT_MODEL_ID || "Unknown"), "");
+      }
+
+      // Load dataset for selected model
+      await loadTorqueData(CURRENT_DATASET_FILE);
+
+      // Optional small voice confirmation (MVP-friendly)
+      if (opts.speakConfirm && m){
+        speak(`Switched to ${m.make} ${m.label}.`);
+      }
+    }
+
+    async function initApp(){
+      // model list
+      await loadModelIndex();
+
+      // default model
+      const defId = modelIndex?.default_model_id;
+      const models = flattenModels(modelIndex);
+      const def = models.find(x=>x.id === defId) || models[0];
+
+      if (!def){
+        throw new Error("No models found in index.json");
+      }
+
+      renderSheet();
+      await setCurrentModel(def.id, def.file, {speakConfirm:false});
+
+      setStatus(`Ready. (${torqueData.length} items)`, true, false);
+    }
+
     function setStatus(text, active=false, isError=false){
       statusLine.textContent = text || "";
       statusLine.classList.toggle("active", !!active);
@@ -533,13 +965,15 @@
         .filter(w => w.length > 2 && !GENERIC_WORDS.includes(w));
     }
 
-    async function loadTorqueData(){
+    async function loadTorqueData(datasetFile){
 
 try{
   setStatus("Loading dataset…", true, false);
-  const res = await fetch(DATASET_FILE, { cache: "no-store" });
+  const fileToLoad = datasetFile || CURRENT_DATASET_FILE;
+  if (!fileToLoad){ throw new Error("No dataset selected"); }
+  const res = await fetch(fileToLoad, { cache: "no-store" });
   if (!res.ok){
-    throw new Error(`HTTP ${res.status} while fetching ${DATASET_FILE}`);
+    throw new Error(`HTTP ${res.status} while fetching ${fileToLoad}`);
   }
   const data = await res.json();
 
@@ -696,6 +1130,22 @@ function formatTorqueValueHtml(valueText){
   const num = extractNmNumber(s);
   if (!num) return escapeHtml(s);
   return `<span class="stepNum">${escapeHtml(num)}</span><span class="stepUnit">Nm</span>`;
+}
+
+function getTorqueStepsForSpeech(item){
+  // Returns an array of objects compatible with the speech builder:
+  // [{ step, torque_nm?, angle_deg?, raw? }]
+  const tt = (item && item.tightening_type ? String(item.tightening_type).trim().toLowerCase() : "");
+  if (tt !== "multi_step") return [];
+
+  if (Array.isArray(item.torque_steps) && item.torque_steps.length){
+    return item.torque_steps;
+  }
+  if (item.torque_steps != null && String(item.torque_steps).trim()){
+    const lines = parseTorqueStepsText(item.torque_steps);
+    return lines.map((line, idx) => ({ step: String(idx + 1), raw: line }));
+  }
+  return [];
 }
 
 
@@ -1100,7 +1550,7 @@ if (hasInfoBlock){
       // ----- Item number + reference images (between infoBlock and pills) -----
       const itemNumber = (item?.item_number ?? "").toString().trim();
       if (itemNumber){
-        html += `<div class="itemNumber"><span class="itemLabel">Ref. image:</span>${escapeHtml(itemNumber)}</div>`;
+        html += `<div class="itemNumber"><span class="itemLabel">Item:</span>${escapeHtml(itemNumber)}</div>`;
       }
 
       let refImgs = [];
@@ -1127,16 +1577,50 @@ if (hasInfoBlock){
       // ❌ 기존 하단 notes 섹션은 삭제 (요청사항)
 
       resultBody.className = "";
-      resultBody.innerHTML = html;
       const spoken = buildSpokenAnswerParts(item);
 
-      // Info-gate removed: speak everything in one pass
-      const spokenFull = (spoken.info && spoken.info.trim())
-        ? `${spoken.base} ${spoken.info}`
-        : spoken.base;
-      speak(spokenFull);
+      // Determine whether there is additional info worth reading (gate)
+      const hasInfoToRead =
+        (getSpecialTools(item).length > 0) ||
+        (!!(item.tightening_seq && String(item.tightening_seq).trim())) ||
+        (getExtraNotesList(item).length > 0);
 
+if (hasInfoToRead){
+        // Add Yes/No gate UI (inserted into DOM)
+        html += `
+          <div class="moreInfoBar" id="moreInfoBar">
+            <div class="moreInfoText">Read additional info?</div>
+            <div class="moreInfoBtns">
+              <button class="moreBtn" type="button" id="moreYes">Yes</button>
+              <button class="moreBtn" type="button" id="moreNo">No</button>
+            </div>
+          </div>
+        `;
+      }
 
+      resultBody.className = "";
+      resultBody.innerHTML = html;
+
+      if (hasInfoToRead){
+        speak(`${spoken.base} Read additional info?`);
+
+        const yesBtn = document.getElementById("moreYes");
+        const noBtn  = document.getElementById("moreNo");
+
+        if (yesBtn) yesBtn.addEventListener("click", ()=>{
+          speak(spoken.info);
+        });
+
+        if (noBtn) noBtn.addEventListener("click", ()=>{
+          // hide the gate bar after decision
+          const bar = document.getElementById("moreInfoBar");
+          if (bar) bar.remove();
+          stopSpeak();
+        });
+      } else {
+        // no extra info: just speak base
+        speak(spoken.base);
+      }
 
     }
 
@@ -1285,7 +1769,40 @@ if (hasInfoBlock){
       stopSpeak();
     });
 
-    // Speech recognition (desktop chrome)
+    
+
+
+    // Model badge tap -> open selector
+    badgeEl.addEventListener("click", ()=>{
+      if (!modelIndex) return;
+      renderSheet();
+      openSheet();
+    });
+    sheetClose.addEventListener("click", closeSheet);
+    sheetOverlay.addEventListener("click", (e)=>{
+      if (e.target === sheetOverlay) closeSheet();
+    });
+
+    // Small mic button -> listen for a model switch command (e.g., "Switch to V4S")
+    if (modelMicBtn){
+      modelMicBtn.addEventListener("click", ()=>{
+        if (!modelIndex){
+          speak("Model list is not loaded yet.");
+          return;
+        }
+        if (!modelRecognition) modelRecognition = initModelSpeech();
+        if (!modelRecognition) {
+          speak("Speech recognition is not supported here.");
+          return;
+        }
+        if (modelListening){
+          modelRecognition.stop();
+          return;
+        }
+        modelRecognition.start();
+      });
+    }
+// Speech recognition (desktop chrome)
     function initSpeech(){
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SpeechRecognition){
@@ -1331,7 +1848,7 @@ if (hasInfoBlock){
     // Init
     renderEmpty("Waiting for your first question.");
     setStatus("");
-    loadTorqueData();
+    initApp().catch(()=>{});
   </script>
 </body>
 </html>
