@@ -639,6 +639,8 @@
     let INDEX_FILE_USED = null;
     let CURRENT_MODEL_ID = null;
     let CURRENT_DATASET_FILE = null;
+    let CURRENT_DATASET_DIR = "./"; // base path for images relative to loaded dataset.json
+
     let CURRENT_MODEL_DISPLAY = null; // {make, label, years_label}
 
     const GENERIC_WORDS = [
@@ -1045,6 +1047,8 @@ try{
   if (!/^https?:\/\//i.test(fileToLoad) && !fileToLoad.startsWith("./") && !fileToLoad.startsWith("/") ){
     fileToLoad = "./" + fileToLoad;
   }
+  // Base directory for assets (images) relative to dataset.json
+  CURRENT_DATASET_DIR = fileToLoad.replace(/[^\/]*$/, "");
   const res = await fetch(fileToLoad, { cache: "no-store" });
   if (!res.ok){
     throw new Error(`HTTP ${res.status} while fetching ${fileToLoad}`);
@@ -1634,7 +1638,7 @@ if (hasInfoBlock){
 
       if (refImgs.length){
         html += `<div class="refImages">` +
-          refImgs.map(fn => `<img class="refImage" src="images/${encodeURIComponent(fn)}" alt="Reference image">`).join("") +
+          refImgs.map(fn => `<img class="refImage" src="${CURRENT_DATASET_DIR}images/${encodeURIComponent(fn)}" alt="Reference image">`).join("") +
           `</div>`;
       }
 
