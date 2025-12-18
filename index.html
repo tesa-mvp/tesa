@@ -638,6 +638,7 @@
     const INDEX_FILE = "index.json";
     let CURRENT_MODEL_ID = null;
     let CURRENT_DATASET_FILE = null;
+    let CURRENT_MODEL_DISPLAY = null; // {make, label, years_label}
 
     const GENERIC_WORDS = [
       "bolt","bolts","screw","screws","nut","nuts","washer","washers",
@@ -908,6 +909,7 @@
       }
     }
 
+    
     async function setCurrentModel(modelId, datasetFile, opts={}){
       CURRENT_MODEL_ID = modelId || null;
       CURRENT_DATASET_FILE = datasetFile || null;
@@ -917,18 +919,22 @@
       const m = models.find(x=>x.id === CURRENT_MODEL_ID) || null;
 
       if (m){
-        updateBadge(m.make, m.label, m.years_label);
+        CURRENT_MODEL_DISPLAY = { make: m.make, label: m.label, years_label: m.years_label };
       } else {
-        // fallback badge
-        updateBadge("Model", (CURRENT_MODEL_ID || "Unknown"), "");
+        CURRENT_MODEL_DISPLAY = { make: "Model", label: (CURRENT_MODEL_ID || "Unknown"), years_label: "" };
       }
 
       // Load dataset for selected model
       await loadTorqueData(CURRENT_DATASET_FILE);
 
+      // After dataset load, re-apply badge from CURRENT_MODEL_DISPLAY (prevents any accidental overrides)
+      if (CURRENT_MODEL_DISPLAY){
+        updateBadge(CURRENT_MODEL_DISPLAY.make, CURRENT_MODEL_DISPLAY.label, CURRENT_MODEL_DISPLAY.years_label);
+      }
+
       // Optional small voice confirmation (MVP-friendly)
-      if (opts.speakConfirm && m){
-        speak(`Switched to ${m.make} ${m.label}.`);
+      if (opts.speakConfirm && CURRENT_MODEL_DISPLAY){
+        speak(`Switched to ${CURRENT_MODEL_DISPLAY.make} ${CURRENT_MODEL_DISPLAY.label}.`);
       }
     }
 
@@ -986,10 +992,7 @@ try{
   const make = meta.make || "Unknown";
   const model = meta.model || "Model";
   const yFrom = meta.year_from ?? "";
-  const yTo   = meta.year_to ?? "";
-
-  badgeEl.innerHTML = `<span class="dot"></span>${escapeHtml(make)} ${escapeHtml(model)} · ${escapeHtml(String(yFrom))}–${escapeHtml(String(yTo))}`;
-  setStatus(`Ready. (${torqueData.length} items)`, true, false);
+  const yTo   = meta.year_to ?? "";  setStatus(`Ready. (${torqueData.length} items)`, true, false);
 } catch (e){
   console.error(e);
   setStatus("Failed to load dataset. Use a local server (python http.server).", true, true);
