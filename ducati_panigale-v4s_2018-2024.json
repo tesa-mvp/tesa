@@ -4625,47 +4625,6 @@
       ]
     },
     {
-      "id": "test_single",
-      "system": "frame",
-      "group": "test",
-      "component_name": "Test single - All info",
-      "common_name": [
-        "test single",
-        "test"
-      ],
-      "tightening_type": "single",
-      "torque_nm_single": 25.0,
-      "torque_steps": null,
-      "threadlock": "Loctite 648, 128455",
-      "threadlock_symbol": "LOCK 5",
-      "lubrication": "SHELL Retinax HDX2",
-      "lubrication_symbol": "GREASE B",
-      "sealant": "THREE BOND 1215",
-      "sealant_symbol": "SEAL",
-      "thread_spec": "M5x1.25",
-      "special_tool_numbers": "88713.3467",
-      "special_tool_name": "Valve collet fitting tool",
-      "tightening_seq": "Criss-cross pattern",
-      "extra_notes": "Left-hand thread",
-      "item_number": "Item #9",
-      "ref_images": [
-        "bolt_crankcase_m8_1.png",
-        "bolt_crankcase_m8_2.png"
-      ],
-      "sample_questions": null,
-      "partName": "Test single - All info",
-      "torqueDisplay": "25 Nm",
-      "chemLine": "Apply Loctite 648, 128455 | Apply SHELL Retinax HDX2 | Apply THREE BOND 1215",
-      "infoBlock": "Sequence: Criss-cross pattern\nThread: M5x1.25\nSpecial tool: 88713.3467 (Valve collet fitting tool)\nLeft-hand thread",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        "2020-2025",
-        "frame",
-        "test"
-      ]
-    },
-    {
       "id": "test_multi_step",
       "system": "frame",
       "group": "test",
