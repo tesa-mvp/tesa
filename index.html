@@ -723,7 +723,35 @@
       // normalize punctuation/spaces
       s = s.replace(/[“”"']/g, "");
       s = s.replace(/\s+/g, " ").trim();
+      // Normalize "V4 S" -> "V4S"
+      s = s.replace(/\bv(\d+)\s+s\b/g, "v$1s");
       return s;
+    }
+
+    function modelAliasVariants(a){
+      // Return a set of variants for robust voice matching:
+      // "v4 s" <-> "v4s", remove spaces/hyphens, etc.
+      const out = new Set();
+      const base = String(a || "").toLowerCase().trim();
+      if (!base) return [];
+      out.add(base);
+
+      const spaced = base.replace(/\s+/g, " ").trim();
+      if (spaced) out.add(spaced);
+
+      const noPunct = spaced.replace(/[-_]/g, " ").replace(/\s+/g, " ").trim();
+      if (noPunct) out.add(noPunct);
+
+      const compact = noPunct.replace(/\s+/g, "");
+      if (compact) out.add(compact);
+
+      // Special: "v4 s" -> "v4s"
+      const vSpaceS = noPunct.replace(/\bv(\d+)\s+s\b/g, "v$1s");
+      if (vSpaceS) out.add(vSpaceS);
+      const vSpaceSCompact = vSpaceS.replace(/\s+/g, "");
+      if (vSpaceSCompact) out.add(vSpaceSCompact);
+
+      return Array.from(out);
     }
 
     function pickModelByVoice(text){
@@ -739,15 +767,27 @@
 
       for (const m of models){
         const candidates = [];
+
         const make = String(m.make || "").toLowerCase().trim();
         const label = String(m.label || "").toLowerCase().trim();
 
-        if (label) candidates.push(label);
-        if (make && label) candidates.push((make + " " + label).trim());
-        (m.aliases || []).forEach(a=>{
-          const aa = String(a || "").toLowerCase().trim();
-          if (aa) candidates.push(aa);
+        // Label variants
+        if (label) candidates.push(...modelAliasVariants(label));
+
+        // Make + label variants
+        if (make && label) candidates.push(...modelAliasVariants((make + " " + label).trim()));
+
+        // Alias variants from index.json
+        (m.aliases || []).forEach(aRaw=>{
+          const a = String(aRaw || "").toLowerCase().trim();
+          if (!a) return;
+          candidates.push(...modelAliasVariants(a));
         });
+
+        // Also add compact make+label token
+        if (make && label){
+          candidates.push((make + label).replace(/\s+/g,"").trim());
+        }
 
         let localBest = -1;
         for (const a of candidates){
@@ -779,27 +819,28 @@
     }
 
     // === Big MIC: allow "Model, component" in one utterance ===
-    function bestAliasHitForModel(model, normalizedText){
+        function bestAliasHitForModel(model, normalizedText){
       const candidates = [];
       const make = String(model.make || "").toLowerCase().trim();
       const label = String(model.label || "").toLowerCase().trim();
 
-      if (label) candidates.push(label);
-      if (make && label) candidates.push((make + " " + label).trim());
-      (model.aliases || []).forEach(a=>{
-        const aa = String(a || "").toLowerCase().trim();
-        if (aa) candidates.push(aa);
+      if (label) candidates.push(...modelAliasVariants(label));
+      if (make && label) candidates.push(...modelAliasVariants((make + " " + label).trim()));
+      (model.aliases || []).forEach(aRaw=>{
+        const a = String(aRaw || "").toLowerCase().trim();
+        if (!a) return;
+        candidates.push(...modelAliasVariants(a));
       });
 
+      // prefer the longest alias that appears in the utterance
       let best = "";
+      const u = String(normalizedText || "");
+      const uCompact = u.replace(/\s+/g,"");
       for (const a of candidates){
         if (!a) continue;
-        if (normalizedText.includes(a)){
-          if (a.length > best.length) best = a;
-        } else if (a.includes(normalizedText) && normalizedText.length >= 2){
-          // user said a shortened form like "v4s"
-          if (normalizedText.length > best.length) best = normalizedText;
-        }
+        const aCompact = a.replace(/\s+/g,"");
+        const hit = u.includes(a) || (uCompact.includes(aCompact) && aCompact.length >= 3);
+        if (hit && a.length > best.length) best = a;
       }
       return best;
     }
@@ -809,6 +850,8 @@
       s = s.replace(/[“”"']/g, "");
       s = s.replace(/[,;:]/g, " ");
       s = s.replace(/\s+/g, " ").trim();
+
+      s = s.replace(/\bv(\d+)\s+s\b/g, "v$1s");
 
       // Remove action words; user might say "switch to ..."
       s = s.replace(/^hey\s+tesa\s*/i, "");
@@ -833,6 +876,8 @@
       // Cleanup filler words at start
       s = s.replace(/^\s*(the|a|an)\s+/i, "");
       s = s.replace(/\s+/g, " ").trim();
+      s = s.replace(/^(s|ess)\s+/i, "");
+
       return s;
     }
 
@@ -859,17 +904,18 @@
       if (picked.status === "OK" && picked.model){
         const model = picked.model;
         const remainder = stripModelFromUtterance(transcript, model);
+        const cleanedRemainder = remainder.replace(/^(s|ess)\s+/i,"").trim();
 
         await setCurrentModel(model.id, model.file, {speakConfirm:true});
 
         // Model only (no component): stop here.
-        if (!remainder){
+        if (!cleanedRemainder){
           speak("What part?");
           return;
         }
 
-        questionInput.value = remainder;
-        handleQuery(remainder);
+        questionInput.value = cleanedRemainder;
+        handleQuery(cleanedRemainder);
         return;
       }
 
