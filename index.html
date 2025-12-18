@@ -635,7 +635,8 @@
     // =========================
     // Data + Safety rails
     // =========================
-    const INDEX_FILE = "./index.json";
+    const INDEX_CANDIDATES = ["./index.json", "index.json", "./data/index.json", "data/index.json"];
+    let INDEX_FILE_USED = null;
     let CURRENT_MODEL_ID = null;
     let CURRENT_DATASET_FILE = null;
     let CURRENT_MODEL_DISPLAY = null; // {make, label, years_label}
@@ -810,7 +811,8 @@
       const m = picked.model;
       setStatus("Switching model…", true, false);
       await setCurrentModel(m.id, m.file, {speakConfirm:true});
-    }
+      closeSheet();
+}
 
 
     // Model index + selector UI
@@ -884,10 +886,13 @@
         btn.addEventListener("click", async ()=>{
           const id = btn.getAttribute("data-model-id");
           const file = btn.getAttribute("data-file");
-          await setCurrentModel(id, file, {speakConfirm:true});
-          closeSheet();
+          try{
+            await setCurrentModel(id, file, {speakConfirm:true});
+          } finally {
+            closeSheet();
+          }
         });
-      });
+});
     }
 
     function updateBadge(make, model, yearsLabel){
@@ -896,18 +901,33 @@
       badgeEl.innerHTML = `<span class="dot"></span>${escapeHtml(String(make))} ${escapeHtml(String(model))}${y}`;
     }
 
+    
     async function loadModelIndex(){
-      try{
-        setStatus("Loading model list…", true, false);
-        const res = await fetch(INDEX_FILE, { cache: "no-store" });
-        if (!res.ok) throw new Error(`HTTP ${res.status} while fetching ${INDEX_FILE}`);
-        modelIndex = await res.json();
-        return modelIndex;
-      } catch(e){
-        console.error(e);
-        setStatus("Failed to load index.json (model list).", true, true);
-        throw e;
+      const tried = [];
+      const bust = `v=${Date.now()}`;
+
+      for (const cand of INDEX_CANDIDATES){
+        try{
+          const url = new URL(cand, window.location.href);
+          url.searchParams.set("v", String(Date.now()));
+
+          tried.push(url.toString());
+          setStatus("Loading model list…", true, false);
+
+          const res = await fetch(url.toString(), { cache: "no-store" });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+          modelIndex = await res.json();
+          INDEX_FILE_USED = cand;
+          return modelIndex;
+        } catch(e){
+          // continue
+        }
       }
+
+      console.error("index.json load failed. Tried:", tried);
+      setStatus("Model list failed to load (index.json not found). Check that index.json is in the same folder as index.html.", true, true);
+      throw new Error("index.json not found");
     }
 
     
@@ -1877,7 +1897,7 @@ if (hasInfoToRead){
     // Init
     renderEmpty("Waiting for your first question.");
     setStatus("");
-    initApp().catch((e)=>{ console.error(e); setStatus("Model list failed to load (index.json 404?) — torque search may still work if a dataset was already loaded. Check Network tab.", true, true); });
-  </script>
+    initApp().catch((e)=>{ console.error(e); });
+</script>
 </body>
 </html>
