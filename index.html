@@ -1621,7 +1621,7 @@ if (hasInfoBlock){
       // ----- Item number + reference images (between infoBlock and pills) -----
       const itemNumber = (item?.item_number ?? "").toString().trim();
       if (itemNumber){
-        html += `<div class="itemNumber"><span class="itemLabel">Item:</span>${escapeHtml(itemNumber)}</div>`;
+        html += `<div class="itemNumber"><span class="itemLabel">Ref. image:</span>${escapeHtml(itemNumber)}</div>`;
       }
 
       let refImgs = [];
@@ -1645,7 +1645,6 @@ if (hasInfoBlock){
         )).join("") + `</div>`;
       }
 
-      // ❌ 기존 하단 notes 섹션은 삭제 (요청사항)
 
       resultBody.className = "";
       const spoken = buildSpokenAnswerParts(item);
