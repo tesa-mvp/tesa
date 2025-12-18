@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "default_model_id": "ducati_panigale-v2_2020-2025",
+  "manufacturers": [
+    {
+      "make": "Ducati",
+      "make_id": "ducati",
+      "models": [
+        {
+          "id": "ducati_panigale-v2_2020-2025",
+          "label": "Panigale V2",
+          "years": {
+            "from": 2020,
+            "to": 2025
+          },
+          "years_label": "2020–2025",
+          "file": "ducati_panigale-v2_2020-2025.json",
+          "aliases": [
+            "ducati panigale v2",
+            "panigale v2",
+            "v2",
+            "panigale"
+          ]
+        },
+        {
+          "id": "ducati_panigale-v4s_2018-2024",
+          "label": "Panigale V4 S",
+          "years": {
+            "from": 2018,
+            "to": 2024
+          },
+          "years_label": "2018–2024",
+          "file": "ducati_panigale-v4s_2018-2024.json",
+          "aliases": [
+            "ducati panigale v4s",
+            "panigale v4s",
+            "v4s",
+            "panigale v4 s",
+            "panigale v4"
+          ]
+        }
+      ]
+    }
+  ]
+}
