@@ -24,7 +24,7 @@
         },
         {
           "id": "ducati_panigale-v4s_2018-2024",
-          "label": "Panigale V4S",
+          "label": "Panigale V4 S",
           "years": {
             "from": 2018,
             "to": 2024
@@ -35,10 +35,8 @@
             "ducati panigale v4s",
             "panigale v4s",
             "v4s",
-            "v4 s",
             "panigale v4 s",
-            "panigale v4",
-            "v4"
+            "panigale v4"
           ]
         }
       ]
