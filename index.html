@@ -644,7 +644,28 @@
     const STORAGE_KEY_MODEL_ID = "TESA_last_model_id";
     const STORAGE_KEY_DATASET_FILE = "TESA_last_dataset_file";
 
-    const GENERIC_WORDS = [
+    
+
+    // =========================
+    // Debug: reset saved model via URL
+    // Use ?reset=1 to clear the last selected model (handy for iPhone Safari testing).
+    // =========================
+    (function(){
+      try{
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("reset") === "1"){
+          localStorage.removeItem(STORAGE_KEY_MODEL_ID);
+          localStorage.removeItem(STORAGE_KEY_DATASET_FILE);
+          // Clean the URL so refresh doesn't keep resetting.
+          params.delete("reset");
+          const qs = params.toString();
+          const clean = window.location.pathname + (qs ? ("?" + qs) : "") + window.location.hash;
+          window.history.replaceState({}, document.title, clean);
+        }
+      } catch(e){}
+    })();
+
+const GENERIC_WORDS = [
       "bolt","bolts","screw","screws","nut","nuts","washer","washers",
       "pin","pins","clip","clips","fastener","fasteners",
       "torque","tightening","spec","specs","value","values"
@@ -1032,6 +1053,7 @@ async function initApp(){
       badgeEl.innerHTML = `<span class="dot"></span>Select model…`;
       setStatus("Select a model to begin.", true, false);
       openSheet();
+      speak("Please select a model.");
 
       // If index.json provides a default model, highlight it in the sheet (no auto-load)
       const defId = modelIndex?.default_model_id;
