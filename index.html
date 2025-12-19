@@ -663,6 +663,38 @@
 
   <script>
     // =========================
+    // URL param utility (MVP)
+    // =========================
+    // Support: ?reset=1  -> clears saved model selection (for testing)
+    (function(){
+      try{
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("reset") === "1"){
+          // Clear known storage keys (current + older variants)
+          const keysToClear = [
+            "TESA_last_model_id",
+            "TESA_last_dataset_file",
+            "TESA_LAST_MODEL_ID",
+            "TESA_LAST_DATASET_FILE",
+            "lastSelectedModelId",
+            "lastSelectedDatasetFile"
+          ];
+          keysToClear.forEach(k=>{ try{ localStorage.removeItem(k); } catch(e){} });
+
+          // Remove reset=1 from URL so refresh won't keep resetting
+          params.delete("reset");
+          const qs = params.toString();
+          const newUrl = window.location.pathname + (qs ? ("?" + qs) : "") + window.location.hash;
+          window.history.replaceState({}, "", newUrl);
+
+          // Flag for UI behaviors (e.g., toast)
+          window.__TESA_DID_RESET__ = true;
+        }
+      } catch(e){}
+    })();
+
+
+    // =========================
     // Data + Safety rails
     // =========================
     const INDEX_CANDIDATES = ["./index.json", "index.json", "./data/index.json", "data/index.json"];
@@ -1782,8 +1814,16 @@ function escapeHtml(s){
     // =========================
     let __toastTimer = null;
     function showToast(message, ms=2200){
-      const el = document.getElementById("toast");
-      if (!el) return;
+      let el = document.getElementById("toast");
+      // If toast element is not yet in DOM (script runs before it), create it.
+      if (!el){
+        el = document.createElement("div");
+        el.id = "toast";
+        el.className = "toast";
+        el.setAttribute("role","status");
+        el.setAttribute("aria-live","polite");
+        document.body.appendChild(el);
+      }
       el.textContent = String(message || "");
       el.classList.add("show");
       if (__toastTimer) clearTimeout(__toastTimer);
