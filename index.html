@@ -670,7 +670,10 @@
       try{
         const params = new URLSearchParams(window.location.search);
         if (params.get("reset") === "1"){
-          // Clear known storage keys (current + older variants)
+          // Clear storage (most reliable across browsers)
+          try{ localStorage.clear(); } catch(e){}
+
+          // Also clear known keys explicitly (in case clear() is blocked)
           const keysToClear = [
             "TESA_last_model_id",
             "TESA_last_dataset_file",
@@ -681,20 +684,22 @@
           ];
           keysToClear.forEach(k=>{ try{ localStorage.removeItem(k); } catch(e){} });
 
-          // Remove reset=1 from URL so refresh won't keep resetting
+          // Remember that a reset just happened (survives the redirect)
+          try{ sessionStorage.setItem("__TESA_DID_RESET__", "1"); } catch(e){}
+
+          // Remove reset=1 from URL and hard-navigate (avoids Chrome edge cases / BFCache)
           params.delete("reset");
           const qs = params.toString();
           const newUrl = window.location.pathname + (qs ? ("?" + qs) : "") + window.location.hash;
-          window.history.replaceState({}, "", newUrl);
 
-          // Flag for UI behaviors (e.g., toast)
-          window.__TESA_DID_RESET__ = true;
+          window.location.replace(newUrl);
+          return;
         }
       } catch(e){}
     })();
 
 
-    // =========================
+// =========================
     // Data + Safety rails
     // =========================
     const INDEX_CANDIDATES = ["./index.json", "index.json", "./data/index.json", "data/index.json"];
