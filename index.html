@@ -545,6 +545,35 @@
     }
     .micMini svg{width:16px;height:16px}
 
+
+    /* === Toast (MVP) === */
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%) translateY(16px);
+      background: rgba(9,11,18,.92);
+      border: 1px solid rgba(255,255,255,.10);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      line-height: 1.2;
+      box-shadow: 0 18px 45px rgba(0,0,0,.55);
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .18s ease, transform .18s ease;
+      max-width: calc(100% - 28px);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .toast.show{
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
 </style>
 </head>
 
@@ -1031,6 +1060,7 @@ async function initApp(){
       // No saved model → show selector first (acts like a first page)
       badgeEl.innerHTML = `<span class="dot"></span>Select model…`;
       setStatus("Select a model to begin.", true, false);
+      showToast("Select a model");
       openSheet();
 
       // If index.json provides a default model, highlight it in the sheet (no auto-load)
@@ -1746,6 +1776,21 @@ function escapeHtml(s){
         .replaceAll("'","&#039;");
     }
 
+    // =========================
+    // Toast (MVP)
+    // =========================
+    let __toastTimer = null;
+    function showToast(message, ms=2200){
+      const el = document.getElementById("toast");
+      if (!el) return;
+      el.textContent = String(message || "");
+      el.classList.add("show");
+      if (__toastTimer) clearTimeout(__toastTimer);
+      __toastTimer = setTimeout(()=>{
+        el.classList.remove("show");
+      }, ms);
+    }
+
     function normalizeQuery(q){
       let s = String(q || "").toLowerCase();
 
@@ -1933,5 +1978,7 @@ function initSpeech(){
     setStatus("");
     initApp().catch((e)=>{ console.error(e); });
 </script>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
 </body>
 </html>
