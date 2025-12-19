@@ -640,6 +640,9 @@
     let CURRENT_MODEL_ID = null;
     let CURRENT_DATASET_FILE = null;
     let CURRENT_MODEL_DISPLAY = null; // {make, label, years_label}
+    // Persist last selected model (Structure A)
+    const STORAGE_KEY_MODEL_ID = "TESA_last_model_id";
+    const STORAGE_KEY_DATASET_FILE = "TESA_last_dataset_file";
 
     const GENERIC_WORDS = [
       "bolt","bolts","screw","screws","nut","nuts","washer","washers",
@@ -972,9 +975,13 @@ async function setCurrentModel(modelId, datasetFile, opts={}){
       renderEmpty("Waiting for your question.");
       // Clear typed fallback input
       if (questionInput) questionInput.value = "";
-      // Reset fallback text input as well
-      if (fallbackInput) fallbackInput.value = "";
       }
+      // Save last selection for next visit
+      try{
+        if (CURRENT_MODEL_ID) localStorage.setItem(STORAGE_KEY_MODEL_ID, String(CURRENT_MODEL_ID));
+        if (CURRENT_DATASET_FILE) localStorage.setItem(STORAGE_KEY_DATASET_FILE, String(CURRENT_DATASET_FILE));
+      } catch(e){}
+
 
       // Optional small voice confirmation (MVP-friendly)
       if (opts.speakConfirm && CURRENT_MODEL_DISPLAY){
@@ -991,36 +998,53 @@ async function initApp(){
       // Make badge interactive (tap to open sheet) even before fully ready.
       badgeEl.classList.add("clickable");
 
-      // model list
+      // Load model list (index.json)
       await loadModelIndex();
-
-      // default model
-      const defId = modelIndex?.default_model_id;
-      const models = flattenModels(modelIndex);
-      const def = models.find(x=>x.id === defId) || models[0];
-
-      if (!def){
-        throw new Error("No models found in index.json");
-
-      // Defensive: re-apply badge shortly after init (prevents stale "Loading model…" UI)
-      setTimeout(()=>{
-        if (CURRENT_MODEL_DISPLAY){
-          updateBadge(CURRENT_MODEL_DISPLAY.make, CURRENT_MODEL_DISPLAY.label, CURRENT_MODEL_DISPLAY.years_label);
-        }
-      }, 200);
-      }
 
       // Populate sheet UI immediately
       renderSheet();
 
-      // Switch to default model (loads dataset + applies badge)
-      await setCurrentModel(def.id, def.file, {speakConfirm:false});
+      // Try restore last selection (Structure A)
+      let restored = null;
+      try{
+        const savedId = localStorage.getItem(STORAGE_KEY_MODEL_ID);
+        const savedFile = localStorage.getItem(STORAGE_KEY_DATASET_FILE);
+        if (savedId && savedFile){
+          const models = flattenModels(modelIndex);
+          const hit = models.find(x=>x.id === savedId && x.file === savedFile) || models.find(x=>x.id === savedId) || null;
+          if (hit){
+            restored = hit;
+          }
+        }
+      } catch(e){}
 
-      // Ensure badge reflects selected model (defensive)
-      if (CURRENT_MODEL_DISPLAY){
-        updateBadge(CURRENT_MODEL_DISPLAY.make, CURRENT_MODEL_DISPLAY.label, CURRENT_MODEL_DISPLAY.years_label);
+      if (restored){
+        // Load saved model immediately
+        await setCurrentModel(restored.id, restored.file, {speakConfirm:false});
+        if (CURRENT_MODEL_DISPLAY){
+          updateBadge(CURRENT_MODEL_DISPLAY.make, CURRENT_MODEL_DISPLAY.label, CURRENT_MODEL_DISPLAY.years_label);
+        }
+        setStatus("Ready.", true, false);
+        return;
+      }
+
+      // No saved model → show selector first (acts like a first page)
+      badgeEl.innerHTML = `<span class="dot"></span>Select model…`;
+      setStatus("Select a model to begin.", true, false);
+      openSheet();
+
+      // If index.json provides a default model, highlight it in the sheet (no auto-load)
+      const defId = modelIndex?.default_model_id;
+      const models = flattenModels(modelIndex);
+      const def = models.find(x=>x.id === defId) || models[0] || null;
+      if (def){
+        CURRENT_MODEL_ID = def.id;
+        CURRENT_DATASET_FILE = def.file;
+        CURRENT_MODEL_DISPLAY = { make: def.make, label: def.label, years_label: def.years_label };
+        renderSheet(); // refresh active highlight
       }
     }
+
 
     function setStatus(text, active=false, isError=false){
       statusLine.textContent = text || "";
