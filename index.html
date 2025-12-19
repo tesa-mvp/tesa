@@ -549,9 +549,10 @@
     /* === Toast (MVP) === */
     .toast{
       position: fixed;
+      top: 18px;
+      bottom: auto;
       left: 50%;
-      bottom: 18px;
-      transform: translateX(-50%) translateY(16px);
+      transform: translateX(-50%);
       background: rgba(9,11,18,.92);
       border: 1px solid rgba(255,255,255,.10);
       color: var(--text);
@@ -1014,7 +1015,7 @@ async function setCurrentModel(modelId, datasetFile, opts={}){
 
       // Optional small voice confirmation (MVP-friendly)
       if (opts.speakConfirm && CURRENT_MODEL_DISPLAY){
-        speak(`Switched to ${CURRENT_MODEL_DISPLAY.make} ${CURRENT_MODEL_DISPLAY.label}.`);
+        speak(`Selected ${CURRENT_MODEL_DISPLAY.make} ${CURRENT_MODEL_DISPLAY.label}.`);
       }
     }
 
