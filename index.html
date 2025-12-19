@@ -1053,7 +1053,7 @@ async function initApp(){
       badgeEl.innerHTML = `<span class="dot"></span>Select model…`;
       setStatus("Select a model to begin.", true, false);
       openSheet();
-      speak("Please select a model.");
+      speakAuto("Please select a model.");
 
       // If index.json provides a default model, highlight it in the sheet (no auto-load)
       const defId = modelIndex?.default_model_id;
@@ -1377,6 +1377,40 @@ function scoreItem(queryLower, qSig, item){
       u.pitch = 1.0;
       window.speechSynthesis.speak(u);
     }
+
+    // iOS Safari blocks speech synthesis unless triggered by a user gesture.
+    // Use this for "auto" prompts (e.g., when opening the model selector on first launch).
+    function speakAuto(text){
+      const msg = String(text || "").trim();
+      if (!msg) return;
+      if (!("speechSynthesis" in window)) return;
+
+      const trySpeak = ()=>{
+        // Delay slightly so UI (sheet) is visible before speaking.
+        setTimeout(()=> speak(msg), 180);
+      };
+
+      // Some browsers (notably Chrome) may drop the first utterance until voices are loaded.
+      const voices = window.speechSynthesis.getVoices();
+      if (voices && voices.length){
+        trySpeak();
+        return;
+      }
+
+      let done = false;
+      const onVoicesChanged = ()=>{
+        if (done) return;
+        done = true;
+        window.speechSynthesis.removeEventListener("voiceschanged", onVoicesChanged);
+        trySpeak();
+      };
+
+      window.speechSynthesis.addEventListener("voiceschanged", onVoicesChanged);
+
+      // Fallback: try anyway after a short timeout even if voiceschanged never fires.
+      setTimeout(onVoicesChanged, 900);
+    }
+
 
     function speakNumbersDigitByDigit(text){
       if (text == null) return "";
