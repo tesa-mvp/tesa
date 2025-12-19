@@ -545,59 +545,7 @@
     }
     .micMini svg{width:16px;height:16px}
 
-
-    /* Toast (non-blocking prompt) */
-    .toast{
-      position:fixed;
-      left:50%;
-      bottom:18px;
-      transform:translateX(-50%);
-      background:rgba(9,11,18,.92);
-      border:1px solid var(--border);
-      color:var(--text);
-      padding:10px 12px;
-      border-radius:999px;
-      font-size:12px;
-      line-height:1.25;
-      box-shadow:0 12px 30px rgba(0,0,0,.55);
-      opacity:0;
-      pointer-events:none;
-      transition:opacity .18s ease, transform .18s ease;
-      z-index:2000;
-      max-width:92vw;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-    .toast.show{
-      opacity:1;
-      transform:translateX(-50%) translateY(-6px);
-    }
-
 </style>
-
-<style>
-.toast {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(20,20,25,0.95);
-  color: #fff;
-  padding: 10px 14px;
-  border-radius: 12px;
-  font-size: 13px;
-  box-shadow: 0 8px 24px rgba(0,0,0,.4);
-  opacity: 0;
-  transition: opacity .25s ease, transform .25s ease;
-  z-index: 2000;
-}
-.toast.show {
-  opacity: 1;
-  transform: translateX(-50%) translateY(-6px);
-}
-</style>
-
 </head>
 
 <body>
@@ -696,28 +644,7 @@
     const STORAGE_KEY_MODEL_ID = "TESA_last_model_id";
     const STORAGE_KEY_DATASET_FILE = "TESA_last_dataset_file";
 
-    
-
-    // =========================
-    // Debug: reset saved model via URL
-    // Use ?reset=1 to clear the last selected model (handy for iPhone Safari testing).
-    // =========================
-    (function(){
-      try{
-        const params = new URLSearchParams(window.location.search);
-        if (params.get("reset") === "1"){
-          localStorage.removeItem(STORAGE_KEY_MODEL_ID);
-          localStorage.removeItem(STORAGE_KEY_DATASET_FILE);
-          // Clean the URL so refresh doesn't keep resetting.
-          params.delete("reset");
-          const qs = params.toString();
-          const clean = window.location.pathname + (qs ? ("?" + qs) : "") + window.location.hash;
-          window.history.replaceState({}, document.title, clean);
-        }
-      } catch(e){}
-    })();
-
-const GENERIC_WORDS = [
+    const GENERIC_WORDS = [
       "bolt","bolts","screw","screws","nut","nuts","washer","washers",
       "pin","pins","clip","clips","fastener","fasteners",
       "torque","tightening","spec","specs","value","values"
@@ -1105,8 +1032,6 @@ async function initApp(){
       badgeEl.innerHTML = `<span class="dot"></span>Select model…`;
       setStatus("Select a model to begin.", true, false);
       openSheet();
-      showToast("Select a model", 2200);
-      
 
       // If index.json provides a default model, highlight it in the sheet (no auto-load)
       const defId = modelIndex?.default_model_id;
@@ -1127,23 +1052,6 @@ async function initApp(){
       statusLine.classList.toggle("error", !!isError);
     }
 
-
-    // Toast helper (non-voice prompt)
-    let _toastTimer = null;
-    function showToast(message, ms=1800){
-      const el = document.getElementById("toast");
-      if (!el) return;
-      const msg = String(message || "").trim();
-      if (!msg) return;
-
-      el.textContent = msg;
-      el.classList.add("show");
-
-      if (_toastTimer) clearTimeout(_toastTimer);
-      _toastTimer = setTimeout(()=>{
-        el.classList.remove("show");
-      }, Math.max(300, ms));
-    }
     function getSignificantWords(str){
       return String(str || "")
         .toLowerCase()
@@ -1447,21 +1355,6 @@ function scoreItem(queryLower, qSig, item){
       u.pitch = 1.0;
       window.speechSynthesis.speak(u);
     }
-
-      let done = false;
-      const onVoicesChanged = ()=>{
-        if (done) return;
-        done = true;
-        window.speechSynthesis.removeEventListener("voiceschanged", onVoicesChanged);
-        trySpeak();
-      };
-
-      window.speechSynthesis.addEventListener("voiceschanged", onVoicesChanged);
-
-      // Fallback: try anyway after a short timeout even if voiceschanged never fires.
-      setTimeout(onVoicesChanged, 900);
-    }
-
 
     function speakNumbersDigitByDigit(text){
       if (text == null) return "";
@@ -2040,23 +1933,5 @@ function initSpeech(){
     setStatus("");
     initApp().catch((e)=>{ console.error(e); });
 </script>
-
-<script>
-function showToast(message, duration=1600){
-  const t = document.createElement('div');
-  t.className = 'toast';
-  t.textContent = message;
-  document.body.appendChild(t);
-  requestAnimationFrame(()=> t.classList.add('show'));
-  setTimeout(()=>{
-    t.classList.remove('show');
-    setTimeout(()=> t.remove(), 300);
-  }, duration);
-}
-</script>
-
-
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
-
 </body>
 </html>
