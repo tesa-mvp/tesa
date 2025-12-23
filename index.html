@@ -110,6 +110,58 @@
       transition:transform .08s ease, box-shadow .08s ease, opacity .12s ease;
     }
     .micBig:active{transform:scale(.97)}
+
+    /* Primary actions (Voice + Photo) */
+    .primaryActions{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:14px;
+      width:100%;
+    }
+    .camBig{
+      width:104px;height:104px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background:radial-gradient(circle at 30% 25%, rgba(255,255,255,.14), rgba(9,11,18,.85));
+      box-shadow:0 12px 32px rgba(0,0,0,.35);
+      display:flex;align-items:center;justify-content:center;
+      cursor:pointer;
+      transition:transform .08s ease, box-shadow .12s ease, border-color .12s ease;
+    }
+    .camBig:hover{border-color:rgba(255,255,255,.22)}
+    .camBig:active{transform:scale(.97)}
+    .camBig svg{width:38px;height:38px}
+
+    .photoPane{
+      width:100%;
+      margin-top:6px;
+      display:none;
+      flex-direction:column;
+      gap:10px;
+      align-items:center;
+    }
+    .photoPane.isOpen{display:flex}
+    .photoPreview{
+      width:100%;
+      max-height:240px;
+      object-fit:cover;
+      border-radius:18px;
+      border:1px solid var(--border);
+      background:rgba(9,11,18,.6);
+    }
+    .photoActions{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+    .photoNote{
+      font-size:11px;
+      color:var(--muted);
+      line-height:1.25;
+    }
+
     .micBig[disabled]{opacity:.35;cursor:not-allowed;box-shadow:none}
     .micBig svg{width:34px;height:34px}
     .hint{
@@ -605,12 +657,20 @@
     <!-- Voice-first input -->
     <section class="card">
       <div class="voiceArea">
+        <div class="primaryActions">
         <button id="micBig" class="micBig" type="button" aria-label="Speak">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path fill="#05060a" d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3z"/>
             <path fill="#05060a" d="M17 11a1 1 0 1 0-2 0 3 3 0 0 1-6 0 1 1 0 1 0-2 0 5.002 5.002 0 0 0 4 4.9V18H9a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2h-2v-2.1A5.002 5.002 0 0 0 17 11z"/>
           </svg>
         </button>
+        <button id="camBtn" class="camBig" type="button" aria-label="Take photo">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M9 4l1.5 2H13l1.5-2H18a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h3zm3 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/>
+          </svg>
+        </button>
+        <input id="photoInput" type="file" accept="image/*" capture="environment" style="display:none" />
+      </div>
 
         <div class="hint">
           Tap mic and ask for torque spec<br>
@@ -618,6 +678,15 @@
         </div>
 
         <div id="statusLine" class="status"></div>
+        <div id="photoPane" class="photoPane" aria-live="polite">
+          <img id="photoPreview" class="photoPreview" alt="Captured photo preview" />
+          <div class="photoActions">
+            <button id="usePhotoBtn" class="pillBtn" type="button" disabled>Use photo</button>
+            <button id="retakePhotoBtn" class="pillBtn" type="button">Retake</button>
+          </div>
+          <div class="photoNote">Beta: photo analysis will be wired to LLM matching.</div>
+        </div>
+
 
         <div class="fallbackRow">
           <input id="questionInput" class="q" type="text"
@@ -736,6 +805,70 @@
     const badgeEl = document.getElementById("modelBadge");
     const statusLine = document.getElementById("statusLine");
     const micBig = document.getElementById("micBig");
+
+    // Photo (beta UI only)
+    const camBtn = document.getElementById("camBtn");
+    const photoInput = document.getElementById("photoInput");
+    const photoPane = document.getElementById("photoPane");
+    const photoPreview = document.getElementById("photoPreview");
+    const usePhotoBtn = document.getElementById("usePhotoBtn");
+    const retakePhotoBtn = document.getElementById("retakePhotoBtn");
+
+    let lastPhotoFile = null;
+
+    function openPhotoPane(){
+      if (!photoPane) return;
+      photoPane.classList.add("isOpen");
+    }
+    function closePhotoPane(){
+      if (!photoPane) return;
+      photoPane.classList.remove("isOpen");
+      if (photoPreview) photoPreview.removeAttribute("src");
+      if (usePhotoBtn) usePhotoBtn.disabled = true;
+      lastPhotoFile = null;
+    }
+
+    if (camBtn && photoInput){
+      camBtn.addEventListener("click", () => {
+        // open camera / picker
+        photoInput.click();
+      });
+      photoInput.addEventListener("change", () => {
+        const file = photoInput.files && photoInput.files[0];
+        if (!file) return;
+        lastPhotoFile = file;
+
+        const url = URL.createObjectURL(file);
+        if (photoPreview) photoPreview.src = url;
+        openPhotoPane();
+        if (usePhotoBtn) usePhotoBtn.disabled = false;
+
+        if (statusLine) statusLine.textContent = "Photo captured — ready to analyze (beta).";
+        if (typeof showToast === "function") showToast("Photo captured (beta)");
+      });
+    }
+
+    if (retakePhotoBtn && photoInput){
+      retakePhotoBtn.addEventListener("click", () => {
+        // reset and reopen camera
+        closePhotoPane();
+        photoInput.value = "";
+        photoInput.click();
+      });
+    }
+
+    if (usePhotoBtn){
+      usePhotoBtn.addEventListener("click", () => {
+        if (!lastPhotoFile){
+          if (typeof showToast === "function") showToast("No photo selected");
+          return;
+        }
+        // UI-only for now: wire this to LLM later
+        if (statusLine) statusLine.textContent = "Analyzing photo… (beta UI stub)";
+        if (typeof showToast === "function") showToast("Photo analysis (coming soon)");
+      });
+    }
+
     const questionInput = document.getElementById("questionInput");
     const sendBtn = document.getElementById("sendBtn");
     const resultBody = document.getElementById("resultBody");
