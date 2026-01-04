@@ -1,0 +1,91 @@
+{
+  "version": 1,
+  "manufacturers": [
+    {
+      "make": "Ducati",
+      "make_id": "ducati",
+      "models": [
+        {
+          "id": "ducati_panigale-v2_2020-2025",
+          "label": "Panigale V2",
+          "group_id": "superbike",
+          "group_label": "Superbike",
+          "years": {
+            "from": 2020,
+            "to": 2025
+          },
+          "years_label": "2020–2025",
+          "file": "datasets/ducati/panigale-v2_2020-2025/torque.json",
+          "aliases": [
+            "ducati panigale v2",
+            "panigale v2",
+            "v2",
+            "panigale"
+          ]
+        },
+        {
+          "id": "ducati_panigale-v4s_2018-2024",
+          "label": "Panigale V4 S",
+          "group_id": "superbike",
+          "group_label": "Superbike",
+          "years": {
+            "from": 2018,
+            "to": 2024
+          },
+          "years_label": "2018–2024",
+          "file": "datasets/ducati/panigale-v4s_2018-2024/torque.json",
+          "aliases": [
+            "ducati panigale v4s",
+            "panigale v4s",
+            "v4s",
+            "panigale v4",
+            "panigale v4 s"
+          ]
+        },
+        {
+          "id": "ducati_hypermotard-821_2013-2015",
+          "label": "Hypermotard 821",
+          "group_id": "hypermotard",
+          "group_label": "Hypermotard",
+          "years": {
+            "from": 2013,
+            "to": 2015
+          },
+          "years_label": "2013–2015",
+          "file": "datasets/ducati/hypermotard-821_2013-2015/torque.json",
+          "aliases": [
+            "ducati panigale v4s",
+            "panigale v4s",
+            "v4s",
+            "panigale v4",
+            "panigale v4 s"
+          ]
+        }
+      ]
+    },
+    {
+      "make": "Yamaha",
+      "make_id": "yamaha",
+      "models": [
+        {
+          "id": "yamaha_yzf-r3_2019-2024",
+          "label": "YZF-R3",
+          "group_id": "superbike",
+          "group_label": "Superbike",
+          "years": {
+            "from": 2019,
+            "to": 2024
+          },
+          "years_label": "2019–2024",
+          "file": "datasets/yamaha/yzf-r3_2019-2024/torque.json",
+          "aliases": [
+            "yamaha yzf r3",
+            "yzf r3",
+            "r3",
+            "yamaha r3"
+          ]
+        }
+      ]
+    }
+  ]
+}
