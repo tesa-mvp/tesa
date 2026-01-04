@@ -41,9 +41,10 @@
     }
     header{
       display:flex;
+      flex-direction:column;
       align-items:center;
-      justify-content:space-between;
-      gap:12px;
+      justify-content:flex-start;
+      gap:8px;
     }
     .brand{display:flex;align-items:center;gap:10px}
     .mark{
@@ -612,7 +613,7 @@
 
 
     /* Small mic button next to model badge */
-    .badgeRow{display:flex;align-items:center;gap:8px}
+    .badgeRow{display:flex;align-items:center;justify-content:center;gap:8px;width:100%}
     .micMini{
       width:34px;height:34px;border-radius:999px;
       border:1px solid var(--border);
@@ -796,18 +797,100 @@
   letter-spacing:0.02em;
 }
 
+
+/* Top header row: logo left, account icon right */
+.topRow{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.accountIcon{
+  font-size:18px;
+  cursor:pointer;
+  opacity:0.75;
+}
+.accountIcon:hover{
+  opacity:1;
+}
+
+
+/* Hamburger menu icon (top right) */
+.menuIcon{
+  width:28px;
+  height:22px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  background:none;
+  border:none;
+  padding:0;
+  cursor:pointer;
+  opacity:0.8;
+}
+.menuIcon span{
+  display:block;
+  height:2px;
+  width:100%;
+  background:var(--text);
+  border-radius:2px;
+}
+.menuIcon:hover{
+  opacity:1;
+}
+
+
+/* Header layout: brand left, menu right */
+.topRow{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.leftBrand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.brandText{
+  text-align:left;
+}
+
+
+/* Stacked result cards */
+#resultBody{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.resultCard{
+  border-radius:18px;
+  background:rgba(255,255,255,0.04);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+  padding:14px 14px 16px 14px;
+}
+
 </style>
 </head>
 
 <body>
   <div class="wrap">
     <header>
-      <div class="brand">
-        <div class="mark">T</div>
-        <div class="brandText">
-          <div class="t1">TESA</div>
-          <div class="t2">Tech Spec Assitant</div>
+      <div class="topRow">
+        <div class="leftBrand">
+          <div class="brand">
+            <div class="mark">T</div>
+          </div>
+          <div class="brandText">
+            <div class="t1">TESA</div>
+            <div class="t2">Tech Spec Assistant</div>
+          </div>
         </div>
+        <button class="menuIcon" aria-label="Open menu" title="Menu" type="button">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
       </div>
       <div class="badgeRow">
       <div class="badge" id="modelBadge">
@@ -875,14 +958,13 @@
       <div class="resultTop">
         <div class="resultTitle">Result</div>
         <div class="controls">
+          <button id="clearBtn" class="pillBtn" type="button">Clear</button>
           <button id="repeatBtn" class="pillBtn" type="button" disabled>Repeat</button>
           <button id="stopBtn" class="pillBtn" type="button" disabled>Stop</button>
         </div>
       </div>
 
-      <div id="resultBody" class="empty">
-        Waiting for your first question.
-      </div>
+      <div id="resultBody" class="empty"></div>
     </section>
   </div>
 
@@ -1044,10 +1126,40 @@
     }
 
     const questionInput = document.getElementById("questionInput");
+
+  const MAX_RESULT_CARDS = 5; // keep most recent N cards
     const sendBtn = document.getElementById("sendBtn");
     const resultBody = document.getElementById("resultBody");
+
+    function addResultCard(cardEl){
+      if (!cardEl) return;
+      // remove empty state
+      resultBody.classList.remove("empty");
+      // prepend newest card
+      resultBody.prepend(cardEl);
+      // limit cards
+      while (resultBody.children.length > MAX_RESULT_CARDS) {
+        resultBody.removeChild(resultBody.lastElementChild);
+      }
+    }
+
     const repeatBtn = document.getElementById("repeatBtn");
     const stopBtn = document.getElementById("stopBtn");
+
+    const clearBtn = document.getElementById("clearBtn");
+
+    clearBtn.addEventListener("click", ()=>{
+      // Stop any ongoing TTS
+      try { speechSynthesis.cancel(); } catch(e){}
+      // Clear cards
+      resultBody.innerHTML = "";
+      // reset repeat payload & buttons
+      repeatPayload = null;
+      setRepeatStop(false);
+      // show waiting message again
+      renderEmpty("Waiting for your question.");
+    });
+
 
 
     // Select-all behavior for manual input fallback (tap/click focuses and selects existing text)
@@ -1605,7 +1717,10 @@ function renderSpecsResult(spec){
     }
   }
 
-  resultBody.innerHTML = parts.join("");
+  const card = document.createElement("div");
+  card.className = "resultCard";
+  card.innerHTML = parts.join("");
+  addResultCard(card);
   setRepeatStop(false);
 }
 
@@ -1883,8 +1998,11 @@ function scoreItem(queryLower, qSig, item){
     // Result rendering (voice-first)
     // =========================
     function renderEmpty(text){
-      resultBody.className = "empty";
-      resultBody.innerHTML = text;
+      if (resultBody.children.length > 0) return;
+      const card = document.createElement("div");
+      card.className = "resultCard";
+      card.innerHTML = `<div class="subLine">${escapeHtml(String(text||""))}</div>`;
+      addResultCard(card);
       setRepeatStop(false);
     }
 
@@ -2251,8 +2369,11 @@ if (hasInfoBlock){
 
       resultBody.className = "";
       const spoken = buildSpokenAnswerParts(item);
-resultBody.className = "";
-      resultBody.innerHTML = html;
+      // append as a new result card
+      const card = document.createElement("div");
+      card.className = "resultCard";
+      card.innerHTML = html;
+      addResultCard(card);
       // Always speak base + info (info gate removed)
       const fullSpeech = spoken.info ? `${spoken.base} ${spoken.info}` : spoken.base;
       speak(fullSpeech);
@@ -2300,12 +2421,15 @@ const thumb = refImgs.length ? getRefImageUrl(refImgs[0]) : "";
         </button>`;
       }).join("") + `</div>`;
 
-      resultBody.innerHTML = html;
+      const card = document.createElement("div");
+      card.className = "resultCard";
+      card.innerHTML = html;
+      addResultCard(card);
       setRepeatStop(false);
       speak("Multiple matches. Please select the correct fastener on the screen.");
 
-      // bind
-      const btns = resultBody.querySelectorAll(".candBtn");
+      // bind inside this card only
+      const btns = card.querySelectorAll(".candBtn");
       btns.forEach((b, idx)=>{
         b.addEventListener("click", ()=>{
           const chosen = top[idx];
@@ -2577,7 +2701,7 @@ function initSpeech(){
     });
 
     // Init
-    renderEmpty("Waiting for your first question.");
+    renderEmpty("Waiting for your question.");
     setStatus("");
     initApp().catch((e)=>{ console.error(e); });
 </script>
