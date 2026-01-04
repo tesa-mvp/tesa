@@ -1131,6 +1131,21 @@
     const sendBtn = document.getElementById("sendBtn");
     const resultBody = document.getElementById("resultBody");
 
+    // Auto-scroll so the request controls stay at the top when a new request is made
+    let autoScrollToRequest = false;
+    function markRequestStart(){
+      autoScrollToRequest = true;
+    }
+    function scrollRequestArea(){
+      const anchor = document.querySelector(".voiceArea") || document.querySelector(".fallbackRow") || document.querySelector("header");
+      if (!anchor) {
+        window.scrollTo({top:0, behavior:"smooth"});
+        return;
+      }
+      anchor.scrollIntoView({behavior:"smooth", block:"start"});
+    }
+
+
     function addResultCard(cardEl){
       if (!cardEl) return;
       // remove empty state
@@ -1140,6 +1155,10 @@
       // limit cards
       while (resultBody.children.length > MAX_RESULT_CARDS) {
         resultBody.removeChild(resultBody.lastElementChild);
+      }
+      if (autoScrollToRequest) {
+        autoScrollToRequest = false;
+        scrollRequestArea();
       }
     }
 
@@ -2432,6 +2451,7 @@ const thumb = refImgs.length ? getRefImageUrl(refImgs[0]) : "";
       const btns = card.querySelectorAll(".candBtn");
       btns.forEach((b, idx)=>{
         b.addEventListener("click", ()=>{
+          markRequestStart();
           const chosen = top[idx];
           if (chosen && chosen.item) renderResult(chosen.item, {bestScore: chosen.score});
         });
@@ -2608,6 +2628,8 @@ if (!candidates.length){
     sendBtn.addEventListener("click", ()=> handleQuery(questionInput.value));
     questionInput.addEventListener("keydown", (e)=>{
       if (e.key === "Enter"){
+        markRequestStart();
+
         e.preventDefault();
         handleQuery(questionInput.value);
       }
@@ -2690,6 +2712,8 @@ function initSpeech(){
     }
 
     micBig.addEventListener("click", ()=>{
+      markRequestStart();
+
       if (!recognition) initSpeech();
       if (!recognition) return;
 
