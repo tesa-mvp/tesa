@@ -1,0 +1,427 @@
+{
+  "specs": [
+    {
+      "topic_id": "valve_clearance",
+      "title": "Valve Clearance",
+      "aliases": [
+        "valve clearance",
+        "desmo service",
+        "valve spec"
+      ],
+      "category": "Engine",
+      "groups": [
+        {
+          "group_title": "Assembly : IN = EX",
+          "format": "table",
+          "rows": [
+            {
+              "row_order": 1,
+              "col_1_label": "Condition",
+              "col_1_value": "Intake, Exhaust - Assembly",
+              "col_2_label": "Side",
+              "col_2_value": "Opening",
+              "col_3_label": "Value",
+              "col_3_value": "0.15 ÷ 0.20 mm"
+            },
+            {
+              "row_order": 2,
+              "col_1_label": "Condition",
+              "col_1_value": "Intake, Exhaust - Assembly",
+              "col_2_label": "Side",
+              "col_2_value": "Closing",
+              "col_3_label": "Value",
+              "col_3_value": "0.08 ÷ 0.13 mm"
+            }
+          ]
+        },
+        {
+          "group_title": "Reset : IN = EX",
+          "format": "table",
+          "rows": [
+            {
+              "row_order": 3,
+              "col_1_label": "Condition",
+              "col_1_value": "Intake, Exhaust - Reset",
+              "col_2_label": "Side",
+              "col_2_value": "Opening",
+              "col_3_label": "Value",
+              "col_3_value": "0.10 ÷ 0.25 mm"
+            },
+            {
+              "row_order": 4,
+              "col_1_label": "Condition",
+              "col_1_value": "Intake, Exhaust - Reset",
+              "col_2_label": "Side",
+              "col_2_value": "Closing",
+              "col_3_label": "Value",
+              "col_3_value": "0.08 ÷ 0.25 mm"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "topic_id": "tyre_pressure",
+      "title": "Tyre Pressure",
+      "aliases": [
+        "tyre pressure",
+        "tire pressure",
+        "tyre",
+        "tire"
+      ],
+      "category": "Chassis",
+      "groups": [
+        {
+          "group_title": "Road use",
+          "format": "table",
+          "note": "When cold",
+          "rows": [
+            {
+              "row_order": 1,
+              "col_1_label": "Use",
+              "col_1_value": "Road use",
+              "col_2_label": "Position",
+              "col_2_value": "Front",
+              "col_3_label": "Value",
+              "col_3_value": "2.5 bar (2.55 kg/sq. cm)"
+            },
+            {
+              "row_order": 2,
+              "col_1_label": "Use",
+              "col_1_value": "Road use",
+              "col_2_label": "Position",
+              "col_2_value": "Rear",
+              "col_3_label": "Value",
+              "col_3_value": "2.5 bar (2.55 kg/sq. cm)"
+            }
+          ]
+        },
+        {
+          "group_title": "Racing use",
+          "format": "table",
+          "note": "When cold",
+          "rows": [
+            {
+              "row_order": 3,
+              "col_1_label": "Use",
+              "col_1_value": "Racing use",
+              "col_2_label": "Position",
+              "col_2_value": "Front",
+              "col_3_label": "Value",
+              "col_3_value": "2.3 bar (2.35 kg/sq. cm)"
+            },
+            {
+              "row_order": 4,
+              "col_1_label": "Use",
+              "col_1_value": "Racing use",
+              "col_2_label": "Position",
+              "col_2_value": "Rear",
+              "col_3_label": "Value",
+              "col_3_value": "2.1 bar (2.14 kg/sq. cm)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "topic_id": "fork",
+      "title": "Fork",
+      "aliases": [
+        "fork",
+        "front fork",
+        "front suspension",
+        "fork fluid",
+        "fork oil"
+      ],
+      "category": "Chassis",
+      "groups": [
+        {
+          "group_title": "",
+          "format": "kv",
+          "pairs": [
+            {
+              "row_order": 1,
+              "label": "Make",
+              "value": "SHOWA"
+            },
+            {
+              "row_order": 2,
+              "label": "Stanchion diameter",
+              "value": "43 mm"
+            },
+            {
+              "row_order": 3,
+              "label": "Wheel Travel",
+              "value": "120 mm"
+            },
+            {
+              "row_order": 4,
+              "label": "Fork fluid",
+              "value": "SHELL Donax TA"
+            },
+            {
+              "row_order": 5,
+              "label": "Oil quantity, per leg",
+              "value": "92 mm (3.62 in)"
+            }
+          ]
+        },
+        {
+          "group_title": "Standard setting",
+          "format": "kv",
+          "pairs": [
+            {
+              "row_order": 6,
+              "label": "Comp",
+              "value": "7 turns (from fully closed)"
+            },
+            {
+              "row_order": 7,
+              "label": "Reb",
+              "value": "5.5 turns (from fully closed)"
+            },
+            {
+              "row_order": 8,
+              "label": "Pre",
+              "value": "7 turns (from fully open)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "topic_id": "shock_absorber",
+      "title": "Shock absorber",
+      "aliases": [
+        "shock absorber",
+        "shock",
+        "rear shock",
+        "rear suspension"
+      ],
+      "category": "Chassis",
+      "groups": [
+        {
+          "group_title": "",
+          "format": "kv",
+          "pairs": [
+            {
+              "row_order": 1,
+              "label": "Make",
+              "value": "Sachs"
+            },
+            {
+              "row_order": 2,
+              "label": "Stroke",
+              "value": "65 mm (2.56 in)"
+            },
+            {
+              "row_order": 3,
+              "label": "Wheel travel",
+              "value": "130 mm (5.12 in)"
+            }
+          ]
+        },
+        {
+          "group_title": "Standard setting",
+          "format": "kv",
+          "pairs": [
+            {
+              "row_order": 4,
+              "label": "Reb",
+              "value": "13 clicks from fully closed"
+            },
+            {
+              "row_order": 5,
+              "label": "Comp",
+              "value": "2.5 turns from fully closed"
+            },
+            {
+              "row_order": 6,
+              "label": "Pre",
+              "value": "14 mm from fully uncompressed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "topic_id": "drive_chain",
+      "title": "Drive Chain",
+      "aliases": [
+        "drive chain",
+        "chain"
+      ],
+      "category": "Chassis",
+      "groups": [
+        {
+          "group_title": "",
+          "format": "kv",
+          "pairs": [
+            {
+              "row_order": 1,
+              "label": "Size",
+              "value": 520
+            },
+            {
+              "row_order": 2,
+              "label": "No. of links",
+              "value": 106
+            },
+            {
+              "row_order": 3,
+              "label": "Make",
+              "value": "Regina 520 ZRDK"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "topic_id": "engine_oil",
+      "title": "Engine Oil",
+      "aliases": [
+        "engine oil",
+        "oil",
+        "oil type",
+        "oil capacity",
+        "oil quantity"
+      ],
+      "category": "Fluids",
+      "groups": [
+        {
+          "group_title": "",
+          "format": "kv",
+          "pairs": [
+            {
+              "row_order": 1,
+              "label": "Viscosity Grade",
+              "value": "15W-50"
+            },
+            {
+              "row_order": 2,
+              "label": "Capacity",
+              "value": "3.8 L (0.84 UK gal)"
+            },
+            {
+              "row_order": 3,
+              "label": "Rec. (USA, CAN, ITA, ENG, FRA, GER)",
+              "value": "SHELL Advance DUCATI 15W-50 Fully Synthetic"
+            },
+            {
+              "row_order": 4,
+              "label": "Rec. (Other countries)",
+              "value": "SHELL Advance 4T Ultra 15W-50 (JASO:MA2,API:SN)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "topic_id": "coolant",
+      "title": "Coolant",
+      "aliases": [
+        "coolant",
+        "antifreeze"
+      ],
+      "category": "Fluids",
+      "groups": [
+        {
+          "group_title": "",
+          "format": "kv",
+          "note": "Do not dilute",
+          "pairs": [
+            {
+              "row_order": 1,
+              "label": "Capacity",
+              "value": "2.3 L (0.50 UK gal)"
+            },
+            {
+              "row_order": 2,
+              "label": "Rec.",
+              "value": "ENI Agip Permanent Spezial antifreeze"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "topic_id": "brake_fluid",
+      "title": "Brake Fluid",
+      "aliases": [
+        "brake fluid",
+        "brake oil"
+      ],
+      "category": "Fluids",
+      "groups": [
+        {
+          "group_title": "",
+          "format": "kv",
+          "pairs": [
+            {
+              "row_order": 1,
+              "label": "Spec",
+              "value": "DOT 4"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "topic_id": "clutch_fluid",
+      "title": "Clutch Fluid",
+      "aliases": [
+        "clutch fluid",
+        "clutch oil"
+      ],
+      "category": "Fluids",
+      "groups": [
+        {
+          "group_title": "",
+          "format": "kv",
+          "pairs": [
+            {
+              "row_order": 1,
+              "label": "Spec",
+              "value": "DOT 4"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "topic_id": "fuel_tank",
+      "title": "Fuel Tank",
+      "aliases": [
+        "fuel tank",
+        "fuel capacity",
+        "tank capacity",
+        "gas octane",
+        "octane rating"
+      ],
+      "category": "Fluids",
+      "groups": [
+        {
+          "group_title": "",
+          "format": "kv",
+          "pairs": [
+            {
+              "row_order": 1,
+              "label": "Capacity",
+              "value": "17 L, including a reserve of 5 L"
+            },
+            {
+              "row_order": 2,
+              "label": "Rec.",
+              "value": "SHELL V-Power with 95-98 RON"
+            },
+            {
+              "row_order": 3,
+              "label": "Rec. (US market)",
+              "value": "SHELL V-Power with 90 (RON+MON)/2"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
