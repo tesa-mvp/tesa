@@ -392,7 +392,11 @@
       "topic_id": "fuel_tank",
       "title": "Fuel Tank",
       "aliases": [
-        "fuel tank|fuel capacity|gas octane|octane rating"
+        "fuel tank",
+        "fuel capacity",
+        "tank capacity",
+        "gas octane",
+        "octane rating"
       ],
       "category": "Fluids",
       "groups": [
@@ -403,17 +407,17 @@
             {
               "row_order": 1,
               "label": "Capacity",
-              "value": "17 L (3.74 UK gal), including a reserve of 5 L (1.10 UK gal)"
+              "value": "17 L, including a reserve of 5 L"
             },
             {
               "row_order": 2,
               "label": "Rec.",
-              "value": "SHELL V-Power with 95-98 RON fuel octane rating (at least)"
+              "value": "SHELL V-Power with 95-98 RON"
             },
             {
               "row_order": 3,
               "label": "Rec. (US market)",
-              "value": "SHELL V-Power with 90 (RON+MON)/2 fuel octane rating (at least)"
+              "value": "SHELL V-Power with 90 (RON+MON)/2"
             }
           ]
         }
