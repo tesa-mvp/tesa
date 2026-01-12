@@ -1,0 +1,68 @@
+{
+  "fastener_triggers": [
+    {
+      "trigger_phrase": "bolt",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "bolts",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "nut",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "nuts",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "screw",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "screws",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "fastener",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "fasteners",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "washer",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "washers",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "pin",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "pins",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "clip",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "clips",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "plug",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "mounting",
+      "word_count": 1
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "spec_triggers": [
+    {
+      "trigger_phrase": "clearance",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "gap",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "tyre",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "tire",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "pressure",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "viscosity",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "grade",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "grading",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "capacity",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "quantity",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "standard",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "settings",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "size",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "links",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "recommended",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "recommendation",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "type",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "octane",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "spec",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "level",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "fluid",
+      "word_count": 1
+    }
+  ]
+}

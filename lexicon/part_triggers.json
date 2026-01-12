@@ -1,0 +1,1230 @@
+{
+  "version": 1,
+  "source": "part_trigger.xlsx",
+  "part_triggers": [
+    {
+      "trigger_phrase": "abs bracket",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "abs control unit bracket",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "abs control unit support",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "abs support",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "abs unit bracket",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "abs unit support",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "ais",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "ais cover",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "battery cage",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "battery mount",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "battery tray",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "bbs bracket",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "bbs holder",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "bbs support",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "camshaft cap",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "camshaft gear",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "camshaft impeller",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "camshaft support",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "canister",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "canister bracket",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "canister holder",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "canister support",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "chain adjuster pinch",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "chain tensioner",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "clutch",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "clutch case cover",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "clutch cover",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "clutch hub",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "clutch inspection cover",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "clutch master cylinder",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "clutch noise dampener",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "clutch noise dampening sheet",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "clutch noise damper",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "clutch pressure plate",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "clutch slave cylinder",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "clutch sound dampener",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "clutch sound damper",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "connecting rod",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "crankcase",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "crankcase m6",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "crankcase m8",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "cylinder head",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "cylinder head timing chain side",
+      "word_count": 5
+    },
+    {
+      "trigger_phrase": "cylinder head cover",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "cylinder head stud",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "cylinder head stud 12 point",
+      "word_count": 5
+    },
+    {
+      "trigger_phrase": "cylinder head stud 6 point",
+      "word_count": 5
+    },
+    {
+      "trigger_phrase": "dashbaord support",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "dashboard bracket",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "dashboard support",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "decompressor",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "dog bone",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "eccentric hub",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "eccentric hub pinch",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "engine case",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "engine case m6",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "engine case m8",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "engine oil drain",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "exhaust manifold",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "exhaust pipe",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "flywheel",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "flywheel rotor",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "flywheel to rotor",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "fork pinch",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "front axle",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "front axle pinch",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "front brake caliper",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "front brake caliper mount",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "front brake caliper mounting",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "front brake cylinder",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "front brake disc",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "front brake disc rotor",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "front brake master cylinder",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "front caliper",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "front caliper mount",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "front caliper mounting",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "front disc",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "front disc rotor",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "front fender",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "front fork pinch",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "front frame",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "front mud guard",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "front sprocket",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "front suspension pinch",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "front wheel axle",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "front wheel axle pinch",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "front wheel shaft",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "front wheel shaft pinch",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "fuel level gauge",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "fuel level sensor",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "fuel line",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "fuel line joint",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "fuel overflow",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "fuel pump",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "fuel tank",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "fuel tank breather",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "fuel tank breather union",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "fuel tank fastener",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "fuel tank flange",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "fuel tank overflow",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "fuel tank overflow union",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "fuel tank quick coupling",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "gas overflow",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "gas tank",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "gas tank breather",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "gas tank overflow",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "gear change lever",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "gear change linkage",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "gear change pedal",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "gear change rod",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "gear position sensor",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "gear sensor",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "gear stop lever",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "gear stopper",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "gear stopper lever",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "gearbox control cover",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "gearbox cover",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "gearbox drum",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "gearbox drum flange",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "gearbox rachet",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "gearchange lever",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "generator",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "generator case cover",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "generator coil",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "generator cover",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "generator to case cover",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "handlebar clamp",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "head",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "head cover",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "head stud",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "heat exchanger",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "heel guard",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "hugger",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "iginition key bracket",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "iginition switch cover",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "iginition switch support",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "ignition cover",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "ignition cover special",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "ignition key cover",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "ignition key support",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "ignition switch bracket",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "ignition switch cover",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "ignition switch support",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "intake funnel",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "key switch cover special",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "left handlebar switch",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "leftside handlebar switch",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "lh handlbar switch",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "lower triple clamp pinch",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "main frame",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "mesh filter",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "mesh filter assembly",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "mirror",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "number plate",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "number plate holder",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "oil drain",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "oil filter",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "oil filter cap",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "oil filter cover",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "oil heat exchanger",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "oil mesh filter",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "oil pressure pump",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "oil pressure sensor",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "oil pump",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "oil pump cover",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "oil pump gear",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "oil pump idle gear",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "oil sump",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "passenger foot peg",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "passenger foot peg plate",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "pick-up sensor",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "pressure plate",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "primary drive gear",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "primary gear",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "primary sprocket",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "quick shfat sensor",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "quick shift sensor",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "quick shifter",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "quick stand",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "rear axle",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "rear brake caliper",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "rear brake caliper mount",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "rear brake caliper mounting",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "rear brake cylinder",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "rear brake cylinder bracket",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "rear brake cylinder holder",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "rear brake cylinder support",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "rear brake disc",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "rear brake disc rotor",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "rear brake fluid reservoir",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "rear brake lever",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "rear brake master cylider bracket",
+      "word_count": 5
+    },
+    {
+      "trigger_phrase": "rear brake master cylinder",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "rear brake master cylinder bracket",
+      "word_count": 5
+    },
+    {
+      "trigger_phrase": "rear brake master cylinder holder",
+      "word_count": 5
+    },
+    {
+      "trigger_phrase": "rear brake master cylinder rod",
+      "word_count": 5
+    },
+    {
+      "trigger_phrase": "rear brake master cylinder support",
+      "word_count": 5
+    },
+    {
+      "trigger_phrase": "rear brake pedal",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "rear brake puch rod",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "rear brake reservoir",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "rear brake rod",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "rear brake rotor",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "rear brake switch",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "rear caliper",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "rear caliper mount",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "rear caliper mounting",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "rear disc",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "rear disc rotor",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "rear fender",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "rear foot peg",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "rear mud guard",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "rear phonic wheel",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "rear rotor",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "rear shock",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "rear shock linkage",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "rear shock rocker arm",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "rear speed ring",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "rear speed sensor ring",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "rear sprocket",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "rear sprocket carrier",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "rear sprocket stud",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "rear sprocket stud-",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "rear stop sensor",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "rear suspension",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "rear suspension rocker arm",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "rear view mirror",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "rear wheel",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "rear wheel axle",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "rear wheel shaft",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "rider seat",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "rocker arm",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "rocker arm palte",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "rocker arm retainer plate",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "rocker arm shaft",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "rocker arm shaft plate",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "rocker arm shaft retainer plate",
+      "word_count": 5
+    },
+    {
+      "trigger_phrase": "rpm sensor",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "screen",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "seat",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "seat bracket",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "seat holder",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "seat support",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "secodary air system cover",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "secondary air system",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "secondary air valve",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "secondary air valve cover",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "shft lever",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "shift drum",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "shift pedal",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "shift rod",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "shock",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "shock linkage",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "shock rocker arm",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "side stand",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "spark",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "speed sensor",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "starter cable",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "starter motor",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "starter motor cable",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "stator",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "stator coil",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "steering dampener",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "steering damper",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "steering head",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "steering head ring",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "steering stem",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "steering stem pinch",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "stem",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "stem pinch",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "sterring head pinch",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "sub frame",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "sub frame to cylinder head",
+      "word_count": 5
+    },
+    {
+      "trigger_phrase": "sub frame to engine",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "sub frame to main frame",
+      "word_count": 5
+    },
+    {
+      "trigger_phrase": "swing arm",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "swing arm shaft",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "swing arm shaft pinch",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "swing arm support",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "swing arm support pinch",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "swingarm pinch",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "tail section",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "tank breather",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "tank flange",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "throttle body",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "throttle body mounting",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "timing chain gear cover",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "timing chain guide",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "timing chain guide special",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "timing chain roller",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "timing chain slide",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "timing chain slider",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "timing chain tensioner",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "timing chian guide",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "top clamp pinch",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "top triple clamp pinch",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "upper clamp pinch",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "upper triple clamp pinch",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "valve collet fitting tool",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "valve collet tool",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "valve cover",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "velocity stack",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "water pump",
+      "word_count": 2
+    },
+    {
+      "trigger_phrase": "water pump gear",
+      "word_count": 3
+    },
+    {
+      "trigger_phrase": "water pump idle gear",
+      "word_count": 4
+    },
+    {
+      "trigger_phrase": "windscreen",
+      "word_count": 1
+    },
+    {
+      "trigger_phrase": "windshield",
+      "word_count": 1
+    }
+  ]
+}
