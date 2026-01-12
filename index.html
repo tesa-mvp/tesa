@@ -634,26 +634,7 @@
 
     /* Small mic button next to model badge */
     .badgeRow{display:flex;align-items:center;justify-content:center;gap:8px;width:100%}
-    .micMini{
-      width:34px;height:34px;border-radius:999px;
-      border:1px solid var(--border);
-      background:rgba(9,11,18,.85);
-      color:var(--text);
-      cursor:pointer;
-      display:flex;align-items:center;justify-content:center;
-      transition:transform .08s ease, border-color .12s ease, opacity .12s ease;
-    }
-    .micMini:hover{border-color:rgba(79,140,255,.6)}
-    .micMini:active{transform:scale(.98)}
-    .micMini[disabled]{opacity:.35;cursor:not-allowed}
-    .micMini.listening{
-      border-color:rgba(39,228,159,.55);
-      box-shadow:0 0 0 2px rgba(39,228,159,.12) inset;
-    }
-    .micMini svg{width:16px;height:16px}
-
-
-    /* === Toast (MVP) === */
+/* === Toast (MVP) === */
     .toast{
       position: fixed;
       top: 18px;
@@ -820,6 +801,7 @@
 
 /* Top header row: logo left, account icon right */
 .topRow{
+  position:relative;
   width:100%;
   display:flex;
   align-items:center;
@@ -890,6 +872,63 @@
   padding:14px 14px 16px 14px;
 }
 
+
+/* Route on/off toggle (top center) */
+.routeToggleWrap{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background:rgba(9,11,18,.85);
+  color:var(--sub);
+  font-size:11px;
+  line-height:1;
+  user-select:none;
+}
+.routeToggleWrap .label{
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  font-weight:800;
+  color:var(--sub);
+}
+.routeToggle{
+  width:38px;
+  height:20px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.08);
+  position:relative;
+  cursor:pointer;
+  flex:0 0 auto;
+}
+.routeToggle .knob{
+  position:absolute;
+  top:2px; left:2px;
+  width:16px; height:16px;
+  border-radius:999px;
+  background:rgba(255,255,255,.75);
+  transition:left .12s ease, background .12s ease;
+}
+.routeToggleWrap.on{
+  border-color:rgba(39,228,159,.55);
+  box-shadow:0 0 0 2px rgba(39,228,159,.10) inset;
+  color:#cfe0ff;
+}
+.routeToggleWrap.on .routeToggle{
+  background:rgba(39,228,159,.20);
+  border-color:rgba(39,228,159,.35);
+}
+.routeToggleWrap.on .routeToggle .knob{
+  left:20px;
+  background:rgba(39,228,159,.85);
+}
+.routeToggleInput{ display:none; }
+
 </style>
 </head>
 
@@ -900,7 +939,16 @@
         <div class="leftBrand">
           <div class="brand">
             <div class="mark">T</div>
+          
+        <!-- Route on/off toggle (default OFF) -->
+        <div id="routeToggleWrap" class="routeToggleWrap" title="Router (LLM) on/off">
+          <span class="label">ROUTE</span>
+          <input id="routeToggleInput" class="routeToggleInput" type="checkbox" />
+          <div id="routeToggle" class="routeToggle" role="switch" aria-checked="false" tabindex="0">
+            <div class="knob"></div>
           </div>
+        </div>
+</div>
           <div class="brandText">
             <div class="t1">TESA</div>
             <div class="t2">Tech Spec Assistant</div>
@@ -921,13 +969,7 @@
         <span class="dot"></span>
         Select model…
       </div>
-      <button id="modelMicBtn" class="micMini" type="button" aria-label="Switch model by voice" title="Switch model by voice">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path fill="currentColor" d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3z"/>
-          <path fill="currentColor" d="M17 11a1 1 0 1 0-2 0 3 3 0 0 1-6 0 1 1 0 1 0-2 0 5.002 5.002 0 0 0 4 4.9V18H9a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2h-2v-2.1A5.002 5.002 0 0 0 17 11z"/>
-        </svg>
-      </button>
-    </div>
+</div>
     </header>
 
     <!-- Voice-first input -->
@@ -1049,8 +1091,6 @@
 // =========================
     // Data + Safety rails
     // =========================
-    const INDEX_CANDIDATES = ["./index.json", "index.json", "./data/index.json", "data/index.json"];
-    let INDEX_FILE_USED = null;
     let CURRENT_MODEL_ID = null;
     let CURRENT_DATASET_FILE = null;
     let CURRENT_MODEL_DISPLAY = null; // {make, label, years_label}
@@ -1058,18 +1098,592 @@
     const STORAGE_KEY_MODEL_ID = "TESA_last_model_id";
     const STORAGE_KEY_DATASET_FILE = "TESA_last_dataset_file";
 
-    const GENERIC_WORDS = [
-      "bolt","bolts","screw","screws","nut","nuts","washer","washers",
-      "pin","pins","clip","clips","fastener","fasteners",
-      "torque","tightening","spec","specs","value","values"
+    
+    // =========================
+    // Query cleanup lexicon (externalized)
+    // - Defaults live here for safety.
+    // - You can override them by adding JSON files:
+    //     ./lexicon/filler_phrases.json
+    //     ./lexicon/generic_stopwords.json
+    //     ./lexicon/extra_stopwords.json
+    // =========================
+    const LEXICON_FILES = {
+      filler_phrases: "./lexicon/filler_phrases.json",
+      generic_stopwords: "./lexicon/generic_stopwords.json",
+      extra_stopwords: "./lexicon/extra_stopwords.json"
+    };
+
+    // Built-in defaults (used if lexicon files are missing/unreadable)
+    let QUERY_FILLER_PHRASES = [
+];
+    let GENERIC_WORDS = [
+];
+    // Keep this conservative: removing too much can reduce matching quality.
+    let EXTRA_STOPWORDS = [
+];
+
+    // STOPWORDS is a derived set used by tokenize(). Rebuild after any lexicon update.
+    let STOPWORDS = new Set();
+    function rebuildStopwords(){
+      STOPWORDS = new Set([
+        ...GENERIC_WORDS,
+        ...EXTRA_STOPWORDS
+      ]);
+    }
+    rebuildStopwords();
+
+    let __lexiconLoadPromise = null;
+    async function loadLexiconOnce(){
+      if (__lexiconLoadPromise) return __lexiconLoadPromise;
+
+      __lexiconLoadPromise = (async () => {
+        try {
+          const [fillerResp, genericResp, extraResp] = await Promise.all([
+            fetch(LEXICON_FILES.filler_phrases, { cache: "no-store" }),
+            fetch(LEXICON_FILES.generic_stopwords, { cache: "no-store" }),
+            fetch(LEXICON_FILES.extra_stopwords, { cache: "no-store" })
+          ]);
+
+          // If any file is missing, keep defaults (do not hard-fail).
+          const safeJsonArray = async (resp) => {
+            if (!resp || !resp.ok) return null;
+            const data = await resp.json();
+            if (!Array.isArray(data)) return null;
+            return data.map(x => String(x)).filter(Boolean);
+          };
+
+          const fillerJson = await safeJsonArray(fillerResp);
+          const genericJson = await safeJsonArray(genericResp);
+          const extraJson = await safeJsonArray(extraResp);
+
+          if (fillerJson) QUERY_FILLER_PHRASES = fillerJson;
+          if (genericJson) GENERIC_WORDS = genericJson;
+          if (extraJson) EXTRA_STOPWORDS = extraJson;
+
+          rebuildStopwords();
+          // console.debug("[TESA lexicon] loaded", {
+          //   filler: QUERY_FILLER_PHRASES.length,
+          //   generic: GENERIC_WORDS.length,
+          //   extra: EXTRA_STOPWORDS.length
+          // });
+        } catch (e) {
+          // Keep built-in defaults
+          // console.warn("[TESA lexicon] load failed; using defaults.", e);
+          rebuildStopwords();
+        }
+      })();
+
+      return __lexiconLoadPromise;
+    }
+
+
+
+
+    
+    // =========================
+    // LLM Router (/api/route) – settings
+    // =========================
+    const DEBUG_ROUTE = true;
+
+    
+
+    // =========================
+    // LOCAL LEXICAL TRIGGERS (route parity)
+    // - spec/fastener triggers can be externalized (./lexicon/*.json)
+    // - part triggers are loaded from ./lexicon/part_triggers.json
+    // =========================
+
+    // Built-in defaults (used if lexicon JSON files are missing/unreadable)
+    let SPEC_TRIGGER_TOKENS = [
+      "clearance", "gap",
+      "tyre", "tire", "pressure",
+      "viscosity",
+      "grade", "grading",
+      "capacity", "quantity",
+      "standard", "settings",
+      "size", "links",
+      "recommended", "recommendation",
+      "type", "octane", "spec", "level", "fluid"
     ];
 
-    const MIN_SCORE_TO_ANSWER = 2;   // score too low → refuse
-    const MIN_GAP_TO_ANSWER   = 2;   // best-second gap too small → ambiguous
+    let FASTENER_TRIGGER_TOKENS = [
+      "tightening", "torque",
+      "bolt", "bolts",
+      "nut", "nuts",
+      "screw", "screws",
+      "fastener", "fasteners",
+      "washer", "washers",
+      "pin", "pins",
+      "clip", "clips",
+      "plug", "mounting"
+    ];
+
+    // External trigger lexicon (optional)
+    const SPEC_TRIGGERS_JSON_PATH = "./lexicon/spec_triggers.json";
+    const FASTENER_TRIGGERS_JSON_PATH = "./lexicon/fastener_triggers.json";
+
+    let __specTriggersLoaded = false;
+    let __specTriggersPromise = null;
+
+    async function loadSpecTriggers(){
+      if (__specTriggersLoaded) return;
+      if (__specTriggersPromise) return __specTriggersPromise;
+
+      __specTriggersPromise = (async ()=>{
+        try{
+          const r = await fetch(SPEC_TRIGGERS_JSON_PATH, { cache: "no-cache" });
+          if (!r.ok) throw new Error("spec_triggers_fetch_failed");
+          const j = await r.json();
+          const arr = (j && Array.isArray(j.spec_triggers)) ? j.spec_triggers : [];
+
+          const out = [];
+          const seen = new Set();
+          for (const it of arr){
+            const phrase = (it && it.trigger_phrase) ? String(it.trigger_phrase).trim().toLowerCase() : "";
+            if (!phrase) continue;
+            // spec triggers are tokens (1-3 words allowed, but we primarily use single tokens)
+            if (seen.has(phrase)) continue;
+            seen.add(phrase);
+            out.push(phrase);
+          }
+
+          if (out.length > 0){
+            SPEC_TRIGGER_TOKENS = out;
+          }
+          __specTriggersLoaded = true;
+        }catch(e){
+          __specTriggersLoaded = false;
+        }finally{
+          if (!__specTriggersLoaded){
+            __specTriggersPromise = null; // allow retry later
+          }
+        }
+      })();
+
+      return __specTriggersPromise;
+    }
+
+    let __fastenerTriggersLoaded = false;
+    let __fastenerTriggersPromise = null;
+
+    async function loadFastenerTriggers(){
+      if (__fastenerTriggersLoaded) return;
+      if (__fastenerTriggersPromise) return __fastenerTriggersPromise;
+
+      __fastenerTriggersPromise = (async ()=>{
+        try{
+          const r = await fetch(FASTENER_TRIGGERS_JSON_PATH, { cache: "no-cache" });
+          if (!r.ok) throw new Error("fastener_triggers_fetch_failed");
+          const j = await r.json();
+          const arr = (j && Array.isArray(j.fastener_triggers)) ? j.fastener_triggers : [];
+
+          const out = [];
+          const seen = new Set();
+          for (const it of arr){
+            const phrase = (it && it.trigger_phrase) ? String(it.trigger_phrase).trim().toLowerCase() : "";
+            if (!phrase) continue;
+            if (seen.has(phrase)) continue;
+            seen.add(phrase);
+            out.push(phrase);
+          }
+
+          if (out.length > 0){
+            FASTENER_TRIGGER_TOKENS = out;
+          }
+          __fastenerTriggersLoaded = true;
+        }catch(e){
+          __fastenerTriggersLoaded = false;
+        }finally{
+          if (!__fastenerTriggersLoaded){
+            __fastenerTriggersPromise = null; // allow retry later
+          }
+        }
+      })();
+
+      return __fastenerTriggersPromise;
+    }
+
+    // =========================
+    // Route v2 (LLM preprocess) – front decides intent (P/F/S rules)
+    // =========================
+    const LLM_QUERY_CONF_MIN = 0.85;      // use llm_query for trigger scan only if >= this
+    const PART_PHRASES_CONF_MIN = 0.60;   // use LLM part_phrases only if >= this
+
+    const LLM_QUERY_GUARD_MAX_EDIT_DIST = 2;
+    const LLM_QUERY_GUARD_REQUIRE_SAME_TOKEN_COUNT = true; // disallow token add/delete
+
+    function __tokenizeNormalized(nq){
+      const s = String(nq || "").trim().toLowerCase();
+      return s ? s.split(/\s+/).filter(Boolean) : [];
+    }
+
+    function __editDistance(a, b){
+      a = String(a || "");
+      b = String(b || "");
+      if (a === b) return 0;
+      const al = a.length, bl = b.length;
+      if (al === 0) return bl;
+      if (bl === 0) return al;
+
+      const dp = new Array(bl + 1);
+      for (let j=0; j<=bl; j++) dp[j] = j;
+
+      for (let i=1; i<=al; i++){
+        let prev = dp[0];
+        dp[0] = i;
+        for (let j=1; j<=bl; j++){
+          const tmp = dp[j];
+          const cost = (a[i-1] === b[j-1]) ? 0 : 1;
+          dp[j] = Math.min(
+            dp[j] + 1,
+            dp[j-1] + 1,
+            prev + cost
+          );
+          prev = tmp;
+        }
+      }
+      return dp[bl];
+    }
+
+    function __llmQueryPassesGuard(localNq, llmNq){
+      const a = __tokenizeNormalized(localNq);
+      const b = __tokenizeNormalized(llmNq);
+
+      if (LLM_QUERY_GUARD_REQUIRE_SAME_TOKEN_COUNT && a.length !== b.length) return false;
+      if (b.length === 0 || a.length === 0) return false;
+
+      for (let i=0; i<Math.min(a.length, b.length); i++){
+        const d = __editDistance(a[i], b[i]);
+        if (d > LLM_QUERY_GUARD_MAX_EDIT_DIST) return false;
+      }
+      return true;
+    }
+
+    function __filterSingleTokenTriggers(terms, specTerms, fastTerms){
+      if (!Array.isArray(terms)) return [];
+      const banned = new Set([
+        ...(Array.isArray(specTerms) ? specTerms : []),
+        ...(Array.isArray(fastTerms) ? fastTerms : [])
+      ].map(s => String(s||"").trim().toLowerCase()).filter(Boolean));
+
+      const out = [];
+      const seen = new Set();
+      for (const t of terms){
+        if (typeof t !== "string") continue;
+        const norm = t.trim().toLowerCase();
+        if (!norm) continue;
+        if (seen.has(norm)) continue;
+        if (norm.includes(" ")) { out.push(norm); seen.add(norm); continue; }
+        if (banned.has(norm)) continue;
+        out.push(norm);
+        seen.add(norm);
+      }
+      return out;
+    }
+
+    function __decideIntentFromPFS(part_terms_found, fastener_terms_found, spec_terms_found){
+      const P = Array.isArray(part_terms_found) && part_terms_found.length > 0;
+      const F = Array.isArray(fastener_terms_found) && fastener_terms_found.length > 0;
+      const S = Array.isArray(spec_terms_found) && spec_terms_found.length > 0;
+
+      if (!P && !F && !S) return "unknown";        // 0,0,0
+      if (!P && !F &&  S) return "spec_lookup";    // 0,0,1
+      if (!P &&  F && !S) return "torque_lookup";  // 0,1,0
+      if (!P &&  F &&  S) return "unknown";        // 0,1,1  (your rule)
+      if ( P && !F && !S) return "torque_lookup";  // 1,0,0
+      if ( P && !F &&  S) return "spec_lookup";    // 1,0,1
+      if ( P &&  F && !S) return "torque_lookup";  // 1,1,0
+      if ( P &&  F &&  S) return "torque_lookup";  // 1,1,1
+      return "unknown";
+    }
+
+    function __buildItemCandidates(intent, part_terms_found, fastener_terms_found, spec_terms_found){
+      if (intent === "spec_lookup"){
+        return [...part_terms_found, ...spec_terms_found].slice(0, 30);
+      }
+      if (intent === "torque_lookup"){
+        return [...part_terms_found, ...fastener_terms_found].slice(0, 30);
+      }
+      return [];
+    }
+
+
+
+    const PART_TRIGGERS_JSON_PATH = "./lexicon/part_triggers.json";
+    let __partTriggersLoaded = false;
+    let __partTriggersPromise = null;
+    let __partTriggerByLen = new Map(); // len -> Set(phrase)
+async function loadPartTriggers(){
+      if (__partTriggersLoaded) return;
+      if (__partTriggersPromise) return __partTriggersPromise;
+
+      __partTriggersPromise = (async ()=>{
+        try{
+          const r = await fetch(PART_TRIGGERS_JSON_PATH, { cache: "no-cache" });
+          const j = await r.json();
+          const arr = (j && Array.isArray(j.part_triggers)) ? j.part_triggers : [];
+
+          const nextMap = new Map(); // len -> Set(phrase)
+          for (const it of arr){
+            const phrase = (it && it.trigger_phrase) ? String(it.trigger_phrase).trim().toLowerCase() : "";
+            const wc = (it && typeof it.word_count === "number") ? it.word_count : (phrase ? phrase.split(/\s+/).length : 0);
+            if (!phrase || wc < 1 || wc > 5) continue;
+            if (!nextMap.has(wc)) nextMap.set(wc, new Set());
+            nextMap.get(wc).add(phrase);
+          }
+
+          __partTriggerByLen = nextMap;
+          __partTriggersLoaded = true;
+        }catch(e){
+          // leave empty (graceful fallback); allow retry on next call
+          __partTriggersLoaded = false;
+        }finally{
+          // If we didn't finish successfully, clear the promise so a later call can retry.
+          if (!__partTriggersLoaded){
+            __partTriggersPromise = null;
+          }
+        }
+      })();
+
+      return __partTriggersPromise;
+    }
+
+    function __uniq(arr){
+      const out = [];
+      const seen = new Set();
+      for (const x of (arr||[])){
+        const s = String(x||"").trim().toLowerCase();
+        if (!s || seen.has(s)) continue;
+        seen.add(s);
+        out.push(s);
+      }
+      return out;
+    }
+
+    function __makeNgrams(tokens, maxN){
+      const out = [];
+      const t = tokens || [];
+      const nmax = Math.min(maxN||5, 5);
+      for (let i=0;i<t.length;i++){
+        for (let n=1;n<=nmax;n++){
+          if (i+n>t.length) break;
+          out.push(t.slice(i,i+n).join(" "));
+        }
+      }
+      return out;
+    }
+
+    function localLexicalRoute(scoringQuery){
+      const tokens = tokenize(scoringQuery);
+      const tokenSet = new Set(tokens);
+
+      const spec_terms_found = SPEC_TRIGGER_TOKENS.filter(w => tokenSet.has(w));
+      const fastener_terms_found = FASTENER_TRIGGER_TOKENS.filter(w => tokenSet.has(w));
+
+      // Part terms: n-gram match (prefer longer first)
+      const ngrams = __makeNgrams(tokens, 5);
+      const part_terms_found = [];
+      const partSeen = new Set();
+
+      for (let L=5; L>=1; L--){
+        const setL = __partTriggerByLen.get(L);
+        if (!setL || setL.size===0) continue;
+        for (const ng of ngrams){
+          if (ng.split(" ").length !== L) continue;
+          if (setL.has(ng) && !partSeen.has(ng)){
+            partSeen.add(ng);
+            part_terms_found.push(ng);
+            if (part_terms_found.length >= 20) break;
+          }
+        }
+        if (part_terms_found.length >= 20) break;
+      }
+
+      const hasSpec = spec_terms_found.length>0;
+      const hasFast = fastener_terms_found.length>0;
+      const hasPart = part_terms_found.length>0;
+
+      let intent = "unknown";
+      if (hasSpec && !hasFast){
+        intent = "spec_lookup";
+      }else if (hasFast && !hasSpec){
+        intent = "torque_lookup";
+      }else if (hasPart && !hasSpec && !hasFast){
+        intent = "torque_lookup";
+      }else if (hasPart && hasSpec && hasFast){
+        intent = "torque_lookup";
+      }else if (!hasPart && !hasSpec && !hasFast){
+        intent = "unknown";
+      }else if (!hasPart && hasSpec && hasFast){
+        intent = "unknown";
+      }
+
+      let item_candidates = [];
+      if (intent === "spec_lookup"){
+        item_candidates = __uniq([ ...part_terms_found, ...spec_terms_found ]);
+      }else if (intent === "torque_lookup"){
+        item_candidates = __uniq([ ...part_terms_found, ...fastener_terms_found ]);
+      }else{
+        item_candidates = [];
+      }
+
+      return { intent, spec_terms_found, fastener_terms_found, part_terms_found, item_candidates };
+    }
+// =========================
+    // ROUTE ON/OFF (DEV + FALLBACK)
+    // Default: OFF (local-only). When OFF, callRouteAPI() returns null immediately.
+    // Persisted in localStorage for convenience.
+    // =========================
+    const ROUTE_TOGGLE_STORAGE_KEY = "TESA_route_enabled";
+    let ROUTE_ENABLED = false;
+
+
+
+    
+    // Router confidence gates (LLM routing)
+    const ROUTE_CONF_MIN = 0.55; // trust LLM normalized_query at/above this
+
+    const ROUTE_TIMEOUT_MS = 9000;
+
+    // Backend base URLs (Router)
+    const ROUTE_API_BASE_PROD = "https://tesa-api-backend.vercel.app";
+    // If you run a local backend later, set this to something like:
+    // "http://localhost:3000"
+    const ROUTE_API_BASE_LOCAL = ROUTE_API_BASE_PROD;
+
+    function getRouteApiBase(){
+      const host = (location.hostname || "").toLowerCase();
+      if (host === "localhost" || host === "127.0.0.1") return ROUTE_API_BASE_LOCAL;
+      return ROUTE_API_BASE_PROD; // GitHub Pages or anything else
+    }
+
+    function withTimeout(promise, ms){
+      return new Promise((resolve, reject)=>{
+        const t = setTimeout(()=>reject(new Error("timeout")), ms);
+        promise.then(
+          v=>{ clearTimeout(t); resolve(v); },
+          e=>{ clearTimeout(t); reject(e); }
+        );
+      });
+    }
+
+    // =========================
+    // Router cache (avoid double /api/route calls per query)
+    // =========================
+    const ROUTE_CACHE_TTL_MS = 60 * 1000; // 60s
+    const __routeCache = new Map(); // key -> {t:number, v:object|null}
+
+    function getRouteCache(key){
+      const k = String(key || "").trim();
+      if (!k) return null;
+      const hit = __routeCache.get(k);
+      if (!hit) return null;
+      if ((Date.now() - hit.t) > ROUTE_CACHE_TTL_MS){
+        __routeCache.delete(k);
+        return null;
+      }
+      return hit.v ?? null;
+    }
+
+    function setRouteCache(key, value){
+      const k = String(key || "").trim();
+      if (!k) return;
+      __routeCache.set(k, { t: Date.now(), v: value ?? null });
+    }
+
+// =========================
+    
+    // =========================
+    // ROUTE DEBUG TRACE (DEV ONLY)
+    // Toggle to enable/disable verbose router tracing.
+    // Easy removal: delete this block and the two call sites in callRouteAPI().
+    // =========================
+    const DEBUG_ROUTE_TRACE = true;
+    const DEBUG_ROUTE_SUMMARY = false; // legacy per-line logs
+
+    function __tesaRouteDebugStart(label, reqBody, rawResponse){
+      if (!DEBUG_ROUTE_TRACE) return;
+      console.groupCollapsed(label);
+      console.log("request_body_sent", reqBody);
+      console.log("raw_route_response", rawResponse);
+
+      // Quick-scan lexical fields (only if backend includes them)
+      if (rawResponse && typeof rawResponse === "object"){
+        if (Array.isArray(rawResponse.spec_terms_found)) console.log("spec_terms_found", rawResponse.spec_terms_found);
+        if (Array.isArray(rawResponse.fastener_terms_found)) console.log("fastener_terms_found", rawResponse.fastener_terms_found);
+        if (Array.isArray(rawResponse.part_terms_found)) console.log("part_terms_found", rawResponse.part_terms_found);
+      }
+    }
+
+    function __tesaRouteDebugEnd(guarded){
+      if (!DEBUG_ROUTE_TRACE) return;
+      console.log("guarded_route_object", guarded);
+      if (guarded && guarded.debug){
+        console.log("route_debug_llm_intermediates", guarded.debug);
+      }
+      console.groupEnd();
+    }
+
+
+async function callRouteAPI(rawQuery){
+      if (!ROUTE_ENABLED) return null;
+const base = getRouteApiBase();
+      const url = `${base}/api/route`;
+
+const body = { normalized_query: String(rawQuery || ""),
+        debug: !!DEBUG_ROUTE_TRACE, locale: "en" };
+
+      
+      // Cache hit (prevents double network calls when autoswitch + handleQuery both route)
+      const cacheKey = String(body.normalized_query || '').trim();
+      const cached = getRouteCache(cacheKey);
+      if (cached) return cached;
+try{
+        const r = await withTimeout(fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        }), ROUTE_TIMEOUT_MS);
+
+        const data = await r.json().catch(()=>null);
+
+        // DEV TRACE (router)
+        __tesaRouteDebugStart("[TESA route] " + (body.normalized_query || ""), body, data);
+
+        if (!r.ok) throw new Error((data && (data.error || data.message)) || `route_http_${r.status}`);
+
+        // Basic shape guard (Route v2 only)
+        const guarded = {
+llm_query: (typeof data?.llm_query === "string") ? data.llm_query : "",
+          llm_query_confidence: (typeof data?.llm_query_confidence === "number") ? data.llm_query_confidence : 0,
+          part_phrases: Array.isArray(data?.part_phrases) ? data.part_phrases : [],
+          part_phrases_confidence: (typeof data?.part_phrases_confidence === "number") ? data.part_phrases_confidence : 0,
+          overall_confidence: (typeof data?.overall_confidence === "number") ? data.overall_confidence : Math.max(0, Math.min(1, (((typeof data?.llm_query_confidence === "number") ? data.llm_query_confidence : 0) + ((typeof data?.part_phrases_confidence === "number") ? data.part_phrases_confidence : 0)) / 2))
+        };        setRouteCache(cacheKey, guarded);
+        if (typeof __tesaRouteDebugEnd === "function") __tesaRouteDebugEnd(guarded);
+        return guarded;
+      }catch(e){
+        if (DEBUG_ROUTE){
+          console.warn("[TESA route] router call failed:", e?.message || e);
+        }
+        return null;
+      }
+    }
+
+const MIN_SCORE_TO_ANSWER = 24;   // score too low → refuse (0-100 scoring)
+    const MIN_GAP_TO_ANSWER   = 7;   // best-second gap too small → ambiguous (0-100 scoring)
+    const MULTI_MIN_SCORE    = 27;  // Multi-match list hides candidates below this score
     const MAX_CANDIDATES_UI   = 3;
 
     let torqueData = [];
     let bikeMeta = null;
+
+    // =========================
+    // Scoring (token + phrase + rarity) – PoC v2
+    // =========================
+    let TOKEN_FREQ = new Map();          // token -> number of items containing token
+    let TOKEN_TOTAL_ITEMS = 0;           // for debugging / future IDF
+    let SCORING_INDEX_READY = false;
 
     // Specs (service data) - lazy loaded per model (cached until model change)
     let specsIndex = null;        // parsed service.json object
@@ -1086,7 +1700,55 @@
 
     // DOM
     const makeBadgeEl = document.getElementById("makeBadge");
-    const modelBadgeEl = document.getElementById("modelBadge");
+    
+
+    // Route toggle UI (top center)
+    const routeToggleWrapEl = document.getElementById("routeToggleWrap");
+    const routeToggleInputEl = document.getElementById("routeToggleInput");
+    const routeToggleEl = document.getElementById("routeToggle");
+
+    function setRouteEnabled(next){
+      ROUTE_ENABLED = !!next;
+      try{ localStorage.setItem(ROUTE_TOGGLE_STORAGE_KEY, ROUTE_ENABLED ? "1" : "0"); }catch(e){}
+      if (routeToggleWrapEl) routeToggleWrapEl.classList.toggle("on", ROUTE_ENABLED);
+      if (routeToggleEl) routeToggleEl.setAttribute("aria-checked", ROUTE_ENABLED ? "true" : "false");
+      if (routeToggleInputEl) routeToggleInputEl.checked = ROUTE_ENABLED;
+      if (typeof showToast === "function"){
+        showToast(ROUTE_ENABLED ? "Route: ON" : "Route: OFF");
+      }
+    }
+
+    function setupRouteToggle(){
+      // default OFF, restore persisted state if exists
+      let saved = null;
+      try{ saved = localStorage.getItem(ROUTE_TOGGLE_STORAGE_KEY); }catch(e){}
+      const initial = (saved === "1");
+      setRouteEnabled(initial);
+
+      const toggle = ()=> setRouteEnabled(!ROUTE_ENABLED);
+
+      if (routeToggleInputEl){
+        routeToggleInputEl.addEventListener("change", ()=> setRouteEnabled(!!routeToggleInputEl.checked));
+      }
+      if (routeToggleEl){
+        routeToggleEl.addEventListener("click", toggle);
+        routeToggleEl.addEventListener("keydown", (ev)=>{
+          if (ev.key === "Enter" || ev.key === " "){
+            ev.preventDefault();
+            toggle();
+          }
+        });
+      }
+      if (routeToggleWrapEl){
+        routeToggleWrapEl.addEventListener("click", (ev)=>{
+          // avoid double toggle if clicking the switch itself
+          if (ev.target === routeToggleEl || routeToggleEl?.contains(ev.target)) return;
+          toggle();
+        });
+      }
+    }
+
+const modelBadgeEl = document.getElementById("modelBadge");
 const statusLine = document.getElementById("statusLine");
     const micBig = document.getElementById("micBig");
 
@@ -1200,6 +1862,8 @@ const statusLine = document.getElementById("statusLine");
       try { speechSynthesis.cancel(); } catch(e){}
       // Clear cards
       resultBody.innerHTML = "";
+      // Clear typed fallback input
+      if (questionInput) questionInput.value = "";
       // reset repeat payload & buttons
       repeatPayload = null;
       setRepeatStop(false);
@@ -1240,154 +1904,9 @@ const statusLine = document.getElementById("statusLine");
     enableSelectAllOnFocus(questionInput);
 
 
-    const modelMicBtn = document.getElementById("modelMicBtn");
+    
 
-    // Model voice switch (separate recognition session)
-    let modelRecognition = null;
-    let modelListening = false;
-
-
-    // =========================
-// Voice: Small MIC (model switch only)
-// =========================
-function initModelSpeech(){
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRecognition){
-        if (modelMicBtn) modelMicBtn.disabled = true;
-        return null;
-      }
-      const r = new SpeechRecognition();
-      r.lang = "en-US";
-      r.interimResults = false;
-      r.maxAlternatives = 1;
-
-      r.onstart = ()=>{
-        modelListening = true;
-        if (modelMicBtn) modelMicBtn.classList.add("listening");
-        setStatus("Listening for model…", true, false);
-      };
-      r.onerror = (ev)=>{
-        modelListening = false;
-        if (modelMicBtn) modelMicBtn.classList.remove("listening");
-        setStatus("Model voice error: " + ev.error, true, true);
-      };
-      r.onend = ()=>{
-        modelListening = false;
-        if (modelMicBtn) modelMicBtn.classList.remove("listening");
-        // If we were listening specifically for model, go back to ready
-        if (statusLine && statusLine.textContent && statusLine.textContent.startsWith("Listening for model")){
-          setStatus("Ready.", true, false);
-        }
-      };
-      r.onresult = (ev)=>{
-        const t = ev.results[0][0].transcript || "";
-        handleModelVoice(t);
-      };
-      return r;
-    }
-
-    function normalizeModelCommand(text){
-      let s = String(text || "").toLowerCase().trim();
-      // common prefixes
-      s = s.replace(/^hey\s+tesa[, ]*/i, "");
-      s = s.replace(/^(switch|change|set|use)\s+(model\s+)?(to\s+)?/i, "");
-      s = s.replace(/^model\s+(to\s+)?/i, "");
-      // normalize punctuation/spaces
-      s = s.replace(/[“”"']/g, "");
-      s = s.replace(/\s+/g, " ").trim();
-      return s;
-    }
-
-    function pickModelByVoice(text){
-      if (!modelIndex) return { status:"NO_INDEX" };
-      const q = normalizeModelCommand(text);
-      if (!q) return { status:"EMPTY" };
-
-      const models = flattenModels(modelIndex);
-
-      let best = null;
-      let bestScore = -1;
-      let secondScore = -1;
-
-      for (const m of models){
-        const candidates = [];
-        const make = String(m.make || "").toLowerCase().trim();
-        const label = String(m.label || "").toLowerCase().trim();
-
-        if (label) candidates.push(label);
-        if (make && label) candidates.push((make + " " + label).trim());
-        (m.aliases || []).forEach(a=>{
-          const aa = String(a || "").toLowerCase().trim();
-          if (aa) candidates.push(aa);
-        });
-
-        let localBest = -1;
-        for (const a of candidates){
-          // match if command contains alias OR alias contains command (handles short input like "v4s")
-          if (q.includes(a) || a.includes(q)){
-            // Score: prefer longer, more specific hits
-            const score = 100 + Math.min(a.length, 60);
-            if (score > localBest) localBest = score;
-          }
-        }
-
-        if (localBest > bestScore){
-          secondScore = bestScore;
-          bestScore = localBest;
-          best = m;
-        } else if (localBest > secondScore){
-          secondScore = localBest;
-        }
-      }
-
-      if (!best || bestScore < 0) return { status:"NO_MATCH" };
-
-      // Ambiguous if top scores tie closely (simple MVP rule)
-      if (secondScore === bestScore){
-        return { status:"AMBIGUOUS" };
-      }
-
-      return { status:"OK", model: best, query: q };
-    }
-
-    async function handleModelVoice(transcript){
-      const picked = pickModelByVoice(transcript);
-
-      if (picked.status === "NO_INDEX"){
-        setStatus("Model list not loaded yet.", true, true);
-        speak("Model list is not loaded yet.");
-        return;
-      }
-      if (picked.status === "EMPTY"){
-        setStatus("Say a model name, like V4S.", true, true);
-        speak("Please say a model name, for example V4 S.");
-        openSheet("make");
-        return;
-      }
-      if (picked.status === "NO_MATCH"){
-        setStatus("No model match. Tap to select.", true, true);
-        speak("I couldn't find that model. Please tap to select.");
-        renderSheet();
-        openSheet("make");
-        return;
-      }
-      if (picked.status === "AMBIGUOUS"){
-        setStatus("Multiple model matches. Tap to select.", true, true);
-        speak("Multiple model matches. Please tap to select.");
-        renderSheet();
-        openSheet("make");
-        return;
-      }
-
-      // OK
-      const m = picked.model;
-      setStatus("Switching model…", true, false);
-      await setCurrentModel(m.id, m.file, {speakConfirm:true});
-      closeSheet();
-}
-
-
-    // Model index + selector UI
+// Model index + selector UI
     const sheetOverlay = document.getElementById("sheetOverlay");
     const sheetBody = document.getElementById("sheetBody");
     const sheetClose = document.getElementById("sheetClose");
@@ -1399,31 +1918,22 @@ let modelIndex = null; // loaded from INDEX_FILE
     let SELECTED_MAKE_ID = null;
     let SELECTED_MAKE_LABEL = null;
 async function loadModelIndex(){
-      const tried = [];
-      const bust = `v=${Date.now()}`;
+      try{
+        const url = new URL("./index.json", window.location.href);
+        url.searchParams.set("v", String(Date.now()));
 
-      for (const cand of INDEX_CANDIDATES){
-        try{
-          const url = new URL(cand, window.location.href);
-          url.searchParams.set("v", String(Date.now()));
+        setStatus("Loading model list…", true, false);
 
-          tried.push(url.toString());
-          setStatus("Loading model list…", true, false);
+        const res = await fetch(url.toString(), { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-          const res = await fetch(url.toString(), { cache: "no-store" });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-          modelIndex = await res.json();
-          INDEX_FILE_USED = cand;
-          return modelIndex;
-        } catch(e){
-          // continue
-        }
+        modelIndex = await res.json();
+        return modelIndex;
+      } catch(e){
+        console.error("index.json load failed:", e);
+        setStatus("Model list failed to load (index.json missing). Make sure index.json is in the same folder as index.html.", true, true);
+        throw e;
       }
-
-      console.error("index.json load failed. Tried:", tried);
-      setStatus("Model list failed to load (index.json not found). Check that index.json is in the same folder as index.html.", true, true);
-      throw new Error("index.json not found");
     }
 
     async function ensureModelIndexLoaded(){
@@ -1455,19 +1965,7 @@ async function loadModelIndex(){
       }
     }
 
-    function updateMakeBadge(){
-      // When make changes, clear model display (user must pick model again)
-      CURRENT_MODEL_ID = null;
-      CURRENT_DATASET_FILE = null;
-      CURRENT_MODEL_DISPLAY = null;
-      updateBadges();
-
-      if (prevModelId && prevModelId !== CURRENT_MODEL_ID){
-        clearResultHistory();
-      }
-    }
-
-
+    
 
     function setSheetMode(mode){
       sheetMode = mode === "model" ? "model" : "make";
@@ -1513,6 +2011,8 @@ async function loadModelIndex(){
             label: m?.label || m?.model || m?.name || "Model",
             years_label: m?.years_label || (m?.years ? `${m.years.from}–${m.years.to}` : ""),
             years: m?.years_label || (m?.years ? `${m.years.from}–${m.years.to}` : ""),
+            years_from: (m?.years && typeof m.years.from === "number") ? m.years.from : null,
+            years_to: (m?.years && typeof m.years.to === "number") ? m.years.to : null,
             group_id: m?.group_id || null,
             group_label: m?.group_label || null,
             file: m?.file,
@@ -1562,12 +2062,6 @@ async function loadModelIndex(){
             const mk = makes.find(x => x.id === makeId);
             SELECTED_MAKE_ID = makeId;
             SELECTED_MAKE_LABEL = mk ? mk.label : makeId;
-
-            if (prevMake && prevMake !== SELECTED_MAKE_ID){
-              clearResultHistory();
-            }
-
-            updateBadges();
             setSheetMode("model");
             renderSheet();
           });
@@ -1677,6 +2171,9 @@ async function loadModelIndex(){
       // Load dataset for selected model
       await loadTorqueData(CURRENT_DATASET_FILE);
 
+      // Preload service specs for the same model (service.json)
+      try{ await loadSpecsDataIfNeeded(); }catch(e){}
+
       // After dataset load, re-apply badge from CURRENT_MODEL_DISPLAY (prevents any accidental overrides)
       if (CURRENT_MODEL_DISPLAY){
         updateBadges();
@@ -1709,7 +2206,10 @@ async function loadModelIndex(){
 // App bootstrap
 // =========================
 async function initApp(){
-      // Make badge interactive (tap to open sheet) even before fully ready.
+
+      // Setup route toggle before any router use
+      try{ setupRouteToggle(); }catch(e){}
+// Make badge interactive (tap to open sheet) even before fully ready.
       if (makeBadgeEl) makeBadgeEl.classList.add("clickable");
       if (modelBadgeEl) modelBadgeEl.classList.add("clickable");
 
@@ -1751,17 +2251,6 @@ async function initApp(){
       setStatus("Select a manufacturer to begin.", true, false);
       showToast("Select a manufacturer");
       openSheet("make");
-
-      // If index.json provides a default model, highlight it in the sheet (no auto-load)
-      const defId = modelIndex?.default_model_id;
-      const models = flattenModels(modelIndex);
-      const def = models.find(x=>x.id === defId) || models[0] || null;
-      if (def){
-        CURRENT_MODEL_ID = def.id;
-        CURRENT_DATASET_FILE = def.file;
-        CURRENT_MODEL_DISPLAY = { make: def.make, label: def.label, years_label: def.years_label };
-        renderSheet(); // refresh active highlight
-      }
     }
 
 
@@ -1924,13 +2413,6 @@ function renderSpecsResult(spec){
   setRepeatStop(false);
 }
 
-function getSignificantWords(str){
-      return String(str || "")
-        .toLowerCase()
-        .split(/[^a-z0-9]+/)
-        .filter(w => w.length > 2 && !GENERIC_WORDS.includes(w));
-    }
-
     async function loadTorqueData(datasetFile){
 
 try{
@@ -1954,7 +2436,13 @@ try{
   bikeMeta = meta;
   torqueData = Array.isArray(meta.items) ? meta.items : [];
 
-  const make = meta.make || "Unknown";
+  // Build token frequency stats for scoring (fast; runs once per dataset load)
+  try{ buildScoringIndex(torqueData); } catch(e){ console.warn('Scoring index build failed', e); }
+
+  
+
+  // Preload service specs (service.json) together with torque dataset
+  try{ await loadSpecsDataIfNeeded(); } catch(e){}const make = meta.make || "Unknown";
   const model = meta.model || "Model";
   const yFrom = meta.year_from ?? "";
   const yTo   = meta.year_to ?? "";  setStatus(`Ready. (${torqueData.length} items)`, true, false);
@@ -2099,22 +2587,6 @@ function formatTorqueValueHtml(valueText){
   return `<span class="stepNum">${escapeHtml(num)}</span><span class="stepUnit">Nm</span>`;
 }
 
-function getTorqueStepsForSpeech(item){
-  // Returns an array of objects compatible with the speech builder:
-  // [{ step, torque_nm?, angle_deg?, raw? }]
-  const tt = (item && item.tightening_type ? String(item.tightening_type).trim().toLowerCase() : "");
-  if (tt !== "multi_step") return [];
-
-  if (Array.isArray(item.torque_steps) && item.torque_steps.length){
-    return item.torque_steps;
-  }
-  if (item.torque_steps != null && String(item.torque_steps).trim()){
-    const lines = parseTorqueStepsText(item.torque_steps);
-    return lines.map((line, idx) => ({ step: String(idx + 1), raw: line }));
-  }
-  return [];
-}
-
 
 function getExtraNotesList(item){
   const v = item?.extra_notes;
@@ -2149,52 +2621,242 @@ function getSpecialTools(item){
   return out.filter(t => t.special_tool_name || t.special_tool_number);
 }
 
-function scoreItem(queryLower, qSig, item){
-      let textParts = [];
-      if (item.component_name) textParts.push(item.component_name);
-      if (Array.isArray(item.common_name)) textParts.push(item.common_name.join(" "));
-      const fullText = textParts.join(" ").toLowerCase();
-      if (!fullText) return 0;
+// =========================
+    // Scoring v2 (token overlap + coverage + phrase bonus + rare token bonus)
+    // =========================
 
-      // hit count
-      let hits = 0;
-      for (const w of qSig) if (fullText.includes(w)) hits++;
-      let score = hits;
-
-      // component_name bonus
-      if (item.component_name){
-        const cn = item.component_name.toLowerCase();
-        if (queryLower === cn) score += 5;
-        else if (queryLower.includes(cn) || cn.includes(queryLower)) score += 2;
-      }
-
-      // common_name bonus
-      if (Array.isArray(item.common_name)){
-        for (const aRaw of item.common_name){
-          const a = String(aRaw || "").toLowerCase();
-          if (!a) continue;
-          if (queryLower === a) score += 4;
-          else if (queryLower.includes(a) || a.includes(queryLower)) score += 1;
-        }
-      }
-      return score;
+    function escapeRegExp(str){
+      return String(str).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     }
 
-    function findCandidates(query){
-      const qLower = query.toLowerCase();
-      const qSig = getSignificantWords(query);
-      if (!qSig.length) return [{__special:"NO_SIG_WORDS"}];
+    function normTextForTokens(s){
+      let out = String(s || "").toLowerCase();
+
+      // Remove common intent filler phrases (e.g., "tell me about", "show me").
+      // This keeps scoring focused on part-relevant tokens.
+      for (const ph of QUERY_FILLER_PHRASES){
+        if (!ph) continue;
+        // Escape any regex characters so phrases remain plain text matches.
+        // Use word boundaries at both ends to avoid nuking substrings.
+        const rePh = new RegExp("\\b" + escapeRegExp(ph) + "\\b", "gi");
+        out = out.replace(rePh, " ");
+      }
+
+      return out
+        .replace(/[“”"']/g, "")
+        .replace(/[^a-z0-9]+/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function tokenize(s){
+      const t = normTextForTokens(s);
+      if (!t) return [];
+      const raw = t.split(" ");
+      // Keep "m6", "m10" etc (len 2+), drop 1-char noise
+      return raw.filter(w => w.length >= 2);
+    }
+
+// Fast path tokenizer for already-normalized strings (output of normalizeQuery()).
+// Assumes: lowercase, single-space separated tokens, filler phrases already removed, STOPWORDS already removed.
+function tokenizeNormalized(s){
+  const t = String(s || "").trim();
+  if (!t) return [];
+  return t.split(/\s+/).filter(w => w.length >= 2);
+}
+
+
+    // Tokenizer used ONLY inside normalizeQuery() to remove STOPWORDS.
+    // It intentionally does NOT apply STOPWORDS filtering itself; normalizeQuery decides what to drop.
+    function tokenizeForNormalize(s){
+      const t = normTextForTokens(s);
+      if (!t) return [];
+      return t.split(" ").filter(Boolean);
+    }
+
+
+    function uniq(arr){
+      return Array.from(new Set(arr));
+    }
+
+    function buildItemSearchText(item){
+      const parts = [];
+      if (item?.component_name) parts.push(String(item.component_name));
+      if (Array.isArray(item?.common_name) && item.common_name.length){
+        parts.push(item.common_name.map(x=>String(x||"")).join(" "));
+      } else if (item?.common_name){
+        parts.push(String(item.common_name));
+      }
+      return normTextForTokens(parts.join(" "));
+    }
+
+    function buildScoringIndex(items){
+      TOKEN_FREQ = new Map();
+      TOKEN_TOTAL_ITEMS = Array.isArray(items) ? items.length : 0;
+      SCORING_INDEX_READY = false;
+
+      if (!Array.isArray(items) || !items.length) return;
+
+      for (const it of items){
+        // cache normalized text and tokens per item for fast scoring
+        const txt = buildItemSearchText(it);
+        it.__searchText = txt; // normalized full text
+        const toks = uniq(tokenize(txt));
+        it.__tokens = toks;
+
+        for (const tok of toks){
+          TOKEN_FREQ.set(tok, (TOKEN_FREQ.get(tok) || 0) + 1);
+        }
+      }
+      SCORING_INDEX_READY = true;
+    }
+
+    function ngrams(tokens, n){
+      const out = [];
+      if (!Array.isArray(tokens) || tokens.length < n) return out;
+      for (let i=0; i<=tokens.length - n; i++){
+        out.push(tokens.slice(i, i+n).join(" "));
+      }
+      return out;
+    }
+
+    function phraseBonus(queryTokens, itemSearchText){
+      // Conservative bonuses; cap to avoid overpowering overlap/coverage
+      let b = 0;
+      const q3 = ngrams(queryTokens, 3);
+      const q2 = ngrams(queryTokens, 2);
+
+      for (const p of q3){
+        if (itemSearchText.includes(p)) b += 10;
+      }
+      for (const p of q2){
+        if (itemSearchText.includes(p)) b += 6;
+      }
+      return Math.min(b, 24);
+    }
+
+    function rareTokenBonus(matchedTokens){
+      // Tie-breaker: reward discriminative terms, never penalize missing role words
+      let b = 0;
+      for (const t of matchedTokens){
+        const f = TOKEN_FREQ.get(t) || 9999;
+        if (f <= 2) b += 8;
+        else if (f <= 5) b += 5;
+        else if (f <= 12) b += 2;
+      }
+      return Math.min(b, 20);
+    }
+
+    function exactMatchBonus(queryNorm, item){
+      // "equal" match gets a strong boost, but we still require other signals in most cases
+      let b = 0;
+
+      const cn = normTextForTokens(item?.component_name || "");
+      if (cn){
+        if (queryNorm === cn) b = Math.max(b, 18);
+        else if (queryNorm.includes(cn) || cn.includes(queryNorm)) b = Math.max(b, 6);
+      }
+
+      const ca = Array.isArray(item?.common_name) ? item.common_name : (item?.common_name ? [item.common_name] : []);
+      for (const aRaw of ca){
+        const a = normTextForTokens(aRaw);
+        if (!a) continue;
+        if (queryNorm === a) b = Math.max(b, 18);
+        else if (queryNorm.includes(a) || a.includes(queryNorm)) b = Math.max(b, 6);
+      }
+      return b;
+    }
+
+
+    function llmTokenBonus(bonusTokens, itemSet){
+      if (!bonusTokens || !bonusTokens.length) return {score:0, hits:[]};
+      const hits = [];
+      // Treat part_candidates as soft hints. We never penalize if missing.
+      for (const bc of bonusTokens){
+        const toks = tokenize(normTextForTokens(String(bc||"")));
+        for (const t of toks){
+          if (itemSet.has(t)){
+            hits.push(t);
+          }
+        }
+      }
+      const uniqHits = uniq(hits);
+      // Small, capped bonus to avoid overpowering deterministic scoring.
+      const score = Math.min(10, uniqHits.length * 3); // 0..10
+      return {score, hits: uniqHits};
+    }
+
+    function scoreItemV2(queryNorm, item, bonusTokens){
+      // queryNorm is expected to be the already-normalized nq (output of normalizeQuery).
+      const qTokens = tokenizeNormalized(queryNorm);
+      if (!qTokens.length) return { score: 0, breakdown: { reason: "NO_TOKENS" } };
+
+      const itemText = item?.__searchText || buildItemSearchText(item);
+      const itemTokens = item?.__tokens || uniq(tokenize(itemText));
+
+      if (!itemText || !itemTokens.length) return { score: 0, breakdown: { reason: "EMPTY_ITEM" } };
+
+      const itemSet = new Set(itemTokens);
+
+      const matched = [];
+      for (const t of qTokens){
+        if (itemSet.has(t)) matched.push(t);
+      }
+
+      const overlapCount = matched.length;
+      if (!overlapCount) return { score: 0, breakdown: { overlap: 0 } };
+
+      // Components
+      const overlapScore = overlapCount * 6; // main driver
+      const coverage = overlapCount / qTokens.length;
+      const coverageScore = Math.round(coverage * 30); // 0..30
+      const pBonus = phraseBonus(qTokens, itemText);   // 0..24
+      const rBonus = rareTokenBonus(uniq(matched));    // 0..20
+      const eBonus = exactMatchBonus(queryNorm, item); // 0..18
+      const llm = llmTokenBonus(bonusTokens, itemSet); // 0..10
+
+      let total = overlapScore + coverageScore + pBonus + rBonus + eBonus + (llm.score||0);
+
+      // Cap + floor
+      if (total < 0) total = 0;
+      if (total > 100) total = 100;
+
+      const breakdown = {
+        overlap: overlapScore,
+        coverage: coverageScore,
+        phrase: pBonus,
+        rare: rBonus,
+        exact: eBonus,
+        llm_bonus: llm.score || 0,
+        llm_hits: llm.hits || [],
+        matched_tokens: uniq(matched),
+        q_tokens: qTokens
+      };
+
+      return { score: total, breakdown };
+    }
+
+    function findCandidates(queryNorm, bonusTokens){
+      // queryNorm is expected to be the already-normalized nq (output of normalizeQuery).
+      const qNorm = String(queryNorm || "").trim();
+      const qTokens = tokenizeNormalized(qNorm);
+
+      // Rail #1 helper: if query has no meaningful tokens, treat as too generic
+      if (!qTokens.length){
+        return [{__special:"NO_SIG_WORDS"}];
+      }
 
       const scored = [];
       for (const item of torqueData){
-        const s = scoreItem(qLower, qSig, item);
-        if (s > 0) scored.push({item, score:s});
+        const r = scoreItemV2(qNorm, item, bonusTokens);
+        if (r.score > 0){
+          scored.push({ item, score: r.score, breakdown: r.breakdown });
+        }
       }
       scored.sort((a,b)=>b.score-a.score);
       return scored;
     }
-
-    // =========================
+// =========================
     // Result rendering (voice-first)
     // =========================
     function renderEmpty(text){
@@ -2586,6 +3248,7 @@ if (hasInfoBlock){
       let html = `
         <div class="partName">Multiple matches</div>
         <div class="subLine">Tap the correct one (safer than guessing).</div>
+        ${info && info.multiMinScore ? `<div class="subLine muted">Showing candidates with score ≥ ${info.multiMinScore}.</div>` : ``}
       `;
 
       html += `<div class="candidates">` + top.map(({item, score})=>{
@@ -2682,12 +3345,32 @@ function escapeHtml(s){
         el.setAttribute("aria-live","polite");
         document.body.appendChild(el);
       }
+
       el.textContent = String(message || "");
       el.classList.add("show");
       if (__toastTimer) clearTimeout(__toastTimer);
       __toastTimer = setTimeout(()=>{
         el.classList.remove("show");
       }, ms);
+    }
+
+    // =========================
+    // Z2: Requery hint (local-only)
+    // =========================
+    function showRequeryHint(msg){
+      const text = msg || "Ask again w/ more information.";
+      const el = document.getElementById("fallbackNoticeText")
+        || document.getElementById("fallbackNotice")
+        || document.getElementById("fallbackHint")
+        || document.getElementById("waitingText")
+        || document.getElementById("statusText");
+      if (el){
+        el.textContent = text;
+        const wrap = el.closest(".fallbackNotice") || el.closest(".notice") || el.parentElement;
+        if (wrap && wrap.style) wrap.style.display = "";
+      } else {
+        if (typeof showToast === "function") showToast(text);
+      }
     }
 
     function normalizeQuery(q){
@@ -2705,7 +3388,16 @@ function escapeHtml(s){
         s = s.replaceAll(k, v);
       }
 
-      return s;
+      // 1) Basic cleanup + filler-phrase removal (via normTextForTokens)
+      const base = normTextForTokens(s);
+      if (!base) return "";
+
+      // 2) Tokenize + remove STOPWORDS (normalize-only process)
+      const tokens = tokenizeForNormalize(base);
+      const kept = tokens.filter(w => w.length >= 2 && !STOPWORDS.has(w));
+
+      // 3) Join with single spaces. No further whitespace cleanup needed.
+      return kept.join(" ");
     }
 
     // =========================
@@ -2715,23 +3407,240 @@ function escapeHtml(s){
     // =========================
 // Torque query + rendering
 // =========================
-function handleQuery(raw){
+async function handleQuery(raw, __preRoute){
       const q = String(raw || "").trim();
-      const nq = normalizeQuery(q);
-      if (!q){
+
+      // Ensure query-cleanup lexicon is loaded before normalization/tokenization
+      await loadLexiconOnce();
+
+      const localNq = normalizeQuery(q);
+
+      // Empty query guard (avoid unnecessary /api/route calls; check normalized query)
+      if (!localNq){
         setStatus("Say a part name, or type in the box.", true, true);
         renderEmpty("Waiting for your question.");
         return;
       }
-      if (!torqueData.length){
-        setStatus("Dataset not loaded yet.", true, true);
-        renderEmpty("Dataset not loaded yet.");
+
+
+      // LLM router (intent + optional normalized query)
+      const routeInput = (localNq && localNq.trim()) ? localNq : q;
+      
+      // === Route v2 preprocess (optional) ===
+      const pre = __preRoute ? __preRoute : await callRouteAPI(routeInput);
+
+      // Decide which query string to use for trigger scanning (spec/fast/part)
+      let llmQuery = "";
+      let qConf = 0;
+      let pConf = 0;
+      let oConf = 0;
+      let partPhrasesRaw = [];
+      if (pre){
+        llmQuery = normalizeQuery(pre.llm_query || "");
+        qConf = typeof pre.llm_query_confidence === "number" ? pre.llm_query_confidence : 0;
+        pConf = typeof pre.part_phrases_confidence === "number" ? pre.part_phrases_confidence : 0;
+        oConf = (typeof pre.overall_confidence === "number") ? pre.overall_confidence : Math.max(0, Math.min(1, ((qConf + pConf) / 2)));
+        partPhrasesRaw = Array.isArray(pre.part_phrases) ? pre.part_phrases : [];
+      }
+
+      const useLlmQueryForTriggers =
+        (oConf >= LLM_QUERY_CONF_MIN) &&
+        llmQuery &&
+        __llmQueryPassesGuard(localNq, llmQuery);
+
+      const triggerQuery = useLlmQueryForTriggers ? llmQuery : localNq;
+
+      // Base lexical extraction (deterministic) from triggerQuery
+      try{ await loadPartTriggers(); }catch(e){}
+      try{ await loadSpecTriggers(); }catch(e){}
+      try{ await loadFastenerTriggers(); }catch(e){}
+      const lr = localLexicalRoute(triggerQuery);
+      const spec_terms_found = Array.isArray(lr?.spec_terms_found) ? lr.spec_terms_found : [];
+      const fastener_terms_found = Array.isArray(lr?.fastener_terms_found) ? lr.fastener_terms_found : [];
+
+      // Part terms selection policy (LLM vs local)
+      // - If triggerQuery is localNq: use local triggers (lr.part_terms_found)
+      // - If triggerQuery is llmQuery: keep only original LLM phrases whose tokens remain
+      //   after dropping spec/fastener trigger tokens (>= 1 token left). If none remain,
+      //   part_terms_found stays [] (no local fallback by design).
+      let part_terms_found = [];
+      let usedLlmPartPhrases = false;
+
+      if (!useLlmQueryForTriggers){
+        part_terms_found = Array.isArray(lr?.part_terms_found) ? lr.part_terms_found : [];
+        usedLlmPartPhrases = false;
+      }else{
+        const dropSet = new Set([ ...SPEC_TRIGGER_TOKENS, ...FASTENER_TRIGGER_TOKENS ]);
+        const kept = [];
+        const seen = new Set();
+
+        for (const phr of (Array.isArray(partPhrasesRaw) ? partPhrasesRaw : [])){
+          const original = String(phr || "").trim();
+          if (!original) continue;
+
+          const toks = __tokenizeNormalized(normalizeQuery(original));
+          const remaining = toks.filter(t => !dropSet.has(t));
+
+          if (remaining.length >= 2){
+            const key = original.toLowerCase();
+            if (!seen.has(key)){
+              seen.add(key);
+              kept.push(original);
+              if (kept.length >= 20) break;
+            }
+          }
+        }
+
+        part_terms_found = kept;
+        usedLlmPartPhrases = (part_terms_found.length > 0);
+      }
+
+// Safety: remove single-token trigger words from part_terms_found
+      part_terms_found = __filterSingleTokenTriggers(part_terms_found, spec_terms_found, fastener_terms_found);
+
+      // Intent: your P/F/S rule (deterministic)
+      const __intent = __decideIntentFromPFS(part_terms_found, fastener_terms_found, spec_terms_found);
+      const __itemCandidates = __buildItemCandidates(__intent, part_terms_found, fastener_terms_found, spec_terms_found);
+
+      // Route v2-only pipeline variables (no v1 / no v1-like bridge)
+      const routeIntent = __intent;
+      const itemCandidates = Array.isArray(__itemCandidates) ? __itemCandidates : [];
+      const bonusTokens = itemCandidates;
+      const hasItems = !!(itemCandidates && itemCandidates.length > 0);
+
+      // LLM normalized query adoption (v2): use the SAME gate as triggerQuery (llm vs local) decision.
+// This intentionally aligns specQuery + scoringQuery to triggerQuery gating.
+      const llmAccepted = !!useLlmQueryForTriggers;
+      const llmNq = llmAccepted ? normalizeQuery(llmQuery) : "";
+
+      // Scoring query: use the SAME gate as triggerQuery.
+      const nq = (llmAccepted && llmNq && llmNq.trim()) ? llmNq : localNq;
+
+// =========================
+      // Debug: decision summary (DEV ONLY)
+      // =========================
+      if (DEBUG_ROUTE_TRACE){
+        try{
+          console.groupCollapsed("[TESA decision] " + (routeInput || ""));
+          console.log("nq_decision", {
+            chosen: nq,
+            source: (llmNq && llmNq.trim()) ? "llmNq" : "localNq",
+            localNq,
+            llmNq,
+            llmAccepted,
+            usedLlmPartPhrases,
+            useLlmQueryForTriggers,
+            triggerQuery,
+            oConf,
+            qConf,
+            pConf,
+            LLM_QUERY_CONF_MIN,
+            ROUTE_CONF_MIN
+          });
+          console.log("intent", routeIntent);
+          console.log("spec_terms_found", spec_terms_found);
+          console.log("fastener_terms_found", fastener_terms_found);
+          console.log("part_terms_found", part_terms_found);
+          console.log("item_candidates", itemCandidates);
+          console.groupEnd();
+        }catch(e){}
+      }
+
+      // =========================
+      // D: decide path based on intent + item_candidates presence (Route OFF safe)
+      // Z2: intent unknown OR no item candidates -> ask user to requery with more info.
+      // =========================
+      if (!hasItems || routeIntent === "unknown"){
+        showRequeryHint("Ask again w/ more information.");
+        return;
+      }
+// // Dataset presence checks (intent-based)
+      const isTorqueIntent = (routeIntent === "torque_lookup");
+      const isSpecIntent = (routeIntent === "spec_lookup");
+
+      if (isTorqueIntent && !torqueData.length){
+        setStatus("Torque dataset not loaded yet.", true, true);
+        renderEmpty("Torque dataset not loaded yet.");
+        return;
+      }
+
+      if (isSpecIntent){
+        const sp = await loadSpecsDataIfNeeded();
+        const hasSpecs = !!(sp && Array.isArray(sp.specs) && sp.specs.length);
+        if (!hasSpecs){
+          setStatus("Service specs dataset not loaded yet.", true, true);
+          renderEmpty("Service specs dataset not loaded yet.");
+          return;
+        }
+      }
+// =========================
+      // Intent gate: service specs (service.json)
+      // =========================
+      // If the router is confident this is a spec/service question, try service lookup first.
+// If no spec match is found, ask the user to rephrase (no torque fallback from spec).
+      const specQuery = (llmAccepted && llmNq && llmNq.trim()) ? llmNq : localNq;
+                  const specGate = (routeIntent === "spec_lookup");
+
+      if (specGate){
+        if (DEBUG_ROUTE){
+          console.log(`[TESA spec] intent=spec_lookup (accepted). specQuery=`, specQuery);
+        }
+        try{
+          const sp = await loadSpecsDataIfNeeded();
+          if (sp){
+            const specCandidates = findSpecCandidates(specQuery);
+            if (specCandidates.length){
+              const bestSpec = specCandidates[0].spec;
+              setStatus("Match found.", true, false);
+              renderSpecsResult(bestSpec);
+              logQuery({ type: "spec", query: q, normalized: specQuery, match: (bestSpec.topic_id || bestSpec.id || bestSpec.title || "") });
+              return;  // spec found; stop here (do not continue to torque scoring)
+            }
+          }
+          if (DEBUG_ROUTE){
+            console.warn("[TESA spec] spec_lookup gated but no spec match; asking user to rephrase.");
+          }
+          showRequeryHint("I couldn't find that spec. Try asking with more detail.");
+          return;
+        }catch(e){
+          if (DEBUG_ROUTE){
+            console.warn("[TESA spec] spec lookup failed; asking user to rephrase.", e);
+          }
+          showRequeryHint("I couldn't find that spec. Try asking with more detail.");
+          return;
+        }
+      }
+      // Intent gate: torque path (torque_lookup)
+      const torqueGate = (routeIntent === "torque_lookup");
+      if (!torqueGate){
+        if (DEBUG_ROUTE){
+          console.log(`[TESA torque] not gated (intent=${routeIntent}).`);
+        }
+        showRequeryHint("Ask again w/ more information.");
+        renderEmpty("Try asking about torque or spec with more detail.");
         return;
       }
 
       setStatus("Searching…", true, false);
 
-      const candidates = findCandidates(nq);
+      const candidates = findCandidates(nq, bonusTokens);
+
+      if (DEBUG_ROUTE){
+        console.log(`[TESA torque] gated (intent=${routeIntent}).`);
+      }
+
+      // Debug: show top matches with score breakdown
+      try{
+        const topN = candidates.filter(x=>!x.__special).slice(0, 5);
+        if (topN.length){
+          console.groupCollapsed(`[TESA match] "${q}" → "${nq}" (top ${topN.length})`);
+          topN.forEach((c, i)=>{
+            const title = c.item?.component_name || c.item?.id || `#${i+1}`;
+            console.log(`#${i+1}  score=${c.score}`, title, c.breakdown);
+          });
+          console.groupEnd();
+        }
+      } catch(e){}
 
       // Rail #1: too generic
       if (candidates.length && candidates[0].__special === "NO_SIG_WORDS"){
@@ -2741,26 +3650,13 @@ function handleQuery(raw){
         return;
       }
 
-// No torque candidates → try specs (lazy)
+// No torque candidates
 if (!candidates.length){
-  (async ()=>{
-    const sp = await loadSpecsDataIfNeeded();
-    if (sp){
-      const specCandidates = findSpecCandidates(nq);
-      if (specCandidates.length){
-        const bestSpec = specCandidates[0].spec;
-        setStatus("Match found.", true, false);
-        renderSpecsResult(bestSpec);
-        logQuery({ type: "spec", query: q, normalized: nq, match: (bestSpec.topic_id || "") });
-        return;
-      }
-    }
     setStatus("No match in dataset.", true, true);
     renderEmpty("No match. This part may not be in the current dataset.");
-    speak("No matching fastener found. This part may not be in the current dataset.");
+    speak("No matching data found. This may not be in the current dataset.");
     logQuery({ type: "none", query: q, normalized: nq, match: "" });
-  })();
-  return;
+    return;
 }
 
       const best = candidates[0];
@@ -2768,45 +3664,195 @@ if (!candidates.length){
       const bestScore = best.score;
       const gap = second ? (best.score - second.score) : best.score;
 
-      // Rail #2: low score → try specs (lazy) before refusing
+      // Rail #2: low score → refuse
       if (bestScore < MIN_SCORE_TO_ANSWER){
-        (async ()=>{
-          const sp = await loadSpecsDataIfNeeded();
-          if (sp){
-            const specCandidates = findSpecCandidates(nq);
-            if (specCandidates.length){
-              const bestSpec = specCandidates[0].spec;
-              setStatus("Match found.", true, false);
-              renderSpecsResult(bestSpec);
-              logQuery({ type: "spec", query: q, normalized: nq, match: (bestSpec.topic_id || "") });
-              return;
-            }
-          }
-          setStatus("Low confidence. Be more specific.", true, true);
-          renderEmpty("No confident match. Try a more specific part name (add location/system).");
-          speak("No confident match. Try a more specific part name.");
-          logQuery({ type: "none", query: q, normalized: nq, match: "" });
-        })();
+        setStatus("Low confidence. Be more specific.", true, true);
+        renderEmpty("No confident match. Try a more specific part name (add location/system).");
+        speak("No confident match. Try a more specific part name.");
+        logQuery({ type: "none", query: q, normalized: nq, match: "" });
         return;
       }
+
 
       // Rail #3: ambiguous → user choose
       if (second && gap < MIN_GAP_TO_ANSWER){
+        // In multi-match mode, hide low-score candidates that are effectively noise.
+        const meaningful = candidates.filter(c => (c.score ?? 0) >= MULTI_MIN_SCORE);
+
+        // If filtering leaves only one meaningful candidate, treat it as a single match.
+        if (meaningful.length <= 1){
+          setStatus("Matched.", true, true);
+          renderResult(candidates[0].item);
+          logQuery({ type: "torque", query: q, normalized: nq, match: candidates[0].item.id || candidates[0].item.component_name || "" });
+          return;
+        }
+
         setStatus("Ambiguous. Select the correct one.", true, true);
-        renderAmbiguous(candidates, {bestScore, gap});
+        renderAmbiguous(meaningful, {bestScore, gap, multiMinScore: MULTI_MIN_SCORE});
         return;
       }
-
-      // Confident
+// Confident
       setStatus("Match found.", true, false);
       renderResult(best.item, {bestScore, gap});
       logQuery({ type: "torque", query: q, normalized: nq, match: (best.item && (best.item.component_name || best.item.id || "")) });
     }
 
+
     // =========================
+    // Model autoswitch (v3_2 base)
+    // - Deterministic index.json matching first
+    // - LLM (/api/route) only for "model info not in TESA" detection (B case)
+    // =========================
+
+    const MODELINFO_YEAR_MIN = 2000;
+    const MODELINFO_DATA_TOKEN_THRESHOLD = 2; // remaining tokens >=2 => data request included (agreed)
+
+    function extractYearHints(raw){
+      const years = [];
+      const s = String(raw || "");
+      const re = /\b(\d{4})\b/g;
+      let m;
+      while ((m = re.exec(s)) !== null){
+        const y = parseInt(m[1], 10);
+        if (Number.isFinite(y) && y >= MODELINFO_YEAR_MIN){
+          years.push(y);
+        }
+      }
+      const uniq = Array.from(new Set(years));
+      return { years: uniq, year: (uniq.length === 1 ? uniq[0] : null), tooMany: uniq.length >= 2 };
+    }
+
+    function stripFillerPhrasesLower(s){
+      let t = String(s || "").toLowerCase();
+      for (const p of QUERY_FILLER_PHRASES){
+        const pp = String(p || "").trim().toLowerCase();
+        if (!pp) continue;
+        // replace as a phrase (pad with spaces to reduce accidental deletes)
+        t = (" " + t + " ").replaceAll(" " + pp + " ", " ");
+        t = t.replace(/\s+/g, " ").trim();
+      }
+      return t;
+    }
+
+        function getMakeMatchTokens(normQuery){
+      // Manufacturer tokens from index.json (make label + make_id)
+      const out = new Set();
+      const padded = " " + (normQuery || "") + " ";
+      const mfgs = Array.isArray(modelIndex?.manufacturers) ? modelIndex.manufacturers : [];
+      for (const m of mfgs){
+        const mkLabel = normTextForTokens(String(m?.make || m?.label || "")) || "";
+        const mkId = normTextForTokens(String(m?.make_id || m?.id || "")) || "";
+        if (mkLabel && padded.includes(" " + mkLabel + " ")) out.add(mkLabel);
+        if (mkId && padded.includes(" " + mkId + " ")) out.add(mkId);
+      }
+      return Array.from(out);
+    }
+
+    function yearInRange(model, year){
+      if (!year) return null;
+      const y = year;
+      // model.years_label is a string; actual range may be in model.years or embedded in label
+      if (model && model.years && typeof model.years === "object"){
+        const yf = parseInt(model.years.from, 10);
+        const yt = parseInt(model.years.to, 10);
+        if (Number.isFinite(yf) && Number.isFinite(yt)){
+          return (yf <= y && y <= yt);
+        }
+      }
+      // fallback: try parse "YYYY–YYYY" from years_label
+      const yl = String(model?.years_label || "");
+      const mm = yl.match(/(\d{4})\D+(\d{4})/);
+      if (mm){
+        const yf = parseInt(mm[1], 10), yt = parseInt(mm[2], 10);
+        if (Number.isFinite(yf) && Number.isFinite(yt)){
+          return (yf <= y && y <= yt);
+        }
+      }
+      return null;
+    }
+
+    function buildModelCandidates(normQuery, year){
+      const padded = " " + (normQuery || "") + " ";
+      const qToks = (normQuery || "").split(" ").filter(Boolean);
+      const qSet = new Set(qToks);
+
+      const models = flattenModels(modelIndex);
+      const candidates = [];
+
+      for (const m of models){
+        const phrases = [];
+        const label = normTextForTokens(m.label) || "";
+        if (label) phrases.push({ kind:"label", text: label });
+        (m.aliases || []).forEach(a=>{
+          const aa = normTextForTokens(a) || "";
+          if (aa) phrases.push({ kind:"alias", text: aa });
+        });
+
+        let bestOverlap = 0;
+        let bestPhrase = "";
+        let exactHit = false;
+        let exactPhrase = "";
+
+        for (const ph of phrases){
+          const ptoks = ph.text.split(" ").filter(Boolean);
+          let overlap = 0;
+          for (const t of ptoks){
+            if (qSet.has(t)) overlap += 1;
+          }
+          if (overlap > bestOverlap){
+            bestOverlap = overlap;
+            bestPhrase = ph.text;
+          }
+
+          // Exact phrase match for auto-switch eligibility
+          if (padded.includes(" " + ph.text + " ")){
+            exactHit = true;
+            // prefer the longest exact phrase
+            if (!exactPhrase || ph.text.length > exactPhrase.length){
+              exactPhrase = ph.text;
+            }
+          }
+        }
+
+        // Make match is a soft bonus (not required; you decided we still generate candidates without make)
+        const makeTok = normTextForTokens(m.make) || "";
+        const makeIdTok = normTextForTokens(m.make_id) || "";
+        const makeMatch = (makeTok && padded.includes(" " + makeTok + " ")) || (makeIdTok && padded.includes(" " + makeIdTok + " "));
+
+        // Score (UI candidates only; never used for auto-switch except via exactHit)
+        let score = 0;
+        score += bestOverlap * 10;
+        if (makeMatch) score += 6;
+
+        const yMatch = yearInRange(m, year);
+        if (yMatch === true) score += 4;
+
+        // If we have an exact phrase hit, bump strongly (still UI-only; auto uses separate rule)
+        if (exactHit) score += 200 + Math.min(exactPhrase.length, 60);
+
+        if (score > 0){
+          candidates.push({
+            model: m,
+            score,
+            exactHit,
+            exactPhrase: exactPhrase || bestPhrase || "",
+            bestPhrase: bestPhrase || "",
+            yearMatch: yMatch
+          });
+        }
+      }
+
+      candidates.sort((a,b)=> b.score - a.score);
+      return candidates;
+    }
+
+// =========================
     // Events
     // =========================
-    sendBtn.addEventListener("click", ()=> handleQuery(questionInput.value));
+    sendBtn.addEventListener("click", ()=>{
+      markRequestStart();
+      handleQuery(questionInput.value);
+    });
     questionInput.addEventListener("keydown", (e)=>{
       if (e.key === "Enter"){
         markRequestStart();
@@ -2849,25 +3895,7 @@ sheetClose.addEventListener("click", closeSheet);
       if (e.target === sheetOverlay) closeSheet();
     });
 
-    // Small mic button -> listen for a model switch command (e.g., "Switch to V4S")
-    if (modelMicBtn){
-      modelMicBtn.addEventListener("click", ()=>{
-        if (!modelIndex){
-          speak("Model list is not loaded yet.");
-          return;
-        }
-        if (!modelRecognition) modelRecognition = initModelSpeech();
-        if (!modelRecognition) {
-          speak("Speech recognition is not supported here.");
-          return;
-        }
-        if (modelListening){
-          modelRecognition.stop();
-          return;
-        }
-        modelRecognition.start();
-      });
-    }
+    
 // Speech recognition (desktop chrome)
 
     // =========================
