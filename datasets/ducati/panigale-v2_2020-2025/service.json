@@ -1,94 +1,60 @@
 {
-  "generated_from": "service.xlsx",
-  "sheet": "Converted_from_original",
-  "generated_at_utc": "2026-01-13T03:17:52+00:00",
-  "topics": [
+  "specs": [
     {
       "topic_id": "valve_clearance",
-      "topic_title": "Valve Clearance",
+      "title": "Valve Clearance",
       "aliases": [
         "valve clearance",
         "desmo service",
         "valve spec"
       ],
       "category": "Engine",
-      "format": "table",
       "groups": [
         {
           "group_title": "Assembly : IN = EX",
-          "items": [
+          "format": "table",
+          "rows": [
             {
               "row_order": 1,
-              "cols": [
-                {
-                  "label": "Condition",
-                  "value": "Intake, Exhaust - Assembly"
-                },
-                {
-                  "label": "Side",
-                  "value": "Opening"
-                },
-                {
-                  "label": "Value",
-                  "value": "0.15 ÷ 0.20 mm"
-                }
-              ]
+              "col_1_label": "Condition",
+              "col_1_value": "Intake, Exhaust - Assembly",
+              "col_2_label": "Side",
+              "col_2_value": "Opening",
+              "col_3_label": "Value",
+              "col_3_value": "0.15 ÷ 0.20 mm"
             },
             {
               "row_order": 2,
-              "cols": [
-                {
-                  "label": "Condition",
-                  "value": "Intake, Exhaust - Assembly"
-                },
-                {
-                  "label": "Side",
-                  "value": "Closing"
-                },
-                {
-                  "label": "Value",
-                  "value": "0.08 ÷ 0.13 mm"
-                }
-              ]
+              "col_1_label": "Condition",
+              "col_1_value": "Intake, Exhaust - Assembly",
+              "col_2_label": "Side",
+              "col_2_value": "Closing",
+              "col_3_label": "Value",
+              "col_3_value": "0.08 ÷ 0.13 mm"
             }
           ]
         },
         {
           "group_title": "Reset : IN = EX",
-          "items": [
+          "format": "table",
+          "rows": [
             {
               "row_order": 3,
-              "cols": [
-                {
-                  "label": "Condition",
-                  "value": "Intake, Exhaust - Reset"
-                },
-                {
-                  "label": "Side",
-                  "value": "Opening"
-                },
-                {
-                  "label": "Value",
-                  "value": "0.10 ÷ 0.25 mm"
-                }
-              ]
+              "col_1_label": "Condition",
+              "col_1_value": "Intake, Exhaust - Reset",
+              "col_2_label": "Side",
+              "col_2_value": "Opening",
+              "col_3_label": "Value",
+              "col_3_value": "0.10 ÷ 0.25 mm"
             },
             {
               "row_order": 4,
-              "cols": [
-                {
-                  "label": "Condition",
-                  "value": "Intake, Exhaust - Reset"
-                },
-                {
-                  "label": "Side",
-                  "value": "Closing"
-                },
-                {
-                  "label": "Value",
-                  "value": "0.08 ÷ 0.25 mm"
-                }
-              ]
+              "col_1_label": "Condition",
+              "col_1_value": "Intake, Exhaust - Reset",
+              "col_2_label": "Side",
+              "col_2_value": "Closing",
+              "col_3_label": "Value",
+              "col_3_value": "0.08 ÷ 0.25 mm"
             }
           ]
         }
@@ -96,7 +62,7 @@
     },
     {
       "topic_id": "tyre_pressure",
-      "topic_title": "Tyre Pressure",
+      "title": "Tyre Pressure",
       "aliases": [
         "tyre pressure",
         "tire pressure",
@@ -104,87 +70,54 @@
         "tire"
       ],
       "category": "Chassis",
-      "format": "table",
       "groups": [
         {
           "group_title": "Road use",
-          "items": [
+          "format": "table",
+          "note": "When cold",
+          "rows": [
             {
               "row_order": 1,
-              "note": "When cold",
-              "cols": [
-                {
-                  "label": "Use",
-                  "value": "Road use"
-                },
-                {
-                  "label": "Position",
-                  "value": "Front"
-                },
-                {
-                  "label": "Value",
-                  "value": "2.5 bar (2.55 kg/sq. cm)"
-                }
-              ]
+              "col_1_label": "Use",
+              "col_1_value": "Road use",
+              "col_2_label": "Position",
+              "col_2_value": "Front",
+              "col_3_label": "Value",
+              "col_3_value": "2.5 bar (2.55 kg/sq. cm)"
             },
             {
               "row_order": 2,
-              "note": "When cold",
-              "cols": [
-                {
-                  "label": "Use",
-                  "value": "Road use"
-                },
-                {
-                  "label": "Position",
-                  "value": "Rear"
-                },
-                {
-                  "label": "Value",
-                  "value": "2.5 bar (2.55 kg/sq. cm)"
-                }
-              ]
+              "col_1_label": "Use",
+              "col_1_value": "Road use",
+              "col_2_label": "Position",
+              "col_2_value": "Rear",
+              "col_3_label": "Value",
+              "col_3_value": "2.5 bar (2.55 kg/sq. cm)"
             }
           ]
         },
         {
           "group_title": "Racing use",
-          "items": [
+          "format": "table",
+          "note": "When cold",
+          "rows": [
             {
               "row_order": 3,
-              "note": "When cold",
-              "cols": [
-                {
-                  "label": "Use",
-                  "value": "Racing use"
-                },
-                {
-                  "label": "Position",
-                  "value": "Front"
-                },
-                {
-                  "label": "Value",
-                  "value": "2.3 bar (2.35 kg/sq. cm)"
-                }
-              ]
+              "col_1_label": "Use",
+              "col_1_value": "Racing use",
+              "col_2_label": "Position",
+              "col_2_value": "Front",
+              "col_3_label": "Value",
+              "col_3_value": "2.3 bar (2.35 kg/sq. cm)"
             },
             {
               "row_order": 4,
-              "note": "When cold",
-              "cols": [
-                {
-                  "label": "Use",
-                  "value": "Racing use"
-                },
-                {
-                  "label": "Position",
-                  "value": "Rear"
-                },
-                {
-                  "label": "Value",
-                  "value": "2.1 bar (2.14 kg/sq. cm)"
-                }
-              ]
+              "col_1_label": "Use",
+              "col_1_value": "Racing use",
+              "col_2_label": "Position",
+              "col_2_value": "Rear",
+              "col_3_label": "Value",
+              "col_3_value": "2.1 bar (2.14 kg/sq. cm)"
             }
           ]
         }
@@ -192,7 +125,7 @@
     },
     {
       "topic_id": "fork",
-      "topic_title": "Fork",
+      "title": "Fork",
       "aliases": [
         "fork",
         "front fork",
@@ -201,11 +134,11 @@
         "fork oil"
       ],
       "category": "Chassis",
-      "format": "kv",
       "groups": [
         {
-          "group_title": "General",
-          "items": [
+          "group_title": "",
+          "format": "kv",
+          "pairs": [
             {
               "row_order": 1,
               "label": "Make",
@@ -218,7 +151,7 @@
             },
             {
               "row_order": 3,
-              "label": "Wheel travel",
+              "label": "Wheel Travel",
               "value": "120 mm"
             },
             {
@@ -235,10 +168,11 @@
         },
         {
           "group_title": "Standard setting",
-          "items": [
+          "format": "kv",
+          "pairs": [
             {
               "row_order": 6,
-              "label": "Com",
+              "label": "Comp",
               "value": "7 turns (from fully closed)"
             },
             {
@@ -257,7 +191,7 @@
     },
     {
       "topic_id": "shock_absorber",
-      "topic_title": "Shock absorber",
+      "title": "Shock absorber",
       "aliases": [
         "shock absorber",
         "shock",
@@ -265,11 +199,11 @@
         "rear suspension"
       ],
       "category": "Chassis",
-      "format": "kv",
       "groups": [
         {
-          "group_title": "General",
-          "items": [
+          "group_title": "",
+          "format": "kv",
+          "pairs": [
             {
               "row_order": 1,
               "label": "Make",
@@ -282,14 +216,15 @@
             },
             {
               "row_order": 3,
-              "label": "Rear wheel travel",
+              "label": "Wheel travel",
               "value": "130 mm (5.12 in)"
             }
           ]
         },
         {
           "group_title": "Standard setting",
-          "items": [
+          "format": "kv",
+          "pairs": [
             {
               "row_order": 4,
               "label": "Reb",
@@ -297,7 +232,7 @@
             },
             {
               "row_order": 5,
-              "label": "Com",
+              "label": "Comp",
               "value": "2.5 turns from fully closed"
             },
             {
@@ -311,26 +246,26 @@
     },
     {
       "topic_id": "drive_chain",
-      "topic_title": "Drive Chain",
+      "title": "Drive Chain",
       "aliases": [
         "drive chain",
         "chain"
       ],
       "category": "Chassis",
-      "format": "kv",
       "groups": [
         {
-          "group_title": "General",
-          "items": [
+          "group_title": "",
+          "format": "kv",
+          "pairs": [
             {
               "row_order": 1,
               "label": "Size",
-              "value": "520"
+              "value": 520
             },
             {
               "row_order": 2,
               "label": "No. of links",
-              "value": "106"
+              "value": 106
             },
             {
               "row_order": 3,
@@ -343,7 +278,7 @@
     },
     {
       "topic_id": "engine_oil",
-      "topic_title": "Engine Oil",
+      "title": "Engine Oil",
       "aliases": [
         "engine oil",
         "oil",
@@ -352,11 +287,11 @@
         "oil quantity"
       ],
       "category": "Fluids",
-      "format": "kv",
       "groups": [
         {
-          "group_title": "General",
-          "items": [
+          "group_title": "",
+          "format": "kv",
+          "pairs": [
             {
               "row_order": 1,
               "label": "Viscosity Grade",
@@ -383,17 +318,18 @@
     },
     {
       "topic_id": "coolant",
-      "topic_title": "Coolant",
+      "title": "Coolant",
       "aliases": [
         "coolant",
         "antifreeze"
       ],
       "category": "Fluids",
-      "format": "kv",
       "groups": [
         {
-          "group_title": "General",
-          "items": [
+          "group_title": "",
+          "format": "kv",
+          "note": "Do not dilute",
+          "pairs": [
             {
               "row_order": 1,
               "label": "Capacity",
@@ -401,7 +337,6 @@
             },
             {
               "row_order": 2,
-              "note": "Do not dilute",
               "label": "Rec.",
               "value": "ENI Agip Permanent Spezial antifreeze"
             }
@@ -411,17 +346,17 @@
     },
     {
       "topic_id": "brake_fluid",
-      "topic_title": "Brake Fluid",
+      "title": "Brake Fluid",
       "aliases": [
         "brake fluid",
         "brake oil"
       ],
       "category": "Fluids",
-      "format": "kv",
       "groups": [
         {
-          "group_title": "General",
-          "items": [
+          "group_title": "",
+          "format": "kv",
+          "pairs": [
             {
               "row_order": 1,
               "label": "Spec",
@@ -433,17 +368,17 @@
     },
     {
       "topic_id": "clutch_fluid",
-      "topic_title": "Clutch Fluid",
+      "title": "Clutch Fluid",
       "aliases": [
         "clutch fluid",
         "clutch oil"
       ],
       "category": "Fluids",
-      "format": "kv",
       "groups": [
         {
-          "group_title": "General",
-          "items": [
+          "group_title": "",
+          "format": "kv",
+          "pairs": [
             {
               "row_order": 1,
               "label": "Spec",
@@ -455,34 +390,35 @@
     },
     {
       "topic_id": "fuel_tank",
-      "topic_title": "Fuel Tank",
+      "title": "Fuel Tank",
       "aliases": [
         "fuel tank",
         "fuel capacity",
+        "tank capacity",
+        "fuel octane",
         "gas octane",
-        "octane rating",
-        "tank capacity"
+        "octane rating"
       ],
       "category": "Fluids",
-      "format": "kv",
       "groups": [
         {
-          "group_title": "General",
-          "items": [
+          "group_title": "",
+          "format": "kv",
+          "pairs": [
             {
               "row_order": 1,
               "label": "Capacity",
-              "value": "17 L (3.74 UK gal), including a reserve of 5 L (1.10 UK gal)"
+              "value": "17 L, including a reserve of 5 L"
             },
             {
               "row_order": 2,
               "label": "Rec.",
-              "value": "SHELL V-Power with 95-98 RON fuel octane rating (at least)"
+              "value": "SHELL V-Power with 95-98 RON"
             },
             {
               "row_order": 3,
               "label": "Rec. (US market)",
-              "value": "SHELL V-Power with 90 (RON+MON)/2 fuel octane rating (at least)"
+              "value": "SHELL V-Power with 90 (RON+MON)/2"
             }
           ]
         }
@@ -490,28 +426,31 @@
     },
     {
       "topic_id": "ohlins_fkr_115",
-      "topic_title": "Ohlins FKR 115",
+      "title": "Ohlins FKR 115",
       "aliases": [
         "ohlins cartridge kit",
         "ohlins fork cartridge",
-        "fork cartridge",
-        "fkr 115"
+        "ohlins cartridge",
+        "ohlins fork cartridge kit",
+        "fkr 115 cartridge",
+        "fkr 115 cartridge kit",
+        "frk cartridge kit"
       ],
-      "category": "Torque",
-      "format": "kv",
+      "category": "Aftermarket",
       "groups": [
         {
-          "group_title": "General",
-          "items": [
+          "group_title": "",
+          "format": "kv",
+          "pairs": [
             {
               "row_order": 1,
               "label": "Inner Tube",
-              "value": "130 Nm  Loctite 2700 (Green)"
+              "value": "130 Nm w/ Loctite 2700 (Green)"
             },
             {
               "row_order": 2,
               "label": "Cylinder Tube",
-              "value": "60 Nm  Loctite 2400 (Blue)"
+              "value": "60 Nm w/ Loctite 2400 (Blue)"
             },
             {
               "row_order": 3,
@@ -526,11 +465,11 @@
             {
               "row_order": 5,
               "label": "Top Cap and Outer Tube",
-              "value": "10 Nm"
+              "value": "20 Nm"
             },
             {
               "row_order": 6,
-              "label": "Stock Pro Adj Plug",
+              "label": "Plug for Stock Pre. Adjster",
               "value": "12 Nm"
             }
           ]
