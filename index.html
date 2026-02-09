@@ -929,6 +929,10 @@
 }
 .routeToggleInput{ display:none; }
 
+
+/* Hide ROUTE ON/OFF toggle UI (functionality remains) */
+#routeToggleWrap{ display:none !important; }
+
 </style>
 </head>
 
@@ -987,7 +991,7 @@
             <path fill="currentColor" d="M9 4l1.5 2H13l1.5-2H18a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h3zm3 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/>
           </svg>
         </button>
-        <input id="photoInput" type="file" accept="image/*" capture="environment" style="display:none" />
+        <input id="photoInput" type="file" accept="image/*" style="display:none" />
       </div>
 
         <div class="hint">
@@ -1252,6 +1256,7 @@
           }
           __specTriggersLoaded = true;
         }catch(e){
+        stopWorkingIndicator();
           __specTriggersLoaded = false;
         }finally{
           if (!__specTriggersLoaded){
@@ -1545,16 +1550,34 @@ async function loadPartTriggers(){
 
     const ROUTE_TIMEOUT_MS = 9000;
 
+    // Vision (/api/vision)
+    const VISION_ENABLED = true;
+    const VISION_AUTO_SEND = true;
+const VISION_CONF_MIN = 0.75; // confidence threshold for auto scoring (0..1)
+ // fill fallback input and immediately ask
+    const DEBUG_VISION = true;
+    const VISION_TIMEOUT_MS = 30000;
+
     // Backend base URLs (Router)
     const ROUTE_API_BASE_PROD = "https://tesa-api-backend.vercel.app";
     // If you run a local backend later, set this to something like:
     // "http://localhost:3000"
     const ROUTE_API_BASE_LOCAL = ROUTE_API_BASE_PROD;
 
+    // Backend base URLs (Vision)
+    const VISION_API_BASE_PROD = ROUTE_API_BASE_PROD;
+    const VISION_API_BASE_LOCAL = ROUTE_API_BASE_LOCAL;
+
     function getRouteApiBase(){
       const host = (location.hostname || "").toLowerCase();
       if (host === "localhost" || host === "127.0.0.1") return ROUTE_API_BASE_LOCAL;
       return ROUTE_API_BASE_PROD; // GitHub Pages or anything else
+    }
+
+    function getVisionApiBase(){
+      const host = (location.hostname || "").toLowerCase();
+      if (host === "localhost" || host === "127.0.0.1") return VISION_API_BASE_LOCAL;
+      return VISION_API_BASE_PROD;
     }
 
     function withTimeout(promise, ms){
@@ -1565,6 +1588,85 @@ async function loadPartTriggers(){
           e=>{ clearTimeout(t); reject(e); }
         );
       });
+    }
+
+    function fileToDataUrl(file){
+      return new Promise((resolve, reject)=>{
+        try{
+          const reader = new FileReader();
+          reader.onload = ()=> resolve(String(reader.result || ""));
+          reader.onerror = ()=> reject(new Error("file_read_error"));
+          reader.readAsDataURL(file);
+        }catch(e){
+          reject(e);
+        }
+      });
+    }
+
+    // Downscale/compress the photo before sending to /api/vision to reduce timeouts.
+    // Returns a JPEG dataURL (data:image/jpeg;base64,...) unless it fails, in which case you can fall back to fileToDataUrl().
+    async function fileToVisionDataUrl(file, maxDim = 1280, quality = 0.82){
+      try{
+        const url = URL.createObjectURL(file);
+        const img = await new Promise((resolve, reject) => {
+          const im = new Image();
+          im.onload = () => resolve(im);
+          im.onerror = () => reject(new Error("image_load_error"));
+          im.src = url;
+        });
+
+        let w = img.naturalWidth || img.width || 0;
+        let h = img.naturalHeight || img.height || 0;
+        if (!w || !h) throw new Error("invalid_image_dim");
+
+        const scale = Math.min(1, maxDim / Math.max(w, h));
+        const tw = Math.max(1, Math.round(w * scale));
+        const th = Math.max(1, Math.round(h * scale));
+
+        const canvas = document.createElement("canvas");
+        canvas.width = tw;
+        canvas.height = th;
+        const ctx = canvas.getContext("2d", { alpha: false });
+        ctx.drawImage(img, 0, 0, tw, th);
+
+        // JPEG is generally much smaller than PNG for photos.
+        const dataUrl = canvas.toDataURL("image/jpeg", quality);
+
+        try{ URL.revokeObjectURL(url); }catch(e){}
+        return dataUrl;
+      }catch(e){
+        return "";
+      }
+    }
+
+    async function callVisionAPI({ image_data_url, query, locale, debug }){
+      const base = getVisionApiBase();
+      const url = base.replace(/\/$/, "") + "/api/vision";
+
+      const payload = {
+        image_data_url,
+        query: (query == null ? "" : String(query)),
+        locale: (locale == null ? "en" : String(locale)),
+        debug: !!debug
+      };
+
+      const fetchPromise = fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      const res = await withTimeout(fetchPromise, VISION_TIMEOUT_MS);
+      const text = await res.text();
+      let data = null;
+      try { data = JSON.parse(text); } catch { data = { raw: text }; }
+
+      if (!res.ok){
+        const err = new Error(`Vision HTTP ${res.status}`);
+        err.data = data;
+        throw err;
+      }
+      return data;
     }
 
     // =========================
@@ -1639,6 +1741,8 @@ const body = { normalized_query: String(rawQuery || ""),
       const cached = getRouteCache(cacheKey);
       if (cached) return cached;
 try{
+        startWorkingIndicator();
+  try {
         const r = await withTimeout(fetch(url, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -1661,6 +1765,7 @@ llm_query: (typeof data?.llm_query === "string") ? data.llm_query : "",
           overall_confidence: (typeof data?.overall_confidence === "number") ? data.overall_confidence : Math.max(0, Math.min(1, (((typeof data?.llm_query_confidence === "number") ? data.llm_query_confidence : 0) + ((typeof data?.part_phrases_confidence === "number") ? data.part_phrases_confidence : 0)) / 2))
         };        setRouteCache(cacheKey, guarded);
         if (typeof __tesaRouteDebugEnd === "function") __tesaRouteDebugEnd(guarded);
+        stopWorkingIndicator();
         return guarded;
       }catch(e){
         if (DEBUG_ROUTE){
@@ -1668,11 +1773,14 @@ llm_query: (typeof data?.llm_query === "string") ? data.llm_query : "",
         }
         return null;
       }
-    }
+      } finally {
+    stopWorkingIndicator();
+  }
+}
 
-const MIN_SCORE_TO_ANSWER = 24;   // score too low → refuse (0-100 scoring)
-    const MIN_GAP_TO_ANSWER   = 7;   // best-second gap too small → ambiguous (0-100 scoring)
-    const MULTI_MIN_SCORE    = 27;  // Multi-match list hides candidates below this score
+    const MIN_SCORE_TO_ANSWER = 40;   // score too low -> refuse (raw score; no 100 cap)
+    const MIN_GAP_TO_ANSWER   = 15;  // best-second gap too small -> ambiguous (raw score)
+    const MULTI_MIN_SCORE    = 44;  // Multi-match list hides candidates below this score (raw score)
     const MAX_CANDIDATES_UI   = 3;
 
     let torqueData = [];
@@ -1750,6 +1858,25 @@ const MIN_SCORE_TO_ANSWER = 24;   // score too low → refuse (0-100 scoring)
 
 const modelBadgeEl = document.getElementById("modelBadge");
 const statusLine = document.getElementById("statusLine");
+let __statusDotsTimer = null;
+function startStatusDots(baseText){
+  stopStatusDots();
+  if (!statusLine) return;
+  const frames = ["", ".", "..", "..."];
+  let i = 0;
+  statusLine.textContent = baseText + frames[i];
+  __statusDotsTimer = setInterval(() => {
+    i = (i + 1) % frames.length;
+    statusLine.textContent = baseText + frames[i];
+  }, 380);
+}
+function stopStatusDots(){
+  if (__statusDotsTimer){
+    clearInterval(__statusDotsTimer);
+    __statusDotsTimer = null;
+  }
+}
+
     const micBig = document.getElementById("micBig");
 
     // Photo (beta UI only)
@@ -1804,14 +1931,107 @@ const statusLine = document.getElementById("statusLine");
     }
 
     if (usePhotoBtn){
-      usePhotoBtn.addEventListener("click", () => {
+      usePhotoBtn.addEventListener("click", async () => {
         if (!lastPhotoFile){
           if (typeof showToast === "function") showToast("No photo selected");
           return;
         }
-        // UI-only for now: wire this to LLM later
-        if (statusLine) statusLine.textContent = "Analyzing photo… (beta UI stub)";
-        if (typeof showToast === "function") showToast("Photo analysis (coming soon)");
+        if (!VISION_ENABLED){
+          if (typeof showToast === "function") showToast("Vision is disabled");
+          return;
+        }
+
+        try{
+          usePhotoBtn.disabled = true;
+          startStatusDots("Analyzing photo");
+
+          // Downscale/compress to reduce payload size and avoid frequent timeouts.
+          let image_data_url = await fileToVisionDataUrl(lastPhotoFile, 1280, 0.82);
+          if (!image_data_url) image_data_url = await fileToDataUrl(lastPhotoFile);
+
+          let vision = null;
+          try{
+            vision = await callVisionAPI({
+              image_data_url,
+              query: "",
+              locale: "en",
+              debug: DEBUG_VISION
+            });
+          }catch(err){
+            const msg = String(err?.message || err || "");
+            const isTimeout = /timeout|aborted|aborterror/i.test(msg);
+            if (isTimeout){
+              // One retry with a smaller image.
+              if (statusLine) statusLine.textContent = "Still working… retrying…";
+              let smaller = await fileToVisionDataUrl(lastPhotoFile, 960, 0.78);
+              if (!smaller) smaller = image_data_url;
+              vision = await callVisionAPI({
+                image_data_url: smaller,
+                query: "",
+                locale: "en",
+                debug: DEBUG_VISION
+              });
+            } else {
+              throw err;
+            }
+          }
+
+          const vision_query = (vision && typeof vision.vision_query === "string") ? vision.vision_query.trim() : "";
+          const confidence = (vision && typeof vision.confidence === "number") ? vision.confidence : null;
+          const warnings = Array.isArray(vision?.warnings) ? vision.warnings : [];
+
+          if (DEBUG_VISION) console.log("[vision]", { vision_query, confidence, warnings, raw: vision });
+
+          if (warnings.length){
+            // show first warning only, keep UI simple
+            if (typeof showToast === "function") showToast(`Vision warning: ${warnings[0]}`);
+          }
+
+          if (vision_query){
+            if (questionInput) questionInput.value = vision_query;
+
+            if (statusLine){
+              const confText = (confidence == null) ? "" : ` (conf ${Math.round(confidence*100)}%)`;
+              statusLine.textContent = `Vision → "${vision_query}"${confText}`;
+            }
+
+            if (Number(confidence || 0) >= VISION_CONF_MIN) {
+              if (VISION_AUTO_SEND) {
+                const preRoute = {
+                  llm_query: vision_query,
+                  llm_query_confidence: Number(confidence || 0),
+                  part_phrases: [vision_query],
+                  part_phrases_confidence: Number(confidence || 0),
+                  overall_confidence: Number(confidence || 0),
+                };
+                markRequestStart();
+                await handleQuery(vision_query, preRoute); // go straight to scoring (skip /api/route)
+              } else {
+                try{ questionInput?.focus(); }catch(e){}
+              }
+            } else {
+              const confText = (confidence == null) ? "" : ` (conf ${Math.round(confidence*100)}%)`;
+              if (statusLine) statusLine.textContent = `Photo unclear${confText}. Retake closer / better light, or type a short hint.`;
+              if (typeof showToast === "function") showToast("Vision confidence low — please retry.");
+              stopStatusDots();
+              // keep photo pane open so user can retry quickly
+              try{ questionInput?.focus(); }catch(e){}
+              return;
+            }} else {
+            if (statusLine) statusLine.textContent = "Vision couldn't extract a reliable query. Try another photo or type manually.";
+            if (typeof showToast === "function") showToast("Vision: no result");
+            try{ questionInput?.focus(); }catch(e){}
+          }
+
+          stopStatusDots();
+          closePhotoPane();
+        } catch(e){
+          stopStatusDots();
+          console.error("Vision call failed:", e);
+          if (statusLine) statusLine.textContent = "Vision failed. Please try again, or type manually.";
+          if (typeof showToast === "function") showToast("Vision failed");
+          usePhotoBtn.disabled = false;
+        }
       });
     }
 
@@ -2259,6 +2479,25 @@ async function initApp(){
       statusLine.classList.toggle("active", !!active);
       statusLine.classList.toggle("error", !!isError);
     }
+
+    // Lightweight "working" indicator (animated dots) during /api/route calls
+    let __tesaWorkingTimer = null;
+    function startWorkingIndicator(){
+      if (__tesaWorkingTimer) return;
+      const base = "Working on it";
+      let dots = 0;
+      setStatus(base + "...", true, false);
+      __tesaWorkingTimer = setInterval(()=>{
+        dots = (dots + 1) % 4; // 0..3
+        setStatus(base + (dots ? ".".repeat(dots) : ""), true, false);
+      }, 350);
+    }
+    function stopWorkingIndicator(){
+      if (!__tesaWorkingTimer) return;
+      clearInterval(__tesaWorkingTimer);
+      __tesaWorkingTimer = null;
+    }
+
 
     // =========================
 // Specs (service data) loading & search (lazy)
@@ -2817,9 +3056,8 @@ function tokenizeNormalized(s){
 
       let total = overlapScore + coverageScore + pBonus + rBonus + eBonus + (llm.score||0);
 
-      // Cap + floor
+      // Floor only (no 100 cap)
       if (total < 0) total = 0;
-      if (total > 100) total = 100;
 
       const breakdown = {
         overlap: overlapScore,
@@ -3481,7 +3719,7 @@ async function handleQuery(raw, __preRoute){
           const toks = __tokenizeNormalized(normalizeQuery(original));
           const remaining = toks.filter(t => !dropSet.has(t));
 
-          if (remaining.length >= 2){
+          if (remaining.length >= 1){
             const key = original.toLowerCase();
             if (!seen.has(key)){
               seen.add(key);
@@ -3697,156 +3935,7 @@ if (!candidates.length){
       logQuery({ type: "torque", query: q, normalized: nq, match: (best.item && (best.item.component_name || best.item.id || "")) });
     }
 
-
     // =========================
-    // Model autoswitch (v3_2 base)
-    // - Deterministic index.json matching first
-    // - LLM (/api/route) only for "model info not in TESA" detection (B case)
-    // =========================
-
-    const MODELINFO_YEAR_MIN = 2000;
-    const MODELINFO_DATA_TOKEN_THRESHOLD = 2; // remaining tokens >=2 => data request included (agreed)
-
-    function extractYearHints(raw){
-      const years = [];
-      const s = String(raw || "");
-      const re = /\b(\d{4})\b/g;
-      let m;
-      while ((m = re.exec(s)) !== null){
-        const y = parseInt(m[1], 10);
-        if (Number.isFinite(y) && y >= MODELINFO_YEAR_MIN){
-          years.push(y);
-        }
-      }
-      const uniq = Array.from(new Set(years));
-      return { years: uniq, year: (uniq.length === 1 ? uniq[0] : null), tooMany: uniq.length >= 2 };
-    }
-
-    function stripFillerPhrasesLower(s){
-      let t = String(s || "").toLowerCase();
-      for (const p of QUERY_FILLER_PHRASES){
-        const pp = String(p || "").trim().toLowerCase();
-        if (!pp) continue;
-        // replace as a phrase (pad with spaces to reduce accidental deletes)
-        t = (" " + t + " ").replaceAll(" " + pp + " ", " ");
-        t = t.replace(/\s+/g, " ").trim();
-      }
-      return t;
-    }
-
-        function getMakeMatchTokens(normQuery){
-      // Manufacturer tokens from index.json (make label + make_id)
-      const out = new Set();
-      const padded = " " + (normQuery || "") + " ";
-      const mfgs = Array.isArray(modelIndex?.manufacturers) ? modelIndex.manufacturers : [];
-      for (const m of mfgs){
-        const mkLabel = normTextForTokens(String(m?.make || m?.label || "")) || "";
-        const mkId = normTextForTokens(String(m?.make_id || m?.id || "")) || "";
-        if (mkLabel && padded.includes(" " + mkLabel + " ")) out.add(mkLabel);
-        if (mkId && padded.includes(" " + mkId + " ")) out.add(mkId);
-      }
-      return Array.from(out);
-    }
-
-    function yearInRange(model, year){
-      if (!year) return null;
-      const y = year;
-      // model.years_label is a string; actual range may be in model.years or embedded in label
-      if (model && model.years && typeof model.years === "object"){
-        const yf = parseInt(model.years.from, 10);
-        const yt = parseInt(model.years.to, 10);
-        if (Number.isFinite(yf) && Number.isFinite(yt)){
-          return (yf <= y && y <= yt);
-        }
-      }
-      // fallback: try parse "YYYY–YYYY" from years_label
-      const yl = String(model?.years_label || "");
-      const mm = yl.match(/(\d{4})\D+(\d{4})/);
-      if (mm){
-        const yf = parseInt(mm[1], 10), yt = parseInt(mm[2], 10);
-        if (Number.isFinite(yf) && Number.isFinite(yt)){
-          return (yf <= y && y <= yt);
-        }
-      }
-      return null;
-    }
-
-    function buildModelCandidates(normQuery, year){
-      const padded = " " + (normQuery || "") + " ";
-      const qToks = (normQuery || "").split(" ").filter(Boolean);
-      const qSet = new Set(qToks);
-
-      const models = flattenModels(modelIndex);
-      const candidates = [];
-
-      for (const m of models){
-        const phrases = [];
-        const label = normTextForTokens(m.label) || "";
-        if (label) phrases.push({ kind:"label", text: label });
-        (m.aliases || []).forEach(a=>{
-          const aa = normTextForTokens(a) || "";
-          if (aa) phrases.push({ kind:"alias", text: aa });
-        });
-
-        let bestOverlap = 0;
-        let bestPhrase = "";
-        let exactHit = false;
-        let exactPhrase = "";
-
-        for (const ph of phrases){
-          const ptoks = ph.text.split(" ").filter(Boolean);
-          let overlap = 0;
-          for (const t of ptoks){
-            if (qSet.has(t)) overlap += 1;
-          }
-          if (overlap > bestOverlap){
-            bestOverlap = overlap;
-            bestPhrase = ph.text;
-          }
-
-          // Exact phrase match for auto-switch eligibility
-          if (padded.includes(" " + ph.text + " ")){
-            exactHit = true;
-            // prefer the longest exact phrase
-            if (!exactPhrase || ph.text.length > exactPhrase.length){
-              exactPhrase = ph.text;
-            }
-          }
-        }
-
-        // Make match is a soft bonus (not required; you decided we still generate candidates without make)
-        const makeTok = normTextForTokens(m.make) || "";
-        const makeIdTok = normTextForTokens(m.make_id) || "";
-        const makeMatch = (makeTok && padded.includes(" " + makeTok + " ")) || (makeIdTok && padded.includes(" " + makeIdTok + " "));
-
-        // Score (UI candidates only; never used for auto-switch except via exactHit)
-        let score = 0;
-        score += bestOverlap * 10;
-        if (makeMatch) score += 6;
-
-        const yMatch = yearInRange(m, year);
-        if (yMatch === true) score += 4;
-
-        // If we have an exact phrase hit, bump strongly (still UI-only; auto uses separate rule)
-        if (exactHit) score += 200 + Math.min(exactPhrase.length, 60);
-
-        if (score > 0){
-          candidates.push({
-            model: m,
-            score,
-            exactHit,
-            exactPhrase: exactPhrase || bestPhrase || "",
-            bestPhrase: bestPhrase || "",
-            yearMatch: yMatch
-          });
-        }
-      }
-
-      candidates.sort((a,b)=> b.score - a.score);
-      return candidates;
-    }
-
-// =========================
     // Events
     // =========================
     sendBtn.addEventListener("click", ()=>{
@@ -3953,23 +4042,6 @@ function initSpeech(){
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-<script>
-(function(){
-  const _renderSpecsOriginal = window.renderSpecs;
-  if (typeof _renderSpecsOriginal === 'function') {
-    window.renderSpecs = function(spec){
-      if (spec && spec.groups) {
-        spec.groups.forEach(g=>{
-          if (g.format === 'table' && Array.isArray(g.rows)) {
-            g.rows.forEach(r=>{ r.col_1_value = ''; });
-          }
-        });
-      }
-      return _renderSpecsOriginal(spec);
-    }
-  }
-})();
-</script>
 
 </body>
 </html>
