@@ -1586,7 +1586,6 @@ body.authLocked .wrap{
       document.body.classList.remove("authLocked");
       updateAuthMenuLabel();
       closeAuthOverlay();
-      setStatus(`Guest · ${getGuestRemaining()}/${GUEST_QUERY_LIMIT}`, true, false);
       await startAppAfterAuth();
     }
 
@@ -1607,8 +1606,6 @@ body.authLocked .wrap{
         return false;
       }
       const next = setGuestQueryCount(used + 1);
-      const remaining = Math.max(0, GUEST_QUERY_LIMIT - next);
-      setStatus(`Guest · ${remaining}/${GUEST_QUERY_LIMIT}`, true, false);
       return true;
     }
 
