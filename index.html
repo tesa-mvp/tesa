@@ -365,27 +365,27 @@
       line-height:1.4;
     }
 
-    /* Emphasized chemistry line (threadlock/lube/sealant) */
+    /* Chemistry line (threadlock/lube/sealant) */
     .chemLine{
       margin-top: 10px;
-      padding: 10px 12px;
+      padding: 8px 10px;
       border-radius: 14px;
-      border: 1px solid rgba(79,140,255,.35);
-      background: rgba(79,140,255,.12);
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.035);
       text-align: left;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 5px;
     }
     .chemItem{
-      font-size: 13px;
-      color: #eef2ff;
+      font-size: 12px;
+      color: var(--sub);
       line-height: 1.25;
     }
     .chemKey{
-      font-weight: 800;
+      font-weight: 700;
       letter-spacing: .02em;
-      color: #cfe0ff;
+      color: #d7d8df;
     }
 
     /* Multi-step list: all same size */
@@ -3338,22 +3338,10 @@ function buildSpokenAnswerParts(item){
 
       const hasSingle = (item.torque_nm_single != null);
 
-      // ----- Pills: Type, Thread, Group, Score (in that order) -----
+      // ----- Pills -----
       const pills = [];
 
-      // Type
-      const tt = (item.tightening_type ? String(item.tightening_type).toLowerCase() : "");
-      if (tt === "multi_step") pills.push("Type: multi");
-      else if (tt === "single" || hasSingle) pills.push("Type: single");
-
-      // Thread
       if (item.thread_spec) pills.push(`Thread: ${item.thread_spec}`);
-
-      // Group
-      if (item.group) pills.push(`Group: ${item.group}`);
-
-      // Score
-      if (info && typeof info.bestScore === "number") pills.push(`Score: ${info.bestScore}`);
 
       // ----- Special tools + Extra notes (new block) -----
       const toolLines = [];
