@@ -200,7 +200,7 @@
     .status{
       height:16px;
       line-height:16px;
-      font-size:11px;
+      font-size:12px;
       color:var(--sub);
       text-align:center;
       overflow:hidden;
@@ -218,7 +218,7 @@
       background:rgba(5,6,12,.9);
       padding:0 15px;
       color:var(--text);
-      font-size:15px;
+      font-size:14px;
       outline:none;
       min-width:0;
       height:50px;
@@ -314,6 +314,9 @@
       color:var(--sub);
       line-height:1.4;
       margin-top:2px;
+    }
+    .emptyLine{
+      font-size:13px;
     }
     .metaRow{
       display:flex;
@@ -3110,7 +3113,7 @@ function tokenizeNormalized(s){
       if (resultBody.children.length > 0) return;
       const card = document.createElement("div");
       card.className = "resultCard";
-      card.innerHTML = `<div class="subLine">${escapeHtml(String(text||""))}</div>`;
+      card.innerHTML = `<div class="subLine emptyLine">${escapeHtml(String(text||""))}</div>`;
       addResultCard(card);
       setRepeatStop(false);
     }
