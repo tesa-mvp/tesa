@@ -248,7 +248,7 @@
     /* Result card */
     .resultTop{
       display:flex;
-      justify-content:flex-end;
+      justify-content:stretch;
       align-items:center;
       gap:10px;
       margin-bottom:10px;
@@ -257,8 +257,8 @@
       display:flex;
       gap:10px;
       align-items:center;
-      justify-content:flex-end;
-      flex-wrap:wrap;
+      justify-content:space-between;
+      width:100%;
     }
     .controlGroup{
       display:flex;
@@ -279,13 +279,65 @@
     .pillBtn:hover{border-color:rgba(79,140,255,.6)}
     .pillBtn:active{transform:scale(.99)}
     .pillBtn[disabled]{opacity:.35;cursor:not-allowed}
+    .iconBtn{
+      width:34px;
+      height:34px;
+      padding:0;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .iconBtn svg{
+      width:16px;
+      height:16px;
+    }
+    .controls .iconBtn:not(.voiceReadToggle):not(.clearBtn):hover{
+      border-color:var(--border);
+    }
+    .controls .iconBtn:not(.voiceReadToggle):not(.clearBtn):not([disabled]):active{
+      border-color:rgba(79,140,255,.6);
+    }
+    .controls .iconBtn:not(.voiceReadToggle):not(.clearBtn).isPressed{
+      border-color:rgba(79,140,255,.6);
+    }
     .clearBtn{
-      margin-left:0;
+      margin-left:auto;
+    }
+    .clearBtn:hover{
+      border-color:var(--border);
+    }
+    .controls .iconBtn.clearBtn:not([disabled]):active{
+      border-color:rgba(255,79,106,.55);
+    }
+    .controls .iconBtn.clearBtn.isPressed{
+      border-color:rgba(255,79,106,.55);
+    }
+    .voiceReadToggle{
+      border-color:var(--border);
+      color:var(--sub);
+    }
+    .voiceReadToggle:hover{
+      border-color:#3a3d49;
+    }
+    .voiceReadToggle .audioIconOn{
+      display:none;
+    }
+    .voiceReadToggle .audioIconOff{
+      display:block;
     }
     .voiceReadToggle.on{
       border-color:rgba(39,228,159,.55);
       color:#d9fff1;
       box-shadow:0 0 0 2px rgba(39,228,159,.10) inset;
+    }
+    .voiceReadToggle.on:hover{
+      border-color:rgba(39,228,159,.72);
+    }
+    .voiceReadToggle.on .audioIconOn{
+      display:block;
+    }
+    .voiceReadToggle.on .audioIconOff{
+      display:none;
     }
 
     .partName{
@@ -295,7 +347,7 @@
       margin:2px 0 8px;
     }
     .torqueBig{
-      font-size:34px;
+      font-size:30px;
       font-weight:800;
       letter-spacing:-.02em;
       line-height:1;
@@ -425,14 +477,31 @@
       align-items:baseline;
       gap:6px;
     }
-    /* Multi-step: emphasize values slightly */
+    /* Multi-step: one container with row dividers */
+    .stepList.multi{
+      padding:4px 0;
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:14px;
+      background:rgba(255,255,255,.035);
+      gap:0;
+      overflow:hidden;
+    }
+    .stepList.multi .stepRow{
+      border:0;
+      border-radius:0;
+      background:transparent;
+      padding:9px 11px;
+    }
+    .stepList.multi .stepRow + .stepRow{
+      border-top:0;
+    }
     .stepList.multi .stepVal{
       font-size: 20px;   /* 기존 16px → 살짝 키움 */
       font-weight: 900;  /* 가독성 강화 (선택) */
     }
 
     .stepNum{
-      font-size:28px;
+      font-size:24px;
       font-weight:800;
       letter-spacing:-.02em;
       line-height:1;
@@ -1036,11 +1105,32 @@
       <div class="resultTop">
         <div class="controls">
           <div class="controlGroup" aria-label="Read result aloud">
-          <button id="voiceReadToggle" class="pillBtn voiceReadToggle" type="button" aria-pressed="false">Audio Off</button>
-            <button id="repeatBtn" class="pillBtn" type="button" disabled>Repeat</button>
-            <button id="stopBtn" class="pillBtn" type="button" disabled>Stop</button>
+            <button id="voiceReadToggle" class="pillBtn iconBtn voiceReadToggle" type="button" aria-label="Audio off" aria-pressed="false" title="Audio">
+              <svg class="audioIconOn" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor" d="M4 9v6h4l5 4V5L8 9H4zm12.5 3a4.5 4.5 0 0 0-2-3.74v7.48a4.5 4.5 0 0 0 2-3.74z"/>
+                <path fill="currentColor" d="M16.9 4.6a1 1 0 0 0-1.1 1.68 6.8 6.8 0 0 1 0 11.44 1 1 0 1 0 1.1 1.68 8.8 8.8 0 0 0 0-14.8z"/>
+              </svg>
+              <svg class="audioIconOff" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor" d="M4 9v6h4l5 4V5L8 9H4z"/>
+                <path fill="currentColor" d="M18.7 5.3a1 1 0 0 0-1.4 0L3.3 19.3a1 1 0 1 0 1.4 1.4l14-14a1 1 0 0 0 0-1.4z"/>
+              </svg>
+            </button>
+            <button id="repeatBtn" class="pillBtn iconBtn" type="button" aria-label="Repeat audio" title="Repeat" disabled>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor" d="M8 5v14l11-7L8 5z"/>
+              </svg>
+            </button>
+            <button id="stopBtn" class="pillBtn iconBtn" type="button" aria-label="Stop audio" title="Stop" disabled>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor" d="M7 7h10v10H7V7z"/>
+              </svg>
+            </button>
           </div>
-          <button id="clearBtn" class="pillBtn clearBtn" type="button">Clear</button>
+          <button id="clearBtn" class="pillBtn iconBtn clearBtn" type="button" aria-label="Clear results" title="Clear">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M9 3h6l1 2h4v2H4V5h4l1-2zm1 6h2v9h-2V9zm4 0h2v9h-2V9zM7 9h2v9h10V9h2v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V9h2z"/>
+            </svg>
+          </button>
         </div>
       </div>
 
@@ -2107,6 +2197,37 @@ function stopStatusDots(){
       clearResultHistory();
     });
 
+    function setupIconPressFeedback(buttons){
+      buttons.forEach((btn)=>{
+        if (!btn) return;
+        const release = ()=>{
+          if (btn.__pressTimer){
+            clearTimeout(btn.__pressTimer);
+            btn.__pressTimer = null;
+          }
+          btn.__pressTimer = setTimeout(()=>{
+            btn.classList.remove("isPressed");
+            btn.__pressTimer = null;
+          }, 140);
+        };
+        const press = ()=>{
+          if (btn.disabled) return;
+          btn.classList.add("isPressed");
+          if (btn.__pressTimer) clearTimeout(btn.__pressTimer);
+          btn.__pressTimer = setTimeout(()=>{
+            btn.classList.remove("isPressed");
+            btn.__pressTimer = null;
+          }, 260);
+        };
+        btn.addEventListener("pointerdown", press);
+        btn.addEventListener("pointerup", release);
+        btn.addEventListener("pointercancel", release);
+        btn.addEventListener("pointerleave", release);
+        btn.addEventListener("blur", release);
+      });
+    }
+    setupIconPressFeedback([repeatBtn, stopBtn, clearBtn]);
+
 
 
     // Select-all behavior for manual input fallback (tap/click focuses and selects existing text)
@@ -3123,9 +3244,10 @@ function tokenizeNormalized(s){
     const VOICE_READ_STORAGE_KEY = "TESA_voice_read_enabled";
     function updateVoiceReadToggle(){
       if (!voiceReadToggle) return;
-      voiceReadToggle.textContent = VOICE_READ_ENABLED ? "Audio On" : "Audio Off";
       voiceReadToggle.classList.toggle("on", !!VOICE_READ_ENABLED);
       voiceReadToggle.setAttribute("aria-pressed", VOICE_READ_ENABLED ? "true" : "false");
+      voiceReadToggle.setAttribute("aria-label", VOICE_READ_ENABLED ? "Audio on" : "Audio off");
+      voiceReadToggle.title = VOICE_READ_ENABLED ? "Audio on" : "Audio off";
     }
     function setVoiceReadEnabled(next){
       VOICE_READ_ENABLED = !!next;
