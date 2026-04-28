@@ -730,7 +730,9 @@
       justify-content:space-between;
       gap:10px;
     }
-    .modelBtn:hover{border-color:rgba(79,140,255,.6)}
+    @media (hover: hover) and (pointer: fine){
+      .modelBtn:hover{border-color:rgba(79,140,255,.6)}
+    }
     .modelBtn .right{
       flex:0 0 auto;
       font-size:11px;
@@ -1636,11 +1638,11 @@ async function loadPartTriggers(){
     }
 // =========================
     // ROUTE ON/OFF (DEV + FALLBACK)
-    // Default: OFF (local-only). When OFF, callRouteAPI() returns null immediately.
+    // Default: ON. When OFF, callRouteAPI() returns null immediately.
     // Persisted in localStorage for convenience.
     // =========================
     const ROUTE_TOGGLE_STORAGE_KEY = "TESA_route_enabled";
-    let ROUTE_ENABLED = false;
+    let ROUTE_ENABLED = true;
 
 
 
@@ -1937,11 +1939,8 @@ llm_query: (typeof data?.llm_query === "string") ? data.llm_query : "",
     }
 
     function setupRouteToggle(){
-      // default OFF, restore persisted state if exists
-      let saved = null;
-      try{ saved = localStorage.getItem(ROUTE_TOGGLE_STORAGE_KEY); }catch(e){}
-      const initial = (saved === "1");
-      setRouteEnabled(initial);
+      // Always start ON for each page load, regardless of any prior persisted state.
+      setRouteEnabled(true);
 
       const toggle = ()=> setRouteEnabled(!ROUTE_ENABLED);
 
@@ -2354,11 +2353,13 @@ async function loadModelIndex(){
       mfgs.forEach(mfg=>{
         const make = mfg?.make || mfg?.make_id || "Unknown";
         const make_id = mfg?.make_id || String(make).toLowerCase();
+        const make_sort_order = (typeof mfg?.sort_order === "number") ? mfg.sort_order : null;
         const models = Array.isArray(mfg?.models) ? mfg.models : [];
         models.forEach(m=>{
           out.push({
             make,
             make_id,
+            make_sort_order,
             id: m?.id,
             label: m?.label || m?.model || m?.name || "Model",
             years_label: m?.years_label || (m?.years ? `${m.years.from}–${m.years.to}` : ""),
@@ -2367,6 +2368,8 @@ async function loadModelIndex(){
             years_to: (m?.years && typeof m.years.to === "number") ? m.years.to : null,
             group_id: m?.group_id || null,
             group_label: m?.group_label || null,
+            group_sort_order: (typeof m?.group_sort_order === "number") ? m.group_sort_order : null,
+            sort_order: (typeof m?.sort_order === "number") ? m.sort_order : null,
             file: m?.file,
             aliases: Array.isArray(m?.aliases) ? m.aliases : []
           });
@@ -2385,16 +2388,23 @@ async function loadModelIndex(){
       const makes = manufacturers
         .map(m => ({
           id: m?.make_id || m?.id || String(m?.make || m?.label || "unknown").toLowerCase(),
-          label: m?.make || m?.label || m?.make_id || m?.id || "Unknown"
+          label: m?.make || m?.label || m?.make_id || m?.id || "Unknown",
+          sort_order: (typeof m?.sort_order === "number") ? m.sort_order : null
         }))
         .filter(m => m.id && m.label);
+
+      const sortValue = (v)=> (typeof v === "number" && Number.isFinite(v)) ? v : Number.POSITIVE_INFINITY;
 
       // Step 1: pick manufacturer
       if (sheetMode === "make" || !SELECTED_MAKE_ID){
         let html = '';
         makes
           .slice()
-          .sort((a,b)=>String(a.label).localeCompare(String(b.label)))
+          .sort((a,b)=>{
+            const so = sortValue(a.sort_order) - sortValue(b.sort_order);
+            if (so !== 0) return so;
+            return String(a.label).localeCompare(String(b.label));
+          })
           .forEach(mk=>{
             const isActive = (mk.id === SELECTED_MAKE_ID);
             html += `
@@ -2445,6 +2455,9 @@ async function loadModelIndex(){
       }
 
       const groupKeys = Object.keys(byGroup).sort((a,b)=>{
+        const aSort = Math.min(...byGroup[a].map(m => sortValue(m.group_sort_order)));
+        const bSort = Math.min(...byGroup[b].map(m => sortValue(m.group_sort_order)));
+        if (aSort !== bSort) return aSort - bSort;
         if (a===otherKey && b!==otherKey) return 1;
         if (b===otherKey && a!==otherKey) return -1;
         return a.localeCompare(b);
@@ -2456,6 +2469,8 @@ async function loadModelIndex(){
         html += `<div class="groupLabel">${escapeHtml(groupLabelForKey(gk))}</div>`;
 
         const list = byGroup[gk].slice().sort((a,b)=>{
+          const so = sortValue(a.sort_order) - sortValue(b.sort_order);
+          if (so !== 0) return so;
           const c = String(a.label||"").localeCompare(String(b.label||""));
           if (c!==0) return c;
           return String(a.years_label||"").localeCompare(String(b.years_label||""));

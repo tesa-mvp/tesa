@@ -4,42 +4,28 @@
     {
       "make": "Ducati",
       "make_id": "ducati",
+      "sort_order": 1,
       "models": [
         {
-          "id": "ducati_panigale-v2_2025-2026",
-          "label": "Panigale V2",
+          "id": "ducati_panigale-v4_2025-2026",
+          "label": "Panigale V4",
           "group_id": "superbike",
           "group_label": "Superbike",
+          "group_sort_order": 1,
+          "sort_order": 1,
           "years": {
             "from": 2025,
             "to": 2026
           },
           "years_label": "2025–2026",
-          "file": "datasets/ducati/panigale-v2_2025-2026/torque.json",
+          "file": "datasets/ducati/panigale-v4_2025-2026/torque.json",
           "aliases": [
-            "ducati panigale v2",
-            "panigale v2",
-            "v2",
-            "new panigale v2",
-            "new v2"
-          ]
-        },
-        {
-          "id": "ducati_panigale-v2_2020-2025",
-          "label": "Panigale V2",
-          "group_id": "superbike",
-          "group_label": "Superbike",
-          "years": {
-            "from": 2020,
-            "to": 2025
-          },
-          "years_label": "2020–2025",
-          "file": "datasets/ducati/panigale-v2_2020-2025/torque.json",
-          "aliases": [
-            "ducati panigale v2",
-            "panigale v2",
-            "v2",
-            "959"
+            "ducati panigale v4",
+            "panigale v4",
+            "v4",
+            "ducati panigale v4s",
+            "panigale v4s",
+            "v4s"
           ]
         },
         {
@@ -47,6 +33,8 @@
           "label": "Panigale V4",
           "group_id": "superbike",
           "group_label": "Superbike",
+          "group_sort_order": 1,
+          "sort_order": 2,
           "years": {
             "from": 2018,
             "to": 2024
@@ -63,90 +51,97 @@
           ]
         },
         {
-          "id": "ducati_diavel-v4_2023-2026",
-          "label": "Diavel V4",
-          "group_id": "diavel",
-          "group_label": "Diavel",
+          "id": "ducati_panigale-v2_2025-2026",
+          "label": "Panigale V2",
+          "group_id": "superbike",
+          "group_label": "Superbike",
+          "group_sort_order": 1,
+          "sort_order": 3,
           "years": {
-            "from": 2023,
+            "from": 2025,
             "to": 2026
           },
-          "years_label": "2023–2026",
-          "file": "datasets/ducati/diavel-v4_2023-2026/torque.json",
+          "years_label": "2025–2026",
+          "file": "datasets/ducati/panigale-v2_2025-2026/torque.json",
           "aliases": [
-            "ducati diavel v4",
-            "diavel v4",
-            "ducati diavel",
-            "diavel"
+            "ducati panigale v2",
+            "panigale v2",
+            "v2",
+            "new panigale v2"
           ]
         },
         {
-          "id": "ducati_diavel-1260_2019-2022",
-          "label": "Diavel 1260",
-          "group_id": "diavel",
-          "group_label": "Diavel",
+          "id": "ducati_panigale-v2_2020-2025",
+          "label": "Panigale V2",
+          "group_id": "superbike",
+          "group_label": "Superbike",
+          "group_sort_order": 1,
+          "sort_order": 4,
           "years": {
-            "from": 2019,
-            "to": 2022
-          },
-          "years_label": "2019–2022",
-          "file": "datasets/ducati/diavel-1260_2019-2022/torque.json",
-          "aliases": [
-            "ducati diavel 1260",
-            "diavel 1260",
-            "ducati diavel",
-            "diavel"
-          ]
-        },
-        {
-          "id": "ducati_hypermotard-821_2013-2015",
-          "label": "Hypermotard 821",
-          "group_id": "hypermotard",
-          "group_label": "Hypermotard",
-          "years": {
-            "from": 2013,
-            "to": 2015
-          },
-          "years_label": "2013–2015",
-          "file": "datasets/ducati/hypermotard-821_2013-2015/torque.json",
-          "aliases": [
-            "ducati hypermotard 821",
-            "hypermotard 821",
-            "hypermotrad"
-          ]
-        },
-        {
-          "id": "ducati_hypermotard-939_2016-2018",
-          "label": "Hypermotard 939",
-          "group_id": "hypermotard",
-          "group_label": "Hypermotard",
-          "years": {
-            "from": 2016,
-            "to": 2018
-          },
-          "years_label": "2016–2018",
-          "file": "datasets/ducati/hypermotard-939_2016-2018/torque.json",
-          "aliases": [
-            "ducati hypermotard 939",
-            "hypermotard 939",
-            "hypermotrad"
-          ]
-        },
-        {
-          "id": "ducati_hypermotard-950_2019-2025",
-          "label": "Hypermotard 950",
-          "group_id": "hypermotard",
-          "group_label": "Hypermotard",
-          "years": {
-            "from": 2019,
+            "from": 2020,
             "to": 2025
           },
-          "years_label": "2019–2025",
-          "file": "datasets/ducati/hypermotard-950_2019-2025/torque.json",
+          "years_label": "2020–2025",
+          "file": "datasets/ducati/panigale-v2_2020-2025/torque.json",
           "aliases": [
-            "ducati hypermotard 950",
-            "hypermotard 950",
-            "hypermotrad"
+            "ducati panigale v2",
+            "panigale v2"
+          ]
+        },
+        {
+          "id": "ducati_streetfighter-v2_2025-2026",
+          "label": "Streetfighter V2",
+          "group_id": "streetfighter",
+          "group_label": "Streetfighter",
+          "group_sort_order": 2,
+          "sort_order": 5,
+          "years": {
+            "from": 2025,
+            "to": 2026
+          },
+          "years_label": "2025–2026",
+          "file": "datasets/ducati/streetfighter-v2_2025-2026/torque.json",
+          "aliases": [
+            "ducati streetfighter v2",
+            "streetfighter v2"
+          ]
+        },
+        {
+          "id": "ducati_streetfighter-v2_2022-2025",
+          "label": "Streetfighter V2",
+          "group_id": "streetfighter",
+          "group_label": "Streetfighter",
+          "group_sort_order": 2,
+          "sort_order": 6,
+          "years": {
+            "from": 2022,
+            "to": 2025
+          },
+          "years_label": "2022–2025",
+          "file": "datasets/ducati/streetfighter-v2_2022-2025/torque.json",
+          "aliases": [
+            "ducati streetfighter v2",
+            "streetfighter v2",
+            "new streetfighter v2"
+          ]
+        },
+        {
+          "id": "ducati_monster-937_2021-2025",
+          "label": "Monster 937",
+          "group_id": "monster",
+          "group_label": "Monster",
+          "group_sort_order": 3,
+          "sort_order": 7,
+          "years": {
+            "from": 2021,
+            "to": 2025
+          },
+          "years_label": "2021–2025",
+          "file": "datasets/ducati/monster-937_2021-2025/torque.json",
+          "aliases": [
+            "ducati monster",
+            "monster 937",
+            "monster"
           ]
         }
       ]
@@ -154,91 +149,92 @@
     {
       "make": "Yamaha",
       "make_id": "yamaha",
+      "sort_order": 2,
       "models": [
         {
-          "id": "yamaha_yzf-r3_2025-2026",
-          "label": "YZF-R3",
+          "id": "yamaha_yzf-r9_2025-2026",
+          "label": "YZF-R9",
           "group_id": "superbike",
           "group_label": "Supersport",
+          "group_sort_order": 1,
+          "sort_order": 1,
           "years": {
             "from": 2025,
             "to": 2026
           },
           "years_label": "2025–2026",
-          "file": "datasets/yamaha/yzf-r3_2025-2026/torque.json",
+          "file": "datasets/yamaha/yzf-r9_2025-2026/torque.json",
           "aliases": [
-            "yamaha yzf r3",
-            "yzf r3",
-            "r3",
-            "yamaha r3"
+            "yamaha yzf r9",
+            "yzf r9",
+            "r9",
+            "yamaha r9"
           ]
         },
         {
-          "id": "yamaha_yzf-r3_2019-2024",
-          "label": "YZF-R3",
+          "id": "yamaha_yzf-r7_2022-2026",
+          "label": "YZF-R7",
           "group_id": "superbike",
           "group_label": "Supersport",
+          "group_sort_order": 1,
+          "sort_order": 2,
           "years": {
-            "from": 2019,
-            "to": 2024
+            "from": 2022,
+            "to": 2026
           },
-          "years_label": "2019–2024",
-          "file": "datasets/yamaha/yzf-r3_2019-2024/torque.json",
+          "years_label": "2022–2026",
+          "file": "datasets/yamaha/yzf-r7_2022-2026/torque.json",
           "aliases": [
-            "yamaha yzf r3",
-            "yzf r3",
-            "r3",
-            "yamaha r3"
+            "yamaha yzf r7",
+            "yzf r7",
+            "r7",
+            "yamaha r7"
           ]
         },
         {
-          "id": "yamaha_yzf-r3_2015-2018",
-          "label": "YZF-R3",
+          "id": "yamaha_yzf-r6_2017-2021",
+          "label": "YZF-R6",
           "group_id": "superbike",
           "group_label": "Supersport",
+          "group_sort_order": 1,
+          "sort_order": 3,
           "years": {
-            "from": 2015,
-            "to": 2018
+            "from": 2017,
+            "to": 2021
           },
-          "years_label": "2015–2018",
-          "file": "datasets/yamaha/yzf-r3_2015-2018/torque.json",
+          "years_label": "2017–2021",
+          "file": "datasets/yamaha/yzf-r6_2017-2021/torque.json",
           "aliases": [
-            "yamaha yzf r3",
-            "yzf r3",
-            "r3",
-            "yamaha r3"
+            "yamaha yzf r6",
+            "yzf r6",
+            "r6",
+            "yamaha r6"
           ]
-        },
+        }
+      ]
+    },
+    {
+      "make": "Kramer",
+      "make_id": "kramer",
+      "sort_order": 3,
+      "models": [
         {
-          "id": "yamaha_mt-09_2021-2024",
-          "label": "MT-09",
-          "group_id": "hypernaked",
-          "group_label": "Hyper Naked",
-          "years": {
-            "from": 2021,
-            "to": 2024
-          },
-          "years_label": "2021–2024",
-          "file": "datasets/yamaha/mt-09_2021-2024/torque.json",
-          "aliases": [
-            "yamaha mt 09",
-            "mt 09"
-          ]
-        },
-        {
-          "id": "yamaha_mt-09_2025-2026",
-          "label": "MT-09",
-          "group_id": "hypernaked",
-          "group_label": "Hyper Naked",
+          "id": "kramer_apx-350_2025-2026",
+          "label": "APX-350",
+          "group_id": null,
+          "group_label": null,
+          "group_sort_order": 1,
+          "sort_order": 1,
           "years": {
             "from": 2025,
             "to": 2026
           },
           "years_label": "2025–2026",
-          "file": "datasets/yamaha/mt-09_2025-2026/torque.json",
+          "file": "datasets/kramer/apx-350_2025-2026/torque.json",
           "aliases": [
-            "yamaha mt 09",
-            "mt 09"
+            "kramer apx350",
+            "kramer 350",
+            "talent cup bike"
           ]
         }
       ]
