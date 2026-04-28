@@ -116,15 +116,13 @@
     .micBig{
       min-width:0;
       height:42px;
-      padding:0 13px;
+      width:42px;
+      padding:0;
       border-radius:999px;
       border:1px solid var(--border);
       background:rgba(9,11,18,.85);
       color:var(--text);
-      font-size:12px;
-      font-weight:700;
       display:flex;align-items:center;justify-content:center;
-      gap:7px;
       cursor:pointer;
       transition:transform .08s ease, box-shadow .08s ease, opacity .12s ease;
     }
@@ -143,14 +141,12 @@
     .camBig{
       min-width:0;
       height:42px;
-      padding:0 13px;
+      width:42px;
+      padding:0;
       border-radius:999px;
       border:1px solid var(--border);
       background:rgba(9,11,18,.85);
       color:var(--text);
-      font-size:12px;
-      font-weight:700;
-      gap:7px;
       display:flex;align-items:center;justify-content:center;
       cursor:pointer;
       transition:transform .08s ease, box-shadow .12s ease, border-color .12s ease;
@@ -997,7 +993,7 @@
       <div class="voiceArea">
         <div class="fallbackRow">
           <input id="questionInput" class="q" type="text"
-                 placeholder="Search torque... e.g. Oil drain"
+                 placeholder="Search torque... e.g. Oil drain bolt"
                  autocomplete="off" />
           <button id="sendBtn" class="send" type="button" aria-label="Ask">
             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -1007,18 +1003,16 @@
         </div>
 
         <div class="primaryActions" aria-label="Other input methods">
-          <button id="micBig" class="micBig" type="button" aria-label="Speak">
+          <button id="micBig" class="micBig" type="button" aria-label="Speak" title="Voice">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path fill="currentColor" d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3z"/>
               <path fill="currentColor" d="M17 11a1 1 0 1 0-2 0 3 3 0 0 1-6 0 1 1 0 1 0-2 0 5.002 5.002 0 0 0 4 4.9V18H9a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2h-2v-2.1A5.002 5.002 0 0 0 17 11z"/>
             </svg>
-            <span>Voice</span>
           </button>
-          <button id="camBtn" class="camBig" type="button" aria-label="Take photo">
+          <button id="camBtn" class="camBig" type="button" aria-label="Take photo" title="Photo">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path fill="currentColor" d="M9 4l1.5 2H13l1.5-2H18a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h3zm3 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/>
             </svg>
-            <span>Photo</span>
           </button>
           <input id="photoInput" type="file" accept="image/*" style="display:none" />
         </div>
