@@ -55,7 +55,7 @@
       box-shadow:0 0 24px rgba(79,140,255,.65);
     }
     .brandText .t1{
-      font-weight:700;letter-spacing:.08em;font-size:12px;
+      font-weight:700;letter-spacing:.04em;font-size:12px;
       text-transform:uppercase;color:var(--sub);
       line-height:1.1;
     }
@@ -2260,6 +2260,16 @@ const VISION_CONF_MIN = 0.75; // confidence threshold for auto scoring (0..1)
       return VISION_API_BASE_PROD;
     }
 
+    async function getSupabaseAccessToken(){
+      if (!supabaseAuth || !CURRENT_USER) return "";
+      try{
+        const { data } = await supabaseAuth.auth.getSession();
+        return data?.session?.access_token || "";
+      }catch(e){
+        return "";
+      }
+    }
+
     function withTimeout(promise, ms){
       return new Promise((resolve, reject)=>{
         const t = setTimeout(()=>reject(new Error("timeout")), ms);
@@ -2419,18 +2429,23 @@ const body = { normalized_query: String(rawQuery || ""),
       
       // Cache hit (prevents double network calls when autoswitch + handleQuery both route)
       const cacheKey = String(body.normalized_query || '').trim();
-      const cached = getRouteCache(cacheKey);
+      const accessTokenForRequest = await getSupabaseAccessToken();
+      const canUseRouteCache = !accessTokenForRequest;
+      const cached = canUseRouteCache ? getRouteCache(cacheKey) : null;
       if (cached) return cached;
-      const pending = __routeInFlight.get(cacheKey);
+      const pending = canUseRouteCache ? __routeInFlight.get(cacheKey) : null;
       if (pending) return await pending;
 
       const routePromise = (async () => {
 try{
         startWorkingIndicator();
   try {
+        const headers = { "Content-Type": "application/json" };
+        const accessToken = accessTokenForRequest;
+        if (accessToken) headers.Authorization = `Bearer ${accessToken}`;
         const r = await withTimeout(fetch(url, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers,
           body: JSON.stringify(body)
         }), ROUTE_TIMEOUT_MS);
 
@@ -2448,7 +2463,7 @@ llm_query: (typeof data?.llm_query === "string") ? data.llm_query : "",
           part_phrases: Array.isArray(data?.part_phrases) ? data.part_phrases : [],
           part_phrases_confidence: (typeof data?.part_phrases_confidence === "number") ? data.part_phrases_confidence : 0,
           overall_confidence: (typeof data?.overall_confidence === "number") ? data.overall_confidence : Math.max(0, Math.min(1, (((typeof data?.llm_query_confidence === "number") ? data.llm_query_confidence : 0) + ((typeof data?.part_phrases_confidence === "number") ? data.part_phrases_confidence : 0)) / 2))
-        };        setRouteCache(cacheKey, guarded);
+        };        if (canUseRouteCache) setRouteCache(cacheKey, guarded);
         if (typeof __tesaRouteDebugEnd === "function") __tesaRouteDebugEnd(guarded);
         stopWorkingIndicator();
         return guarded;
@@ -2464,7 +2479,7 @@ llm_query: (typeof data?.llm_query === "string") ? data.llm_query : "",
   }
       })();
 
-      __routeInFlight.set(cacheKey, routePromise);
+      if (canUseRouteCache) __routeInFlight.set(cacheKey, routePromise);
       return await routePromise;
 }
 
