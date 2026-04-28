@@ -1,0 +1,4198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TESA – Torque Assistant MVP Light</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    :root{
+      --bg:#05060a;
+      --panel:#0b0d14;
+      --panel2:#070813;
+      --border:#232530;
+      --text:#f5f5f7;
+      --sub:#a5a7b3;
+      --muted:#6f7380;
+      --accent:#4f8cff;
+      --accent2:#9fddff;
+      --danger:#ff4f6a;
+      --ok:#27e49f;
+      --r:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;
+      background:radial-gradient(circle at top,#141622 0,#05060a 55%);
+      color:var(--text);
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:stretch;
+    }
+    .wrap{
+      width:100%;
+      max-width:760px;
+      padding:18px 14px 24px;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+    header{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:flex-start;
+      gap:8px;
+    }
+    .brand{display:flex;align-items:center;gap:10px}
+    .mark{
+      width:34px;height:34px;border-radius:12px;
+      background:radial-gradient(circle at 30% 30%,var(--accent2),var(--accent));
+      display:flex;align-items:center;justify-content:center;
+      color:#05060a;font-weight:800;
+      box-shadow:0 0 24px rgba(79,140,255,.65);
+    }
+    .brandText .t1{
+      font-weight:700;letter-spacing:.08em;font-size:12px;
+      text-transform:uppercase;color:var(--sub);
+      line-height:1.1;
+    }
+    .brandText .t2{
+      font-size:11px;color:var(--muted);
+      line-height:1.1;margin-top:2px;
+    }
+    .badge{
+      padding:7px 10px;border-radius:999px;
+      border:1px solid var(--border);
+      font-size:11px;color:var(--sub);
+      background:rgba(12,14,22,.9);
+      display:inline-flex;align-items:center;gap:7px;
+      white-space:nowrap;
+    }
+    .dot{width:6px;height:6px;border-radius:999px;background:var(--ok);box-shadow:0 0 10px rgba(39,228,159,.7)}
+
+    .card{
+      background:linear-gradient(145deg,var(--panel),var(--panel2));
+      border:1px solid var(--border);
+      border-radius:var(--r);
+      padding:14px;
+      position:relative;
+      overflow:hidden;
+      box-shadow:0 18px 45px rgba(0,0,0,.6);
+    }
+    .card::before{
+      content:"";
+      position:absolute;inset:-40%;
+      background:radial-gradient(circle at top left,rgba(79,140,255,.12),transparent 60%);
+      pointer-events:none;
+      opacity:.9;
+    }
+    .card > *{position:relative;z-index:1}
+
+    .inputCard{
+      padding:22px 20px 18px;
+      min-height:178px;
+      border-color:#34394a;
+      box-shadow:0 18px 45px rgba(0,0,0,.6), 0 0 0 1px rgba(79,140,255,.08) inset;
+    }
+
+    /* Input center */
+    .voiceArea{
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      align-items:stretch;
+      text-align:left;
+      padding:0;
+    }
+
+    .fallbackRow{
+      width:100%;
+      display:flex;
+      gap:8px;
+      align-items:stretch;
+    }
+
+    .micBig{
+      min-width:0;
+      height:42px;
+      width:42px;
+      padding:0;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(9,11,18,.85);
+      color:var(--text);
+      display:flex;align-items:center;justify-content:center;
+      cursor:pointer;
+      transition:transform .08s ease, box-shadow .08s ease, opacity .12s ease;
+    }
+    .micBig:hover{border-color:rgba(79,140,255,.6)}
+    .micBig:active{transform:scale(.97)}
+
+    /* Secondary actions (Voice + Photo) */
+    .primaryActions{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      width:100%;
+      flex-wrap:wrap;
+    }
+    .camBig{
+      min-width:0;
+      height:42px;
+      width:42px;
+      padding:0;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(9,11,18,.85);
+      color:var(--text);
+      display:flex;align-items:center;justify-content:center;
+      cursor:pointer;
+      transition:transform .08s ease, box-shadow .12s ease, border-color .12s ease;
+    }
+    .camBig:hover{border-color:rgba(79,140,255,.6)}
+    .camBig:active{transform:scale(.97)}
+    .camBig svg{width:20px;height:20px}
+
+    .photoPane{
+      width:100%;
+      margin-top:6px;
+      display:none;
+      flex-direction:column;
+      gap:10px;
+      align-items:center;
+    }
+    .photoPane.isOpen{display:flex}
+    .photoPreview{
+      width:100%;
+      max-height:240px;
+      object-fit:cover;
+      border-radius:18px;
+      border:1px solid var(--border);
+      background:rgba(9,11,18,.6);
+    }
+    .photoActions{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+    .photoNote{
+      font-size:11px;
+      color:var(--muted);
+      line-height:1.25;
+    }
+
+    .micBig[disabled]{opacity:.35;cursor:not-allowed;box-shadow:none}
+    .micBig svg{width:20px;height:20px}
+    .hint{
+      font-size:12px;color:var(--sub);
+      line-height:1.35;
+      text-align:center;
+    }
+    .hint b{color:#c2d5ff}
+    .status{
+      height:16px;
+      line-height:16px;
+      font-size:12px;
+      color:var(--sub);
+      text-align:center;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      width:100%;
+    }
+    .status.active{color:#c2d5ff}
+    .status.error{color:var(--danger)}
+
+    .q{
+      flex:1;
+      border-radius:999px;
+      border:1px solid #34394a;
+      background:rgba(5,6,12,.9);
+      padding:0 15px;
+      color:var(--text);
+      font-size:14px;
+      outline:none;
+      min-width:0;
+      height:50px;
+    }
+    .q:focus{border-color:rgba(79,140,255,.7);box-shadow:0 0 0 3px rgba(79,140,255,.12)}
+    .q::placeholder{color:#8b91a3}
+    .send{
+      width:50px;
+      min-width:50px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:var(--accent);
+      color:#05060a;
+      cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      transition:transform .08s ease, filter .12s ease;
+    }
+    .send:hover{filter:brightness(1.08)}
+    .send:active{transform:scale(.98)}
+    .send svg{width:19px;height:19px}
+
+    /* step list shown in the headline area (no top divider) */
+    .stepList.inline{
+      margin-top: 8px;
+      padding-top: 0;
+      border-top: none;
+    }
+
+    /* Result card */
+    .resultTop{
+      display:flex;
+      justify-content:flex-end;
+      align-items:center;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .controls{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:flex-end;
+      flex-wrap:wrap;
+    }
+    .controlGroup{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      padding-right:10px;
+      border-right:1px solid rgba(255,255,255,.10);
+    }
+    .pillBtn{
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(9,11,18,.85);
+      color:var(--text);
+      font-size:11px;
+      cursor:pointer;
+    }
+    .pillBtn:hover{border-color:rgba(79,140,255,.6)}
+    .pillBtn:active{transform:scale(.99)}
+    .pillBtn[disabled]{opacity:.35;cursor:not-allowed}
+    .clearBtn{
+      margin-left:0;
+    }
+    .voiceReadToggle.on{
+      border-color:rgba(39,228,159,.55);
+      color:#d9fff1;
+      box-shadow:0 0 0 2px rgba(39,228,159,.10) inset;
+    }
+
+    .partName{
+      font-size:16px;
+      font-weight:700;
+      line-height:1.2;
+      margin:2px 0 8px;
+    }
+    .torqueBig{
+      font-size:34px;
+      font-weight:800;
+      letter-spacing:-.02em;
+      line-height:1;
+      margin:0 0 8px;
+    }
+    .torqueUnit{
+      font-size:14px;
+      font-weight:700;
+      color:#c2d5ff;
+      margin-left:6px;
+    }
+    .subLine{
+      font-size:12px;
+      color:var(--sub);
+      line-height:1.4;
+      margin-top:2px;
+    }
+    .emptyLine{
+      font-size:13px;
+    }
+    .metaRow{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      margin-top:10px;
+    }
+    .meta{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:4px 9px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(9,11,18,.85);
+      font-size:10px;
+      color:var(--sub);
+    }
+    .meta .mDot{width:6px;height:6px;border-radius:999px;background:var(--accent)}
+    .notes{
+      margin-top:10px;
+      padding-top:10px;
+      border-top:1px solid rgba(255,255,255,.06);
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+   .note{
+      margin-top:6px;            /* 정보와의 간격 살짝 줄임 */
+      font-size:12px;
+      opacity:.75;
+      display:flex;
+      justify-content:flex-end;  /* 오른쪽 정렬 */
+      align-items:flex-start;
+      gap:6px;                   /* ⓘ 와 텍스트 간격 */
+    }
+    .note .icon{
+      font-size:12px;            /* 텍스트와 동일 */
+      line-height:1.35;
+    }
+    .note .text{
+      line-height:1.35;
+      max-width:100%;
+    }
+    .empty{
+      font-size:13px;
+      color:#888b96;
+      line-height:1.4;
+    }
+
+    /* Emphasized chemistry line (threadlock/lube/sealant) */
+    .chemLine{
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(79,140,255,.35);
+      background: rgba(79,140,255,.12);
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .chemItem{
+      font-size: 13px;
+      color: #eef2ff;
+      line-height: 1.25;
+    }
+    .chemKey{
+      font-weight: 800;
+      letter-spacing: .02em;
+      color: #cfe0ff;
+    }
+
+    /* Multi-step list: all same size */
+    .stepList{
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,.06);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .stepRow{
+      display: flex;
+      gap: 10px;
+      align-items: baseline;
+      padding: 8px 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.06);
+      background: rgba(7,9,16,.55);
+    }
+    .stepTag{
+      flex: 0 0 auto;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: #c2d5ff;
+    }
+    .stepVal{
+      flex: 1 1 auto;
+      font-size: 16px;        /* <= 모든 step 동일 크기 */
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      line-height: 1.15;
+      display:flex;
+      align-items:baseline;
+      gap:6px;
+    }
+    /* Multi-step: emphasize values slightly */
+    .stepList.multi .stepVal{
+      font-size: 20px;   /* 기존 16px → 살짝 키움 */
+      font-weight: 900;  /* 가독성 강화 (선택) */
+    }
+
+    .stepNum{
+      font-size:28px;
+      font-weight:800;
+      letter-spacing:-.02em;
+      line-height:1;
+    }
+    .stepUnit{
+      font-size:14px;
+      font-weight:700;
+      color:#c2d5ff;
+    }
+
+
+    .moreInfoBar{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(7,9,16,.55);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .moreInfoText{font-size:12px;color:#d7d8df;line-height:1.25}
+    .moreInfoBtns{display:flex;gap:8px}
+    .moreBtn{
+      padding:7px 10px;border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(9,11,18,.85);
+      color:var(--text);
+      font-size:11px;
+      cursor:pointer;
+    }
+    .moreBtn:hover{border-color:rgba(79,140,255,.6)}
+
+    /* Tools + Notes block (between torque/steps and chemistry line) */
+    .infoBlock{
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(7,9,16,.55);
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .infoLine{
+      font-size: 12px;
+      color: #d7d8df;
+      line-height: 1.35;
+    }
+    .infoKey{
+      font-weight: 800;
+      letter-spacing: .02em;
+      color: #cfe0ff;
+    }
+
+    /* Candidate chooser (safety rail #3) */
+    .candidates{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      margin-top:10px;
+    }
+    .candBtn{
+      width:100%;
+      text-align:left;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:rgba(7,9,16,.75);
+      color:var(--text);
+      padding:10px 12px;
+      cursor:pointer;
+      font-size:12px;
+      line-height:1.25;
+    }
+    .candBtn:hover{border-color:rgba(79,140,255,.6)}
+    .candSub{display:block;margin-top:4px;font-size:11px;color:var(--sub)}
+    .candCard{padding:14px}
+    .candRow{display:flex;gap:14px;align-items:flex-start}
+    .candThumbWrap{
+      width: 260px;height: 170px;flex: 0 0 260px;
+      border-radius:12px;overflow:hidden;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.03);
+      display:flex;align-items:center;justify-content:center;
+    }
+    .candThumb{width:100%;height:100%;object-fit:contain}
+    .candThumbPh{font-size:10px;color:var(--sub);text-align:center;padding:6px;line-height:1.2}
+    .candInfo strong{font-size:14px;display:block}
+    .candMeta{margin-top:6px;display:flex;flex-wrap:wrap;gap:6px}
+    .pillMini{
+      display:inline-flex;align-items:center;
+      padding:4px 8px;border-radius:999px;
+      font-size:11px;border:1px solid var(--border);
+      background:rgba(255,255,255,.04);color:var(--text);
+      white-space:nowrap;
+    }
+    .pillMini.pillGhost{background:transparent;color:var(--sub)}
+
+  
+    .itemNumber{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(7,9,16,.45);
+      font-size:12px;
+      line-height:1.35;
+    }
+    .itemNumber .itemLabel{
+      color: var(--muted);
+      font-weight:700;
+      margin-right:6px;
+    }
+    .refImages{
+      margin-top:10px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .refImage{
+      width:100%;
+      max-width:100%;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(7,9,16,.35);
+    }
+
+
+    /* === Model selector sheet (MVP) === */
+    .sheetOverlay{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.55);
+      display:none;
+      align-items:flex-end;
+      justify-content:center;
+      z-index:999;
+      padding:14px;
+    }
+    .sheetOverlay.show{display:flex}
+    .sheet{
+      width:100%;
+      max-width:760px;
+      border-radius:20px 20px 18px 18px;
+      border:1px solid var(--border);
+      background:linear-gradient(145deg,var(--panel),var(--panel2));
+      box-shadow:0 18px 55px rgba(0,0,0,.75);
+      overflow:hidden;
+    }
+    .sheetHeader{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:12px 14px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    
+    .sheetLeft{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:0;
+    }
+    .sheetLeft .sheetTitle{
+      margin:0;
+    }
+.sheetTitle{
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.09em;
+      color:var(--sub);
+      font-weight:800;
+    }
+    .sheetClose{
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(9,11,18,.85);
+      color:var(--text);
+      font-size:11px;
+      padding:7px 10px;
+      cursor:pointer;
+    }
+    .sheetClose:hover{border-color:rgba(79,140,255,.6)}
+    .sheetBody{
+      padding:10px 10px 12px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      max-height:62vh;
+      overflow:auto;
+    }
+    .makeLabel{
+      margin-top:6px;
+      padding:6px 6px 0;
+      font-size:11px;
+      color:var(--muted);
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+    
+    .groupLabel{
+      margin-top:6px;
+      padding:8px 6px 0;
+      font-size:10px;
+      color:var(--sub);
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      opacity:.9;
+    }
+.modelBtn{
+      width:100%;
+      text-align:left;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(7,9,16,.55);
+      color:var(--text);
+      padding:10px 12px;
+      cursor:pointer;
+      font-size:12px;
+      line-height:1.25;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .modelBtn:hover{border-color:rgba(79,140,255,.6)}
+    .modelBtn .right{
+      flex:0 0 auto;
+      font-size:11px;
+      color:var(--sub);
+      white-space:nowrap;
+    }
+    .modelBtn.active{
+      border-color:rgba(39,228,159,.55);
+      box-shadow:0 0 0 2px rgba(39,228,159,.12) inset;
+    }
+    .badge.clickable{cursor:pointer}
+    .badge.clickable:hover{border-color:rgba(79,140,255,.6)}
+
+
+    /* Small mic button next to model badge */
+    .badgeRow{display:flex;align-items:center;justify-content:center;gap:8px;width:100%}
+/* === Multi-match vertical card layout override === */
+.candidates{
+  display:grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap:12px;
+}
+
+.candBtn.candCard{
+  text-align:center;
+}
+
+.candRow{
+  flex-direction:column;
+  align-items:center;
+}
+
+.candInfo{
+  width:100%;
+}
+
+.candInfo strong{
+  display:block;
+  margin-top:2px;
+  line-height:1.2;
+  /* tidy: clamp to 2 lines */
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  overflow:hidden;
+}
+
+.candMeta{
+  justify-content:center;
+}
+/* === End override === */
+
+
+/* === Multi-match layout tweaks (wide image, title above) === */
+.candThumbWrap{
+  width: 260px !important;
+  height: 170px !important;
+  flex: 0 0 auto !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  background:#0f1118 !important;
+}
+.candThumb{
+  width: 260px !important;
+  height: 170px !important;
+  object-fit: contain !important;
+}
+.candThumbPh{
+  width: 260px !important;
+  height: 170px !important;
+}
+/* Title/ItemNo above image */
+.candCard{
+  padding-top: 12px !important;
+}
+/* === End tweaks === */
+
+
+/* === Multi-match: show title + item number above image (override) === */
+.candInfoTop{
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  margin-bottom:2px;
+}
+.candInfoTop .pillMini{
+  font-size:12px;
+  padding:4px 10px;
+}
+/* === End override === */
+
+
+/* =========================
+   Specs (service data) 2-column list
+   ========================= */
+.subTitle{
+  margin-top:14px;
+  font-weight:700;
+  font-size:14px;
+  opacity:.92;
+}
+.twoCol{
+  margin-top:8px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.twoCol .row{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+  padding:8px 10px;
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:12px;
+  background:rgba(255,255,255,.03);
+}
+.twoCol .k{
+  flex: 1 1 auto;
+  min-width: 0;
+  font-weight:600;
+  opacity:.9;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.twoCol .v{
+  flex: 0 0 auto;
+  font-weight:700;
+  text-align:right;
+  white-space:nowrap;
+}
+.note{
+  margin-top:8px;
+  font-size:12px;
+  opacity:.75;
+}
+
+/* Subtle label styling for Specs */
+.twoCol .row .k{
+  font-size:11px;
+  opacity:0.55;
+  letter-spacing:0.02em;
+}
+
+
+/* Top header row: logo left, account icon right */
+.topRow{
+  position:relative;
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.accountIcon{
+  font-size:18px;
+  cursor:pointer;
+  opacity:0.75;
+}
+.accountIcon:hover{
+  opacity:1;
+}
+
+
+/* Hamburger menu icon (top right) */
+.menuIcon{
+  width:28px;
+  height:22px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  background:none;
+  border:none;
+  padding:0;
+  cursor:pointer;
+  opacity:0.8;
+}
+.menuIcon span{
+  display:block;
+  height:2px;
+  width:100%;
+  background:var(--text);
+  border-radius:2px;
+}
+.menuIcon:hover{
+  opacity:1;
+}
+
+
+/* Header layout: brand left, menu right */
+.topRow{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.leftBrand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.brandText{
+  text-align:left;
+}
+
+
+/* Stacked result cards */
+#resultBody{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.resultCard{
+  border-radius:18px;
+  background:rgba(255,255,255,0.04);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+  padding:14px 14px 16px 14px;
+}
+
+
+/* Route on/off toggle (top center) */
+.routeToggleWrap{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background:rgba(9,11,18,.85);
+  color:var(--sub);
+  font-size:11px;
+  line-height:1;
+  user-select:none;
+}
+.routeToggleWrap .label{
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  font-weight:800;
+  color:var(--sub);
+}
+.routeToggle{
+  width:38px;
+  height:20px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.08);
+  position:relative;
+  cursor:pointer;
+  flex:0 0 auto;
+}
+.routeToggle .knob{
+  position:absolute;
+  top:2px; left:2px;
+  width:16px; height:16px;
+  border-radius:999px;
+  background:rgba(255,255,255,.75);
+  transition:left .12s ease, background .12s ease;
+}
+.routeToggleWrap.on{
+  border-color:rgba(39,228,159,.55);
+  box-shadow:0 0 0 2px rgba(39,228,159,.10) inset;
+  color:#cfe0ff;
+}
+.routeToggleWrap.on .routeToggle{
+  background:rgba(39,228,159,.20);
+  border-color:rgba(39,228,159,.35);
+}
+.routeToggleWrap.on .routeToggle .knob{
+  left:20px;
+  background:rgba(39,228,159,.85);
+}
+.routeToggleInput{ display:none; }
+
+
+/* Hide ROUTE ON/OFF toggle UI (functionality remains) */
+#routeToggleWrap{ display:none !important; }
+
+/* === Light theme override === */
+:root{
+  --bg:#f4f7fb;
+  --panel:#ffffff;
+  --panel2:#f7f9fd;
+  --border:#cfd7e6;
+  --text:#172033;
+  --sub:#536074;
+  --muted:#7a8495;
+  --accent:#2563eb;
+  --accent2:#7dd3fc;
+  --danger:#dc2626;
+  --ok:#059669;
+}
+body{
+  background:linear-gradient(180deg,#eef4ff 0,#f8fafc 42%,#eef2f7 100%);
+  color:var(--text);
+}
+.mark{
+  color:#0f172a;
+  box-shadow:0 8px 24px rgba(37,99,235,.28);
+}
+.badge{
+  background:rgba(255,255,255,.78);
+  color:var(--sub);
+  border-color:#d6deec;
+  box-shadow:0 6px 18px rgba(15,23,42,.06);
+}
+.dot{
+  background:var(--ok);
+  box-shadow:0 0 10px rgba(5,150,105,.35);
+}
+.card{
+  background:linear-gradient(145deg,#ffffff,#f7f9fd);
+  border-color:#d7deeb;
+  box-shadow:0 18px 45px rgba(15,23,42,.10);
+}
+.card::before{
+  background:radial-gradient(circle at top left,rgba(37,99,235,.08),transparent 58%);
+}
+.inputCard{
+  border-color:#b8c5d8;
+  box-shadow:0 18px 45px rgba(15,23,42,.11), 0 0 0 1px rgba(37,99,235,.10) inset;
+}
+.q{
+  border-color:#b8c5d8;
+  background:#ffffff;
+  color:var(--text);
+}
+.q:focus{
+  border-color:rgba(37,99,235,.75);
+  box-shadow:0 0 0 3px rgba(37,99,235,.14);
+}
+.q::placeholder{color:#6f7b8f}
+.send{
+  background:var(--accent);
+  color:#ffffff;
+}
+.micBig,
+.camBig,
+.pillBtn{
+  background:#ffffff;
+  color:var(--text);
+  border-color:#cfd7e6;
+}
+.micBig:hover,
+.camBig:hover,
+.pillBtn:hover{
+  border-color:rgba(37,99,235,.55);
+}
+.controlGroup{
+  border-right-color:#d8dfec;
+}
+.voiceReadToggle.on{
+  border-color:rgba(5,150,105,.55);
+  color:#047857;
+  background:#ecfdf5;
+  box-shadow:0 0 0 2px rgba(5,150,105,.10) inset;
+}
+.resultCard{
+  background:#ffffff;
+  border:1px solid #e1e7f0;
+  box-shadow:0 10px 28px rgba(15,23,42,.08);
+}
+.chemLine{
+  border-color:rgba(37,99,235,.25);
+  background:rgba(37,99,235,.07);
+}
+.chemItem{color:#1e293b}
+.chemKey{color:#1d4ed8}
+.meta,
+.pillMini,
+.itemNumber,
+.modelBtn,
+.sheetClose{
+  background:#ffffff;
+  border-color:#d7deeb;
+  color:var(--text);
+}
+.modelBtn.active{
+  border-color:rgba(5,150,105,.62);
+  box-shadow:0 0 0 2px rgba(5,150,105,.12) inset;
+}
+.sheet{
+  background:#f8fafc;
+  border-color:#d7deeb;
+  box-shadow:0 24px 70px rgba(15,23,42,.18);
+}
+.sheetHeader{
+  border-bottom-color:#e1e7f0;
+}
+.sheetOverlay{
+  background:rgba(15,23,42,.22);
+}
+.candBtn,
+.candThumbWrap,
+.twoCol .row,
+.stepRow{
+  background:#ffffff;
+  border-color:#d7deeb;
+}
+.candThumbPh{color:var(--sub)}
+.menuIcon span{
+  background:#172033;
+}
+
+</style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topRow">
+        <div class="leftBrand">
+          <div class="brand">
+            <div class="mark">T</div>
+          
+        <!-- Route on/off toggle (default OFF) -->
+        <div id="routeToggleWrap" class="routeToggleWrap" title="Router (LLM) on/off">
+          <span class="label">ROUTE</span>
+          <input id="routeToggleInput" class="routeToggleInput" type="checkbox" />
+          <div id="routeToggle" class="routeToggle" role="switch" aria-checked="false" tabindex="0">
+            <div class="knob"></div>
+          </div>
+        </div>
+</div>
+          <div class="brandText">
+            <div class="t1">TESA</div>
+            <div class="t2">Tech Spec Assistant</div>
+          </div>
+        </div>
+        <button class="menuIcon" aria-label="Open menu" title="Menu" type="button">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+      <div class="badgeRow">
+      <div class="badge" id="makeBadge">
+        <span class="dot"></span>
+        Select make…
+      </div>
+      <div class="badge" id="modelBadge">
+        <span class="dot"></span>
+        Select model…
+      </div>
+</div>
+    </header>
+
+    <!-- Text-first input -->
+    <section class="card inputCard">
+      <div class="voiceArea">
+        <div class="fallbackRow">
+          <input id="questionInput" class="q" type="text"
+                 placeholder="Search torque... e.g. Oil drain bolt"
+                 autocomplete="off" />
+          <button id="sendBtn" class="send" type="button" aria-label="Ask">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M2 21l21-9L2 3v7l15 2-15 2v7z"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="primaryActions" aria-label="Other input methods">
+          <button id="micBig" class="micBig" type="button" aria-label="Speak" title="Voice">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3z"/>
+              <path fill="currentColor" d="M17 11a1 1 0 1 0-2 0 3 3 0 0 1-6 0 1 1 0 1 0-2 0 5.002 5.002 0 0 0 4 4.9V18H9a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2h-2v-2.1A5.002 5.002 0 0 0 17 11z"/>
+            </svg>
+          </button>
+          <button id="camBtn" class="camBig" type="button" aria-label="Take photo" title="Photo">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M9 4l1.5 2H13l1.5-2H18a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h3zm3 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/>
+            </svg>
+          </button>
+          <input id="photoInput" type="file" accept="image/*" style="display:none" />
+        </div>
+
+        <div id="statusLine" class="status"></div>
+        <div id="photoPane" class="photoPane" aria-live="polite">
+          <img id="photoPreview" class="photoPreview" alt="Captured photo preview" />
+          <div class="photoActions">
+            <button id="usePhotoBtn" class="pillBtn" type="button" disabled>Use photo</button>
+            <button id="retakePhotoBtn" class="pillBtn" type="button">Retake</button>
+          </div>
+          <div class="photoNote">Beta: photo analysis will be wired to LLM matching.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Result -->
+    <section class="card" id="resultCard">
+      <div class="resultTop">
+        <div class="controls">
+          <div class="controlGroup" aria-label="Read result aloud">
+          <button id="voiceReadToggle" class="pillBtn voiceReadToggle" type="button" aria-pressed="false">Audio Off</button>
+            <button id="repeatBtn" class="pillBtn" type="button" disabled>Repeat</button>
+            <button id="stopBtn" class="pillBtn" type="button" disabled>Stop</button>
+          </div>
+          <button id="clearBtn" class="pillBtn clearBtn" type="button">Clear</button>
+        </div>
+      </div>
+
+      <div id="resultBody" class="empty"></div>
+    </section>
+  </div>
+
+
+  <!-- Model selector (tap the model badge) -->
+  <div id="sheetOverlay" class="sheetOverlay" role="dialog" aria-modal="true" aria-label="Select model">
+    <div class="sheet">
+      <div class="sheetHeader">
+        <div class="sheetLeft">
+          <button id="sheetBack" class="sheetClose" type="button" style="display:none">Back</button>
+          <div class="sheetTitle" id="sheetTitle">Select</div>
+        </div>
+        <button id="sheetClose" class="sheetClose" type="button">Close</button>
+      </div>
+      <div id="sheetBody" class="sheetBody"></div>
+    </div>
+  </div>
+
+
+  <script>
+    // =========================
+    // URL param utility (MVP)
+    // =========================
+    // Support: ?reset=1  -> clears saved model selection (for testing)
+    (function(){
+      try{
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("reset") === "1"){
+          // Clear storage (most reliable across browsers)
+          try{ localStorage.clear(); } catch(e){}
+
+          // Also clear known keys explicitly (in case clear() is blocked)
+          const keysToClear = [
+            "TESA_last_model_id",
+            "TESA_last_dataset_file",
+            "TESA_LAST_MODEL_ID",
+            "TESA_LAST_DATASET_FILE",
+            "lastSelectedModelId",
+            "lastSelectedDatasetFile"
+          ];
+          keysToClear.forEach(k=>{ try{ localStorage.removeItem(k); } catch(e){} });
+
+          // Remember that a reset just happened (survives the redirect)
+          try{ sessionStorage.setItem("__TESA_DID_RESET__", "1"); } catch(e){}
+
+          // Remove reset=1 from URL and hard-navigate (avoids Chrome edge cases / BFCache)
+          params.delete("reset");
+          const qs = params.toString();
+          const newUrl = window.location.pathname + (qs ? ("?" + qs) : "") + window.location.hash;
+
+          window.location.replace(newUrl);
+          return;
+        }
+      } catch(e){}
+    })();
+
+
+// =========================
+    // Data + Safety rails
+    // =========================
+    let CURRENT_MODEL_ID = null;
+    let CURRENT_DATASET_FILE = null;
+    let CURRENT_MODEL_DISPLAY = null; // {make, label, years_label}
+    // Persist last selected model (Structure A)
+    const STORAGE_KEY_MODEL_ID = "TESA_last_model_id";
+    const STORAGE_KEY_DATASET_FILE = "TESA_last_dataset_file";
+
+    
+    // =========================
+    // Query cleanup lexicon (externalized)
+    // - Defaults live here for safety.
+    // - You can override them by adding JSON files:
+    //     ./lexicon/filler_phrases.json
+    //     ./lexicon/generic_stopwords.json
+    //     ./lexicon/extra_stopwords.json
+    // =========================
+    const LEXICON_FILES = {
+      filler_phrases: "./lexicon/filler_phrases.json",
+      generic_stopwords: "./lexicon/generic_stopwords.json",
+      extra_stopwords: "./lexicon/extra_stopwords.json"
+    };
+
+    // Built-in defaults (used if lexicon files are missing/unreadable)
+    let QUERY_FILLER_PHRASES = [
+];
+    let GENERIC_WORDS = [
+];
+    // Keep this conservative: removing too much can reduce matching quality.
+    let EXTRA_STOPWORDS = [
+];
+
+    // STOPWORDS is a derived set used by tokenize(). Rebuild after any lexicon update.
+    let STOPWORDS = new Set();
+    function rebuildStopwords(){
+      STOPWORDS = new Set([
+        ...GENERIC_WORDS,
+        ...EXTRA_STOPWORDS
+      ]);
+    }
+    rebuildStopwords();
+
+    let __lexiconLoadPromise = null;
+    async function loadLexiconOnce(){
+      if (__lexiconLoadPromise) return __lexiconLoadPromise;
+
+      __lexiconLoadPromise = (async () => {
+        try {
+          const [fillerResp, genericResp, extraResp] = await Promise.all([
+            fetch(LEXICON_FILES.filler_phrases, { cache: "no-store" }),
+            fetch(LEXICON_FILES.generic_stopwords, { cache: "no-store" }),
+            fetch(LEXICON_FILES.extra_stopwords, { cache: "no-store" })
+          ]);
+
+          // If any file is missing, keep defaults (do not hard-fail).
+          const safeJsonArray = async (resp) => {
+            if (!resp || !resp.ok) return null;
+            const data = await resp.json();
+            if (!Array.isArray(data)) return null;
+            return data.map(x => String(x)).filter(Boolean);
+          };
+
+          const fillerJson = await safeJsonArray(fillerResp);
+          const genericJson = await safeJsonArray(genericResp);
+          const extraJson = await safeJsonArray(extraResp);
+
+          if (fillerJson) QUERY_FILLER_PHRASES = fillerJson;
+          if (genericJson) GENERIC_WORDS = genericJson;
+          if (extraJson) EXTRA_STOPWORDS = extraJson;
+
+          rebuildStopwords();
+          // console.debug("[TESA lexicon] loaded", {
+          //   filler: QUERY_FILLER_PHRASES.length,
+          //   generic: GENERIC_WORDS.length,
+          //   extra: EXTRA_STOPWORDS.length
+          // });
+        } catch (e) {
+          // Keep built-in defaults
+          // console.warn("[TESA lexicon] load failed; using defaults.", e);
+          rebuildStopwords();
+        }
+      })();
+
+      return __lexiconLoadPromise;
+    }
+
+
+
+
+    
+    // =========================
+    // LLM Router (/api/route) – settings
+    // =========================
+    const DEBUG_ROUTE = true;
+
+    
+
+    // =========================
+    // LOCAL LEXICAL TRIGGERS (route parity)
+    // - spec/fastener triggers can be externalized (./lexicon/*.json)
+    // - part triggers are loaded from ./lexicon/part_triggers.json
+    // =========================
+
+    // Built-in defaults (used if lexicon JSON files are missing/unreadable)
+    let SPEC_TRIGGER_TOKENS = [
+      "clearance", "gap",
+      "tyre", "tire", "pressure",
+      "viscosity",
+      "grade", "grading",
+      "capacity", "quantity",
+      "standard", "settings",
+      "size", "links",
+      "recommended", "recommendation",
+      "type", "octane", "spec", "level", "fluid"
+    ];
+
+    let FASTENER_TRIGGER_TOKENS = [
+      "tightening", "torque",
+      "bolt", "bolts",
+      "nut", "nuts",
+      "screw", "screws",
+      "fastener", "fasteners",
+      "washer", "washers",
+      "pin", "pins",
+      "clip", "clips",
+      "plug", "mounting"
+    ];
+
+    // External trigger lexicon (optional)
+    const SPEC_TRIGGERS_JSON_PATH = "./lexicon/spec_triggers.json";
+    const FASTENER_TRIGGERS_JSON_PATH = "./lexicon/fastener_triggers.json";
+
+    let __specTriggersLoaded = false;
+    let __specTriggersPromise = null;
+
+    async function loadSpecTriggers(){
+      if (__specTriggersLoaded) return;
+      if (__specTriggersPromise) return __specTriggersPromise;
+
+      __specTriggersPromise = (async ()=>{
+        try{
+          const r = await fetch(SPEC_TRIGGERS_JSON_PATH, { cache: "no-cache" });
+          if (!r.ok) throw new Error("spec_triggers_fetch_failed");
+          const j = await r.json();
+          const arr = (j && Array.isArray(j.spec_triggers)) ? j.spec_triggers : [];
+
+          const out = [];
+          const seen = new Set();
+          for (const it of arr){
+            const phrase = (it && it.trigger_phrase) ? String(it.trigger_phrase).trim().toLowerCase() : "";
+            if (!phrase) continue;
+            // spec triggers are tokens (1-3 words allowed, but we primarily use single tokens)
+            if (seen.has(phrase)) continue;
+            seen.add(phrase);
+            out.push(phrase);
+          }
+
+          if (out.length > 0){
+            SPEC_TRIGGER_TOKENS = out;
+          }
+          __specTriggersLoaded = true;
+        }catch(e){
+        stopWorkingIndicator();
+          __specTriggersLoaded = false;
+        }finally{
+          if (!__specTriggersLoaded){
+            __specTriggersPromise = null; // allow retry later
+          }
+        }
+      })();
+
+      return __specTriggersPromise;
+    }
+
+    let __fastenerTriggersLoaded = false;
+    let __fastenerTriggersPromise = null;
+
+    async function loadFastenerTriggers(){
+      if (__fastenerTriggersLoaded) return;
+      if (__fastenerTriggersPromise) return __fastenerTriggersPromise;
+
+      __fastenerTriggersPromise = (async ()=>{
+        try{
+          const r = await fetch(FASTENER_TRIGGERS_JSON_PATH, { cache: "no-cache" });
+          if (!r.ok) throw new Error("fastener_triggers_fetch_failed");
+          const j = await r.json();
+          const arr = (j && Array.isArray(j.fastener_triggers)) ? j.fastener_triggers : [];
+
+          const out = [];
+          const seen = new Set();
+          for (const it of arr){
+            const phrase = (it && it.trigger_phrase) ? String(it.trigger_phrase).trim().toLowerCase() : "";
+            if (!phrase) continue;
+            if (seen.has(phrase)) continue;
+            seen.add(phrase);
+            out.push(phrase);
+          }
+
+          if (out.length > 0){
+            FASTENER_TRIGGER_TOKENS = out;
+          }
+          __fastenerTriggersLoaded = true;
+        }catch(e){
+          __fastenerTriggersLoaded = false;
+        }finally{
+          if (!__fastenerTriggersLoaded){
+            __fastenerTriggersPromise = null; // allow retry later
+          }
+        }
+      })();
+
+      return __fastenerTriggersPromise;
+    }
+
+    // =========================
+    // Route v2 (LLM preprocess) – front decides intent (P/F/S rules)
+    // =========================
+    const LLM_QUERY_CONF_MIN = 0.85;      // use llm_query for trigger scan only if >= this
+    const PART_PHRASES_CONF_MIN = 0.60;   // use LLM part_phrases only if >= this
+
+    const LLM_QUERY_GUARD_MAX_EDIT_DIST = 2;
+    const LLM_QUERY_GUARD_REQUIRE_SAME_TOKEN_COUNT = true; // disallow token add/delete
+
+    function __tokenizeNormalized(nq){
+      const s = String(nq || "").trim().toLowerCase();
+      return s ? s.split(/\s+/).filter(Boolean) : [];
+    }
+
+    function __editDistance(a, b){
+      a = String(a || "");
+      b = String(b || "");
+      if (a === b) return 0;
+      const al = a.length, bl = b.length;
+      if (al === 0) return bl;
+      if (bl === 0) return al;
+
+      const dp = new Array(bl + 1);
+      for (let j=0; j<=bl; j++) dp[j] = j;
+
+      for (let i=1; i<=al; i++){
+        let prev = dp[0];
+        dp[0] = i;
+        for (let j=1; j<=bl; j++){
+          const tmp = dp[j];
+          const cost = (a[i-1] === b[j-1]) ? 0 : 1;
+          dp[j] = Math.min(
+            dp[j] + 1,
+            dp[j-1] + 1,
+            prev + cost
+          );
+          prev = tmp;
+        }
+      }
+      return dp[bl];
+    }
+
+    function __llmQueryPassesGuard(localNq, llmNq){
+      const a = __tokenizeNormalized(localNq);
+      const b = __tokenizeNormalized(llmNq);
+
+      if (LLM_QUERY_GUARD_REQUIRE_SAME_TOKEN_COUNT && a.length !== b.length) return false;
+      if (b.length === 0 || a.length === 0) return false;
+
+      for (let i=0; i<Math.min(a.length, b.length); i++){
+        const d = __editDistance(a[i], b[i]);
+        if (d > LLM_QUERY_GUARD_MAX_EDIT_DIST) return false;
+      }
+      return true;
+    }
+
+    function __filterSingleTokenTriggers(terms, specTerms, fastTerms){
+      if (!Array.isArray(terms)) return [];
+      const banned = new Set([
+        ...(Array.isArray(specTerms) ? specTerms : []),
+        ...(Array.isArray(fastTerms) ? fastTerms : [])
+      ].map(s => String(s||"").trim().toLowerCase()).filter(Boolean));
+
+      const out = [];
+      const seen = new Set();
+      for (const t of terms){
+        if (typeof t !== "string") continue;
+        const norm = t.trim().toLowerCase();
+        if (!norm) continue;
+        if (seen.has(norm)) continue;
+        if (norm.includes(" ")) { out.push(norm); seen.add(norm); continue; }
+        if (banned.has(norm)) continue;
+        out.push(norm);
+        seen.add(norm);
+      }
+      return out;
+    }
+
+    function __decideIntentFromPFS(part_terms_found, fastener_terms_found, spec_terms_found){
+      const P = Array.isArray(part_terms_found) && part_terms_found.length > 0;
+      const F = Array.isArray(fastener_terms_found) && fastener_terms_found.length > 0;
+      const S = Array.isArray(spec_terms_found) && spec_terms_found.length > 0;
+
+      if (!P && !F && !S) return "unknown";        // 0,0,0
+      if (!P && !F &&  S) return "spec_lookup";    // 0,0,1
+      if (!P &&  F && !S) return "torque_lookup";  // 0,1,0
+      if (!P &&  F &&  S) return "unknown";        // 0,1,1  (your rule)
+      if ( P && !F && !S) return "torque_lookup";  // 1,0,0
+      if ( P && !F &&  S) return "spec_lookup";    // 1,0,1
+      if ( P &&  F && !S) return "torque_lookup";  // 1,1,0
+      if ( P &&  F &&  S) return "torque_lookup";  // 1,1,1
+      return "unknown";
+    }
+
+    function __buildItemCandidates(intent, part_terms_found, fastener_terms_found, spec_terms_found){
+      if (intent === "spec_lookup"){
+        return [...part_terms_found, ...spec_terms_found].slice(0, 30);
+      }
+      if (intent === "torque_lookup"){
+        return [...part_terms_found, ...fastener_terms_found].slice(0, 30);
+      }
+      return [];
+    }
+
+
+
+    const PART_TRIGGERS_JSON_PATH = "./lexicon/part_triggers.json";
+    let __partTriggersLoaded = false;
+    let __partTriggersPromise = null;
+    let __partTriggerByLen = new Map(); // len -> Set(phrase)
+async function loadPartTriggers(){
+      if (__partTriggersLoaded) return;
+      if (__partTriggersPromise) return __partTriggersPromise;
+
+      __partTriggersPromise = (async ()=>{
+        try{
+          const r = await fetch(PART_TRIGGERS_JSON_PATH, { cache: "no-cache" });
+          const j = await r.json();
+          const arr = (j && Array.isArray(j.part_triggers)) ? j.part_triggers : [];
+
+          const nextMap = new Map(); // len -> Set(phrase)
+          for (const it of arr){
+            const phrase = (it && it.trigger_phrase) ? String(it.trigger_phrase).trim().toLowerCase() : "";
+            const wc = (it && typeof it.word_count === "number") ? it.word_count : (phrase ? phrase.split(/\s+/).length : 0);
+            if (!phrase || wc < 1 || wc > 5) continue;
+            if (!nextMap.has(wc)) nextMap.set(wc, new Set());
+            nextMap.get(wc).add(phrase);
+          }
+
+          __partTriggerByLen = nextMap;
+          __partTriggersLoaded = true;
+        }catch(e){
+          // leave empty (graceful fallback); allow retry on next call
+          __partTriggersLoaded = false;
+        }finally{
+          // If we didn't finish successfully, clear the promise so a later call can retry.
+          if (!__partTriggersLoaded){
+            __partTriggersPromise = null;
+          }
+        }
+      })();
+
+      return __partTriggersPromise;
+    }
+
+    function __uniq(arr){
+      const out = [];
+      const seen = new Set();
+      for (const x of (arr||[])){
+        const s = String(x||"").trim().toLowerCase();
+        if (!s || seen.has(s)) continue;
+        seen.add(s);
+        out.push(s);
+      }
+      return out;
+    }
+
+    function __makeNgrams(tokens, maxN){
+      const out = [];
+      const t = tokens || [];
+      const nmax = Math.min(maxN||5, 5);
+      for (let i=0;i<t.length;i++){
+        for (let n=1;n<=nmax;n++){
+          if (i+n>t.length) break;
+          out.push(t.slice(i,i+n).join(" "));
+        }
+      }
+      return out;
+    }
+
+    function localLexicalRoute(scoringQuery){
+      const tokens = tokenize(scoringQuery);
+      const tokenSet = new Set(tokens);
+
+      const spec_terms_found = SPEC_TRIGGER_TOKENS.filter(w => tokenSet.has(w));
+      const fastener_terms_found = FASTENER_TRIGGER_TOKENS.filter(w => tokenSet.has(w));
+
+      // Part terms: n-gram match (prefer longer first)
+      const ngrams = __makeNgrams(tokens, 5);
+      const part_terms_found = [];
+      const partSeen = new Set();
+
+      for (let L=5; L>=1; L--){
+        const setL = __partTriggerByLen.get(L);
+        if (!setL || setL.size===0) continue;
+        for (const ng of ngrams){
+          if (ng.split(" ").length !== L) continue;
+          if (setL.has(ng) && !partSeen.has(ng)){
+            partSeen.add(ng);
+            part_terms_found.push(ng);
+            if (part_terms_found.length >= 20) break;
+          }
+        }
+        if (part_terms_found.length >= 20) break;
+      }
+
+      const hasSpec = spec_terms_found.length>0;
+      const hasFast = fastener_terms_found.length>0;
+      const hasPart = part_terms_found.length>0;
+
+      let intent = "unknown";
+      if (hasSpec && !hasFast){
+        intent = "spec_lookup";
+      }else if (hasFast && !hasSpec){
+        intent = "torque_lookup";
+      }else if (hasPart && !hasSpec && !hasFast){
+        intent = "torque_lookup";
+      }else if (hasPart && hasSpec && hasFast){
+        intent = "torque_lookup";
+      }else if (!hasPart && !hasSpec && !hasFast){
+        intent = "unknown";
+      }else if (!hasPart && hasSpec && hasFast){
+        intent = "unknown";
+      }
+
+      let item_candidates = [];
+      if (intent === "spec_lookup"){
+        item_candidates = __uniq([ ...part_terms_found, ...spec_terms_found ]);
+      }else if (intent === "torque_lookup"){
+        item_candidates = __uniq([ ...part_terms_found, ...fastener_terms_found ]);
+      }else{
+        item_candidates = [];
+      }
+
+      return { intent, spec_terms_found, fastener_terms_found, part_terms_found, item_candidates };
+    }
+// =========================
+    // ROUTE ON/OFF (DEV + FALLBACK)
+    // Default: OFF (local-only). When OFF, callRouteAPI() returns null immediately.
+    // Persisted in localStorage for convenience.
+    // =========================
+    const ROUTE_TOGGLE_STORAGE_KEY = "TESA_route_enabled";
+    let ROUTE_ENABLED = false;
+
+
+
+    
+    // Router confidence gates (LLM routing)
+    const ROUTE_CONF_MIN = 0.55; // trust LLM normalized_query at/above this
+
+    const ROUTE_TIMEOUT_MS = 9000;
+
+    // Vision (/api/vision)
+    const VISION_ENABLED = true;
+    const VISION_AUTO_SEND = true;
+const VISION_CONF_MIN = 0.75; // confidence threshold for auto scoring (0..1)
+ // fill fallback input and immediately ask
+    const DEBUG_VISION = true;
+    const VISION_TIMEOUT_MS = 30000;
+
+    // Backend base URLs (Router)
+    const ROUTE_API_BASE_PROD = "https://tesa-api-backend.vercel.app";
+    // If you run a local backend later, set this to something like:
+    // "http://localhost:3000"
+    const ROUTE_API_BASE_LOCAL = ROUTE_API_BASE_PROD;
+
+    // Backend base URLs (Vision)
+    const VISION_API_BASE_PROD = ROUTE_API_BASE_PROD;
+    const VISION_API_BASE_LOCAL = ROUTE_API_BASE_LOCAL;
+
+    function getRouteApiBase(){
+      const host = (location.hostname || "").toLowerCase();
+      if (host === "localhost" || host === "127.0.0.1") return ROUTE_API_BASE_LOCAL;
+      return ROUTE_API_BASE_PROD; // GitHub Pages or anything else
+    }
+
+    function getVisionApiBase(){
+      const host = (location.hostname || "").toLowerCase();
+      if (host === "localhost" || host === "127.0.0.1") return VISION_API_BASE_LOCAL;
+      return VISION_API_BASE_PROD;
+    }
+
+    function withTimeout(promise, ms){
+      return new Promise((resolve, reject)=>{
+        const t = setTimeout(()=>reject(new Error("timeout")), ms);
+        promise.then(
+          v=>{ clearTimeout(t); resolve(v); },
+          e=>{ clearTimeout(t); reject(e); }
+        );
+      });
+    }
+
+    function fileToDataUrl(file){
+      return new Promise((resolve, reject)=>{
+        try{
+          const reader = new FileReader();
+          reader.onload = ()=> resolve(String(reader.result || ""));
+          reader.onerror = ()=> reject(new Error("file_read_error"));
+          reader.readAsDataURL(file);
+        }catch(e){
+          reject(e);
+        }
+      });
+    }
+
+    // Downscale/compress the photo before sending to /api/vision to reduce timeouts.
+    // Returns a JPEG dataURL (data:image/jpeg;base64,...) unless it fails, in which case you can fall back to fileToDataUrl().
+    async function fileToVisionDataUrl(file, maxDim = 1280, quality = 0.82){
+      try{
+        const url = URL.createObjectURL(file);
+        const img = await new Promise((resolve, reject) => {
+          const im = new Image();
+          im.onload = () => resolve(im);
+          im.onerror = () => reject(new Error("image_load_error"));
+          im.src = url;
+        });
+
+        let w = img.naturalWidth || img.width || 0;
+        let h = img.naturalHeight || img.height || 0;
+        if (!w || !h) throw new Error("invalid_image_dim");
+
+        const scale = Math.min(1, maxDim / Math.max(w, h));
+        const tw = Math.max(1, Math.round(w * scale));
+        const th = Math.max(1, Math.round(h * scale));
+
+        const canvas = document.createElement("canvas");
+        canvas.width = tw;
+        canvas.height = th;
+        const ctx = canvas.getContext("2d", { alpha: false });
+        ctx.drawImage(img, 0, 0, tw, th);
+
+        // JPEG is generally much smaller than PNG for photos.
+        const dataUrl = canvas.toDataURL("image/jpeg", quality);
+
+        try{ URL.revokeObjectURL(url); }catch(e){}
+        return dataUrl;
+      }catch(e){
+        return "";
+      }
+    }
+
+    async function callVisionAPI({ image_data_url, query, locale, debug }){
+      const base = getVisionApiBase();
+      const url = base.replace(/\/$/, "") + "/api/vision";
+
+      const payload = {
+        image_data_url,
+        query: (query == null ? "" : String(query)),
+        locale: (locale == null ? "en" : String(locale)),
+        debug: !!debug
+      };
+
+      const fetchPromise = fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      const res = await withTimeout(fetchPromise, VISION_TIMEOUT_MS);
+      const text = await res.text();
+      let data = null;
+      try { data = JSON.parse(text); } catch { data = { raw: text }; }
+
+      if (!res.ok){
+        const err = new Error(`Vision HTTP ${res.status}`);
+        err.data = data;
+        throw err;
+      }
+      return data;
+    }
+
+    // =========================
+    // Router cache (avoid double /api/route calls per query)
+    // =========================
+    const ROUTE_CACHE_TTL_MS = 60 * 1000; // 60s
+    const __routeCache = new Map(); // key -> {t:number, v:object|null}
+    const __routeInFlight = new Map(); // key -> Promise<object|null>
+
+    function getRouteCache(key){
+      const k = String(key || "").trim();
+      if (!k) return null;
+      const hit = __routeCache.get(k);
+      if (!hit) return null;
+      if ((Date.now() - hit.t) > ROUTE_CACHE_TTL_MS){
+        __routeCache.delete(k);
+        return null;
+      }
+      return hit.v ?? null;
+    }
+
+    function setRouteCache(key, value){
+      const k = String(key || "").trim();
+      if (!k) return;
+      __routeCache.set(k, { t: Date.now(), v: value ?? null });
+    }
+
+// =========================
+    
+    // =========================
+    // ROUTE DEBUG TRACE (DEV ONLY)
+    // Toggle to enable/disable verbose router tracing.
+    // Easy removal: delete this block and the two call sites in callRouteAPI().
+    // =========================
+    const DEBUG_ROUTE_TRACE = true;
+    const DEBUG_ROUTE_SUMMARY = false; // legacy per-line logs
+
+    function __tesaRouteDebugStart(label, reqBody, rawResponse){
+      if (!DEBUG_ROUTE_TRACE) return;
+      console.groupCollapsed(label);
+      console.log("request_body_sent", reqBody);
+      console.log("raw_route_response", rawResponse);
+
+      // Quick-scan lexical fields (only if backend includes them)
+      if (rawResponse && typeof rawResponse === "object"){
+        if (Array.isArray(rawResponse.spec_terms_found)) console.log("spec_terms_found", rawResponse.spec_terms_found);
+        if (Array.isArray(rawResponse.fastener_terms_found)) console.log("fastener_terms_found", rawResponse.fastener_terms_found);
+        if (Array.isArray(rawResponse.part_terms_found)) console.log("part_terms_found", rawResponse.part_terms_found);
+      }
+    }
+
+    function __tesaRouteDebugEnd(guarded){
+      if (!DEBUG_ROUTE_TRACE) return;
+      console.log("guarded_route_object", guarded);
+      if (guarded && guarded.debug){
+        console.log("route_debug_llm_intermediates", guarded.debug);
+      }
+      console.groupEnd();
+    }
+
+
+async function callRouteAPI(rawQuery){
+      if (!ROUTE_ENABLED) return null;
+const base = getRouteApiBase();
+      const url = `${base}/api/route`;
+
+const body = { normalized_query: String(rawQuery || ""),
+        debug: !!DEBUG_ROUTE_TRACE, locale: "en" };
+
+      
+      // Cache hit (prevents double network calls when autoswitch + handleQuery both route)
+      const cacheKey = String(body.normalized_query || '').trim();
+      const cached = getRouteCache(cacheKey);
+      if (cached) return cached;
+      const pending = __routeInFlight.get(cacheKey);
+      if (pending) return await pending;
+
+      const routePromise = (async () => {
+try{
+        startWorkingIndicator();
+  try {
+        const r = await withTimeout(fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        }), ROUTE_TIMEOUT_MS);
+
+        const data = await r.json().catch(()=>null);
+
+        // DEV TRACE (router)
+        __tesaRouteDebugStart("[TESA route] " + (body.normalized_query || ""), body, data);
+
+        if (!r.ok) throw new Error((data && (data.error || data.message)) || `route_http_${r.status}`);
+
+        // Basic shape guard (Route v2 only)
+        const guarded = {
+llm_query: (typeof data?.llm_query === "string") ? data.llm_query : "",
+          llm_query_confidence: (typeof data?.llm_query_confidence === "number") ? data.llm_query_confidence : 0,
+          part_phrases: Array.isArray(data?.part_phrases) ? data.part_phrases : [],
+          part_phrases_confidence: (typeof data?.part_phrases_confidence === "number") ? data.part_phrases_confidence : 0,
+          overall_confidence: (typeof data?.overall_confidence === "number") ? data.overall_confidence : Math.max(0, Math.min(1, (((typeof data?.llm_query_confidence === "number") ? data.llm_query_confidence : 0) + ((typeof data?.part_phrases_confidence === "number") ? data.part_phrases_confidence : 0)) / 2))
+        };        setRouteCache(cacheKey, guarded);
+        if (typeof __tesaRouteDebugEnd === "function") __tesaRouteDebugEnd(guarded);
+        stopWorkingIndicator();
+        return guarded;
+      }catch(e){
+        if (DEBUG_ROUTE){
+          console.warn("[TESA route] router call failed:", e?.message || e);
+        }
+        return null;
+      }
+      } finally {
+    stopWorkingIndicator();
+    __routeInFlight.delete(cacheKey);
+  }
+      })();
+
+      __routeInFlight.set(cacheKey, routePromise);
+      return await routePromise;
+}
+
+    const MIN_SCORE_TO_ANSWER = 40;   // score too low -> refuse (raw score; no 100 cap)
+    const MIN_GAP_TO_ANSWER   = 15;  // best-second gap too small -> ambiguous (raw score)
+    const MULTI_MIN_SCORE    = 44;  // Multi-match list hides candidates below this score (raw score)
+    const MAX_CANDIDATES_UI   = 3;
+
+    let torqueData = [];
+    let bikeMeta = null;
+
+    // =========================
+    // Scoring (token + phrase + rarity) – PoC v2
+    // =========================
+    let TOKEN_FREQ = new Map();          // token -> number of items containing token
+    let TOKEN_TOTAL_ITEMS = 0;           // for debugging / future IDF
+    let SCORING_INDEX_READY = false;
+
+    // Specs (service data) - lazy loaded per model (cached until model change)
+    let specsIndex = null;        // parsed service.json object
+    let specsModelId = null;      // model id that specsIndex belongs to
+    let specsFilePath = null;     // resolved path to service.json for current model
+
+    // Speech
+    let recognition = null;
+    let recognizing = false;
+    let voiceTranscript = "";
+    let voiceRequestSubmitted = false;
+
+    // TTS
+    let lastSpokenText = "";
+    let lastSpokenEnabled = false;
+    let VOICE_READ_ENABLED = false;
+
+    // DOM
+    const makeBadgeEl = document.getElementById("makeBadge");
+    
+
+    // Route toggle UI (top center)
+    const routeToggleWrapEl = document.getElementById("routeToggleWrap");
+    const routeToggleInputEl = document.getElementById("routeToggleInput");
+    const routeToggleEl = document.getElementById("routeToggle");
+
+    function setRouteEnabled(next){
+      ROUTE_ENABLED = !!next;
+      try{ localStorage.setItem(ROUTE_TOGGLE_STORAGE_KEY, ROUTE_ENABLED ? "1" : "0"); }catch(e){}
+      if (routeToggleWrapEl) routeToggleWrapEl.classList.toggle("on", ROUTE_ENABLED);
+      if (routeToggleEl) routeToggleEl.setAttribute("aria-checked", ROUTE_ENABLED ? "true" : "false");
+      if (routeToggleInputEl) routeToggleInputEl.checked = ROUTE_ENABLED;
+    }
+
+    function setupRouteToggle(){
+      // default OFF, restore persisted state if exists
+      let saved = null;
+      try{ saved = localStorage.getItem(ROUTE_TOGGLE_STORAGE_KEY); }catch(e){}
+      const initial = (saved === "1");
+      setRouteEnabled(initial);
+
+      const toggle = ()=> setRouteEnabled(!ROUTE_ENABLED);
+
+      if (routeToggleInputEl){
+        routeToggleInputEl.addEventListener("change", ()=> setRouteEnabled(!!routeToggleInputEl.checked));
+      }
+      if (routeToggleEl){
+        routeToggleEl.addEventListener("click", toggle);
+        routeToggleEl.addEventListener("keydown", (ev)=>{
+          if (ev.key === "Enter" || ev.key === " "){
+            ev.preventDefault();
+            toggle();
+          }
+        });
+      }
+      if (routeToggleWrapEl){
+        routeToggleWrapEl.addEventListener("click", (ev)=>{
+          // avoid double toggle if clicking the switch itself
+          if (ev.target === routeToggleEl || routeToggleEl?.contains(ev.target)) return;
+          toggle();
+        });
+      }
+    }
+
+const modelBadgeEl = document.getElementById("modelBadge");
+const statusLine = document.getElementById("statusLine");
+let __statusDotsTimer = null;
+function startStatusDots(baseText){
+  stopStatusDots();
+  if (!statusLine) return;
+  const frames = ["", ".", "..", "..."];
+  let i = 0;
+  statusLine.textContent = baseText + frames[i];
+  __statusDotsTimer = setInterval(() => {
+    i = (i + 1) % frames.length;
+    statusLine.textContent = baseText + frames[i];
+  }, 380);
+}
+function stopStatusDots(){
+  if (__statusDotsTimer){
+    clearInterval(__statusDotsTimer);
+    __statusDotsTimer = null;
+  }
+}
+
+    const micBig = document.getElementById("micBig");
+
+    // Photo (beta UI only)
+    const camBtn = document.getElementById("camBtn");
+    const photoInput = document.getElementById("photoInput");
+    const photoPane = document.getElementById("photoPane");
+    const photoPreview = document.getElementById("photoPreview");
+    const usePhotoBtn = document.getElementById("usePhotoBtn");
+    const retakePhotoBtn = document.getElementById("retakePhotoBtn");
+
+    let lastPhotoFile = null;
+
+    function openPhotoPane(){
+      if (!photoPane) return;
+      photoPane.classList.add("isOpen");
+    }
+    function closePhotoPane(){
+      if (!photoPane) return;
+      photoPane.classList.remove("isOpen");
+      if (photoPreview) photoPreview.removeAttribute("src");
+      if (usePhotoBtn) usePhotoBtn.disabled = true;
+      lastPhotoFile = null;
+    }
+
+    if (camBtn && photoInput){
+      camBtn.addEventListener("click", () => {
+        // open camera / picker
+        photoInput.click();
+      });
+      photoInput.addEventListener("change", () => {
+        const file = photoInput.files && photoInput.files[0];
+        if (!file) return;
+        lastPhotoFile = file;
+
+        const url = URL.createObjectURL(file);
+        if (photoPreview) photoPreview.src = url;
+        openPhotoPane();
+        if (usePhotoBtn) usePhotoBtn.disabled = false;
+
+        if (statusLine) statusLine.textContent = "Photo captured — ready to analyze (beta).";
+      });
+    }
+
+    if (retakePhotoBtn && photoInput){
+      retakePhotoBtn.addEventListener("click", () => {
+        // reset and reopen camera
+        closePhotoPane();
+        photoInput.value = "";
+        photoInput.click();
+      });
+    }
+
+    if (usePhotoBtn){
+      usePhotoBtn.addEventListener("click", async () => {
+        if (!lastPhotoFile){
+          setStatus("No photo selected.", true, true);
+          return;
+        }
+        if (!VISION_ENABLED){
+          setStatus("Vision is disabled.", true, true);
+          return;
+        }
+
+        try{
+          usePhotoBtn.disabled = true;
+          startStatusDots("Analyzing photo");
+
+          // Downscale/compress to reduce payload size and avoid frequent timeouts.
+          let image_data_url = await fileToVisionDataUrl(lastPhotoFile, 1280, 0.82);
+          if (!image_data_url) image_data_url = await fileToDataUrl(lastPhotoFile);
+
+          let vision = null;
+          try{
+            vision = await callVisionAPI({
+              image_data_url,
+              query: "",
+              locale: "en",
+              debug: DEBUG_VISION
+            });
+          }catch(err){
+            const msg = String(err?.message || err || "");
+            const isTimeout = /timeout|aborted|aborterror/i.test(msg);
+            if (isTimeout){
+              // One retry with a smaller image.
+              if (statusLine) statusLine.textContent = "Still working… retrying…";
+              let smaller = await fileToVisionDataUrl(lastPhotoFile, 960, 0.78);
+              if (!smaller) smaller = image_data_url;
+              vision = await callVisionAPI({
+                image_data_url: smaller,
+                query: "",
+                locale: "en",
+                debug: DEBUG_VISION
+              });
+            } else {
+              throw err;
+            }
+          }
+
+          const vision_query = (vision && typeof vision.vision_query === "string") ? vision.vision_query.trim() : "";
+          const confidence = (vision && typeof vision.confidence === "number") ? vision.confidence : null;
+          const warnings = Array.isArray(vision?.warnings) ? vision.warnings : [];
+
+          if (DEBUG_VISION) console.log("[vision]", { vision_query, confidence, warnings, raw: vision });
+
+          if (warnings.length){
+            if (DEBUG_VISION) console.warn("[vision warning]", warnings[0]);
+          }
+
+          if (vision_query){
+            if (questionInput) questionInput.value = vision_query;
+
+            if (statusLine){
+              const confText = (confidence == null) ? "" : ` (conf ${Math.round(confidence*100)}%)`;
+              statusLine.textContent = `Vision → "${vision_query}"${confText}`;
+            }
+
+            if (Number(confidence || 0) >= VISION_CONF_MIN) {
+              if (VISION_AUTO_SEND) {
+                const preRoute = {
+                  llm_query: vision_query,
+                  llm_query_confidence: Number(confidence || 0),
+                  part_phrases: [vision_query],
+                  part_phrases_confidence: Number(confidence || 0),
+                  overall_confidence: Number(confidence || 0),
+                };
+                markRequestStart();
+                await handleQuery(vision_query, preRoute); // go straight to scoring (skip /api/route)
+              } else {
+                try{ questionInput?.focus(); }catch(e){}
+              }
+            } else {
+              const confText = (confidence == null) ? "" : ` (conf ${Math.round(confidence*100)}%)`;
+              if (statusLine) statusLine.textContent = `Photo unclear${confText}. Retake closer / better light, or type a short hint.`;
+              stopStatusDots();
+              // keep photo pane open so user can retry quickly
+              try{ questionInput?.focus(); }catch(e){}
+              return;
+            }} else {
+            if (statusLine) statusLine.textContent = "Vision couldn't extract a reliable query. Try another photo or type manually.";
+            try{ questionInput?.focus(); }catch(e){}
+          }
+
+          stopStatusDots();
+          closePhotoPane();
+        } catch(e){
+          stopStatusDots();
+          console.error("Vision call failed:", e);
+          if (statusLine) statusLine.textContent = "Vision failed. Please try again, or type manually.";
+          usePhotoBtn.disabled = false;
+        }
+      });
+    }
+
+    const questionInput = document.getElementById("questionInput");
+
+  const MAX_RESULT_CARDS = 5; // keep most recent N cards
+    const sendBtn = document.getElementById("sendBtn");
+    const resultBody = document.getElementById("resultBody");
+
+    // Auto-scroll so the request controls stay at the top when a new request is made
+    let autoScrollToRequest = false;
+    function markRequestStart(){
+      autoScrollToRequest = true;
+    }
+    function scrollRequestArea(){
+      window.scrollTo({top:0, behavior:"smooth"});
+    }
+
+
+    function addResultCard(cardEl){
+      if (!cardEl) return;
+      // remove empty state
+      resultBody.classList.remove("empty");
+      // prepend newest card
+      resultBody.prepend(cardEl);
+      // limit cards
+      while (resultBody.children.length > MAX_RESULT_CARDS) {
+        resultBody.removeChild(resultBody.lastElementChild);
+      }
+      if (autoScrollToRequest) {
+        autoScrollToRequest = false;
+        scrollRequestArea();
+      }
+    }
+
+    const repeatBtn = document.getElementById("repeatBtn");
+    const stopBtn = document.getElementById("stopBtn");
+    const voiceReadToggle = document.getElementById("voiceReadToggle");
+
+    const clearBtn = document.getElementById("clearBtn");
+
+    function clearResultHistory(){
+      // Stop any ongoing TTS
+      try { speechSynthesis.cancel(); } catch(e){}
+      // Clear cards
+      resultBody.innerHTML = "";
+      // Clear typed fallback input
+      if (questionInput) questionInput.value = "";
+      // reset repeat payload & buttons
+      repeatPayload = null;
+      setRepeatStop(false);
+      // show waiting message again
+      renderEmpty("Torque results will appear here.");
+    }
+
+
+    clearBtn.addEventListener("click", ()=>{
+      clearResultHistory();
+    });
+
+
+
+    // Select-all behavior for manual input fallback (tap/click focuses and selects existing text)
+    function enableSelectAllOnFocus(el){
+      if(!el) return;
+      const selectAll = () => {
+        try{
+          // Delay helps on mobile where selection needs a tick after focus
+          setTimeout(()=>{ el.select(); }, 0);
+        }catch(e){}
+      };
+      el.addEventListener("focus", selectAll);
+
+      // On desktop, mouseup can clear selection; prevent that when focusing
+      el.addEventListener("mouseup", (e)=>{
+        // If text is already selected, keep it
+        if (el.selectionStart !== el.selectionEnd) {
+          e.preventDefault();
+        }
+      });
+
+      // Explicit click/touch should also select all (useful when already focused)
+      el.addEventListener("click", selectAll);
+      el.addEventListener("touchstart", selectAll, {passive:true});
+    }
+    enableSelectAllOnFocus(questionInput);
+
+
+    
+
+// Model index + selector UI
+    const sheetOverlay = document.getElementById("sheetOverlay");
+    const sheetBody = document.getElementById("sheetBody");
+    const sheetClose = document.getElementById("sheetClose");
+    const sheetBack = document.getElementById("sheetBack");
+    const sheetTitleEl = document.getElementById("sheetTitle");
+let modelIndex = null; // loaded from INDEX_FILE
+
+    let sheetMode = "make"; // "make" or "model"
+    let SELECTED_MAKE_ID = null;
+    let SELECTED_MAKE_LABEL = null;
+async function loadModelIndex(){
+      try{
+        const url = new URL("./index.json", window.location.href);
+        url.searchParams.set("v", String(Date.now()));
+
+        setStatus("Loading model list…", true, false);
+
+        const res = await fetch(url.toString(), { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        modelIndex = await res.json();
+        return modelIndex;
+      } catch(e){
+        console.error("index.json load failed:", e);
+        setStatus("Model list failed to load (index.json missing).", true, true);
+        throw e;
+      }
+    }
+
+    async function ensureModelIndexLoaded(){
+      if (modelIndex) return modelIndex;
+      try{
+        await loadModelIndex();
+      } catch(e){
+        console.error(e);
+      }
+      return modelIndex;
+    }
+
+    function updateBadges(){
+      // Make badge
+      if (makeBadgeEl){
+        const makeText = (SELECTED_MAKE_LABEL || (CURRENT_MODEL_DISPLAY && CURRENT_MODEL_DISPLAY.make) || "Select make…");
+        makeBadgeEl.innerHTML = `<span class="dot"></span>${escapeHtml(makeText)}`;
+      }
+      // Model badge
+      if (modelBadgeEl){
+        if (CURRENT_MODEL_DISPLAY && CURRENT_MODEL_ID){
+          const modelText = CURRENT_MODEL_DISPLAY.years_label
+            ? `${CURRENT_MODEL_DISPLAY.label} ${CURRENT_MODEL_DISPLAY.years_label}`
+            : `${CURRENT_MODEL_DISPLAY.label}`;
+          modelBadgeEl.innerHTML = `<span class="dot"></span>${escapeHtml(modelText)}`;
+        } else {
+          modelBadgeEl.innerHTML = `<span class="dot"></span>Select model…`;
+        }
+      }
+    }
+
+    
+
+    function setSheetMode(mode){
+      sheetMode = mode === "model" ? "model" : "make";
+      if (sheetTitleEl){
+        sheetTitleEl.textContent = (sheetMode === "make") ? "Select manufacturer" : "Select model";
+      }
+      if (sheetBack){
+        // Back is only meaningful when we're in model mode with a selected make
+        sheetBack.style.display = (sheetMode === "model" && SELECTED_MAKE_ID) ? "inline-flex" : "none";
+      }
+    }
+
+    function openSheet(mode){
+      if (!sheetOverlay) return;
+      if (mode) setSheetMode(mode);
+
+      // If user asked for models but no make selected, force make step.
+      if (sheetMode === "model" && !SELECTED_MAKE_ID){
+        setSheetMode("make");
+      }
+
+      renderSheet();
+      sheetOverlay.classList.add("show");
+    }
+
+    function closeSheet(){
+      if (!sheetOverlay) return;
+      sheetOverlay.classList.remove("show");
+    }
+
+    function flattenModels(idx){
+      const out = [];
+      const mfgs = Array.isArray(idx?.manufacturers) ? idx.manufacturers : [];
+      mfgs.forEach(mfg=>{
+        const make = mfg?.make || mfg?.make_id || "Unknown";
+        const make_id = mfg?.make_id || String(make).toLowerCase();
+        const models = Array.isArray(mfg?.models) ? mfg.models : [];
+        models.forEach(m=>{
+          out.push({
+            make,
+            make_id,
+            id: m?.id,
+            label: m?.label || m?.model || m?.name || "Model",
+            years_label: m?.years_label || (m?.years ? `${m.years.from}–${m.years.to}` : ""),
+            years: m?.years_label || (m?.years ? `${m.years.from}–${m.years.to}` : ""),
+            years_from: (m?.years && typeof m.years.from === "number") ? m.years.from : null,
+            years_to: (m?.years && typeof m.years.to === "number") ? m.years.to : null,
+            group_id: m?.group_id || null,
+            group_label: m?.group_label || null,
+            file: m?.file,
+            aliases: Array.isArray(m?.aliases) ? m.aliases : []
+          });
+        });
+      });
+      return out.filter(x=>x.id && x.file);
+    }
+
+    function renderSheet(){
+      if (!sheetBody || !modelIndex) return;
+
+      const models = flattenModels(modelIndex);
+      const manufacturers = Array.isArray(modelIndex?.manufacturers) ? modelIndex.manufacturers : [];
+
+      // Build make list from index.json (make_id/make)
+      const makes = manufacturers
+        .map(m => ({
+          id: m?.make_id || m?.id || String(m?.make || m?.label || "unknown").toLowerCase(),
+          label: m?.make || m?.label || m?.make_id || m?.id || "Unknown"
+        }))
+        .filter(m => m.id && m.label);
+
+      // Step 1: pick manufacturer
+      if (sheetMode === "make" || !SELECTED_MAKE_ID){
+        let html = '';
+        makes
+          .slice()
+          .sort((a,b)=>String(a.label).localeCompare(String(b.label)))
+          .forEach(mk=>{
+            const isActive = (mk.id === SELECTED_MAKE_ID);
+            html += `
+              <button class="modelBtn ${isActive ? 'active' : ''}" type="button" data-make-id="${escapeHtml(mk.id)}">
+                <span><strong>${escapeHtml(mk.label)}</strong></span>
+                <span class="right">${isActive ? 'Selected' : ''}</span>
+              </button>`;
+          });
+
+        sheetBody.innerHTML = html;
+
+        sheetBody.querySelectorAll("[data-make-id]").forEach(btn=>{
+          btn.addEventListener("click", ()=>{
+            const makeId = btn.getAttribute("data-make-id");
+            const prevMake = SELECTED_MAKE_ID;
+            const mk = makes.find(x => x.id === makeId);
+            SELECTED_MAKE_ID = makeId;
+            SELECTED_MAKE_LABEL = mk ? mk.label : makeId;
+            setSheetMode("model");
+            renderSheet();
+          });
+        });
+        return;
+      }
+
+      // Step 2: pick model within selected manufacturer (grouped)
+      const makeId = SELECTED_MAKE_ID;
+      const mk = makes.find(x => x.id === makeId) || { id: makeId, label: (SELECTED_MAKE_LABEL || makeId) };
+
+      const inMake = models.filter(m => m.make_id === makeId);
+
+      // group helpers
+      const norm = (s)=> String(s||"").trim();
+      const otherKey = "__other__";
+      const groupKeyFor = (m)=>{
+        const gl = norm(m.group_label);
+        const gi = norm(m.group_id);
+        if (gl) return gl;
+        if (gi) return gi;
+        return otherKey;
+      };
+      const groupLabelForKey = (k)=> (k===otherKey ? "Other" : k);
+
+      const byGroup = {};
+      for (const m of inMake){
+        const gk = groupKeyFor(m);
+        (byGroup[gk] ||= []).push(m);
+      }
+
+      const groupKeys = Object.keys(byGroup).sort((a,b)=>{
+        if (a===otherKey && b!==otherKey) return 1;
+        if (b===otherKey && a!==otherKey) return -1;
+        return a.localeCompare(b);
+      });
+
+      let html = '';
+
+      groupKeys.forEach(gk=>{
+        html += `<div class="groupLabel">${escapeHtml(groupLabelForKey(gk))}</div>`;
+
+        const list = byGroup[gk].slice().sort((a,b)=>{
+          const c = String(a.label||"").localeCompare(String(b.label||""));
+          if (c!==0) return c;
+          return String(a.years_label||"").localeCompare(String(b.years_label||""));
+        });
+
+        list.forEach(m=>{
+          const active = (m.id === CURRENT_MODEL_ID) ? "active" : "";
+          const right = m.years_label ? `<span class="right">${escapeHtml(m.years_label)}</span>` : "";
+          html += `
+            <button class="modelBtn ${active}" type="button" data-model-id="${escapeHtml(m.id)}" data-file="${escapeHtml(m.file)}">
+              <span><strong>${escapeHtml(m.label)}</strong></span>
+              ${right}
+            </button>`;
+        });
+      });
+
+      sheetBody.innerHTML = html;
+
+      sheetBody.querySelectorAll("[data-model-id]").forEach(btn=>{
+        btn.addEventListener("click", async ()=>{
+          const id = btn.getAttribute("data-model-id");
+          const file = btn.getAttribute("data-file");
+          try{
+            await setCurrentModel(id, file, {speakConfirm:true});
+          } finally {
+            closeSheet();
+          }
+        });
+      });
+    }
+
+
+    async function setCurrentModel(modelId, datasetFile, opts={}){
+      const prevModelId = CURRENT_MODEL_ID;
+      CURRENT_MODEL_ID = modelId || null;
+      CURRENT_DATASET_FILE = datasetFile || null;
+
+      // Reset specs cache on model change
+      specsIndex = null;
+      specsModelId = null;
+      specsFilePath = null;
+
+      // Find display info from index.json if available
+      const models = modelIndex ? flattenModels(modelIndex) : [];
+      const m = models.find(x=>x.id === CURRENT_MODEL_ID) || null;
+
+      if (m){
+        SELECTED_MAKE_ID = m.make_id || null;
+        SELECTED_MAKE_LABEL = m.make || SELECTED_MAKE_LABEL || (m.make_id || null);
+        CURRENT_MODEL_DISPLAY = { make: (m.make || SELECTED_MAKE_LABEL || ""), label: (m.label || ""), years_label: (m.years_label || "") };
+        try{
+          const mf = (modelIndex?.manufacturers || []).find(x => (x.id===SELECTED_MAKE_ID) || ((x.make_id||String(x.make||"").toLowerCase())===SELECTED_MAKE_ID));
+          SELECTED_MAKE_LABEL = mf ? (mf.label || mf.id) : (m.make || m.make_id);
+        } catch(e){
+          SELECTED_MAKE_LABEL = m.make || m.make_id || null;
+        }
+
+        CURRENT_MODEL_DISPLAY = { make: m.make, label: m.label, years_label: m.years_label };
+      } else {
+        CURRENT_MODEL_DISPLAY = { make: "Model", label: (CURRENT_MODEL_ID || "Unknown"), years_label: "" };
+      }
+
+      // Load dataset for selected model
+      await loadTorqueData(CURRENT_DATASET_FILE);
+
+      // Preload service specs for the same model (service.json)
+      try{ await loadSpecsDataIfNeeded(); }catch(e){}
+
+      // After dataset load, re-apply badge from CURRENT_MODEL_DISPLAY (prevents any accidental overrides)
+      if (CURRENT_MODEL_DISPLAY){
+        updateBadges();
+      }
+      // Reset UI when switching dataset
+      if (prevModelId && prevModelId !== CURRENT_MODEL_ID){
+        clearResultHistory();
+      } else {
+        renderEmpty("Torque results will appear here.");
+        // Clear typed fallback input
+        if (questionInput) questionInput.value = "";
+      }
+
+      // Save last selection for next visit
+      try{
+        if (CURRENT_MODEL_ID) localStorage.setItem(STORAGE_KEY_MODEL_ID, String(CURRENT_MODEL_ID));
+        if (CURRENT_DATASET_FILE) localStorage.setItem(STORAGE_KEY_DATASET_FILE, String(CURRENT_DATASET_FILE));
+      } catch(e){}
+
+
+      // Optional small voice confirmation (MVP-friendly)
+      if (opts.speakConfirm && CURRENT_MODEL_DISPLAY){
+        speak(`Selected ${CURRENT_MODEL_DISPLAY.make} ${CURRENT_MODEL_DISPLAY.label}.`);
+      }
+    }
+
+
+
+    // =========================
+// App bootstrap
+// =========================
+async function initApp(){
+
+      // Setup route toggle before any router use
+      try{ setupRouteToggle(); }catch(e){}
+// Make badge interactive (tap to open sheet) even before fully ready.
+      if (makeBadgeEl) makeBadgeEl.classList.add("clickable");
+      if (modelBadgeEl) modelBadgeEl.classList.add("clickable");
+
+      // Load model list (index.json)
+      await loadModelIndex();
+
+      // Populate sheet UI immediately
+      renderSheet();
+
+      // Try restore last selection (Structure A)
+      let restored = null;
+      try{
+        const savedId = localStorage.getItem(STORAGE_KEY_MODEL_ID);
+        const savedFile = localStorage.getItem(STORAGE_KEY_DATASET_FILE);
+        if (savedId && savedFile){
+          const models = flattenModels(modelIndex);
+          const hit = models.find(x=>x.id === savedId && x.file === savedFile) || models.find(x=>x.id === savedId) || null;
+          if (hit){
+            restored = hit;
+          }
+        }
+      } catch(e){}
+
+      if (restored){
+        // Load saved model immediately
+        await setCurrentModel(restored.id, restored.file, {speakConfirm:false});
+        if (CURRENT_MODEL_DISPLAY){
+          updateBadges();
+        }
+        setStatus("Ready.", true, false);
+        return;
+      }
+
+      // No saved model → show selector first (acts like a first page)
+      CURRENT_MODEL_ID = null;
+      SELECTED_MAKE_ID = null;
+      SELECTED_MAKE_LABEL = null;
+      updateBadges();
+      setStatus("Select a manufacturer to begin.", true, false);
+      openSheet("make");
+    }
+
+
+    function setStatus(text, active=false, isError=false){
+      statusLine.textContent = text || "";
+      statusLine.classList.toggle("active", !!active);
+      statusLine.classList.toggle("error", !!isError);
+    }
+
+    // Lightweight "working" indicator (animated dots) during /api/route calls
+    let __tesaWorkingTimer = null;
+    function startWorkingIndicator(){
+      if (__tesaWorkingTimer) return;
+      const base = "Working on it";
+      let dots = 0;
+      setStatus(base + "...", true, false);
+      __tesaWorkingTimer = setInterval(()=>{
+        dots = (dots + 1) % 4; // 0..3
+        setStatus(base + (dots ? ".".repeat(dots) : ""), true, false);
+      }, 350);
+    }
+    function stopWorkingIndicator(){
+      if (!__tesaWorkingTimer) return;
+      clearInterval(__tesaWorkingTimer);
+      __tesaWorkingTimer = null;
+    }
+
+
+    // =========================
+// Specs (service data) loading & search (lazy)
+// =========================
+function resolveSpecsPathFromDatasetFile(datasetFile){
+  try{
+    let base = String(datasetFile || "").trim();
+    if (!base) return null;
+    // normalize
+    if (!/^https?:\/\//i.test(base) && !base.startsWith("./") && !base.startsWith("/") ){
+      base = "./" + base;
+    }
+    // replace filename with service.json
+    const slash = base.lastIndexOf("/");
+    if (slash === -1) return "./service.json";
+    return base.slice(0, slash + 1) + "service.json";
+  } catch(e){
+    return null;
+  }
+}
+
+async function loadSpecsDataIfNeeded(){
+  // cached and still for same model
+  if (specsIndex && specsModelId === CURRENT_MODEL_ID) return specsIndex;
+
+  specsIndex = null;
+  specsModelId = CURRENT_MODEL_ID || null;
+  specsFilePath = resolveSpecsPathFromDatasetFile(CURRENT_DATASET_FILE);
+
+  if (!specsFilePath) return null;
+
+  try{
+    const res = await fetch(specsFilePath, { cache: "no-store" });
+    if (!res.ok) return null;
+    const data = await res.json();
+    // Accept {specs:[...]} only
+    if (!data || !Array.isArray(data.specs)) return null;
+    specsIndex = data;
+    return specsIndex;
+  } catch(e){
+    return null;
+  }
+}
+
+function normalizeAlias(s){
+  return String(s||"").toLowerCase().trim();
+}
+
+function findSpecCandidates(nq){
+  if (!specsIndex || !Array.isArray(specsIndex.specs)) return [];
+
+  const q = normalizeAlias(nq);
+  if (!q) return [];
+
+  const scored = [];
+  for (const sp of specsIndex.specs){
+    const title = normalizeAlias(sp.title || sp.topic_title || "");
+    const aliases = Array.isArray(sp.aliases) ? sp.aliases : [];
+    let best = 0;
+
+    // title match
+    if (title){
+      if (q === title) best = Math.max(best, 100);
+      else if (title.includes(q)) best = Math.max(best, 60);
+      else if (q.includes(title) && title.length >= 4) best = Math.max(best, 55);
+    }
+
+    for (const a of aliases){
+      const aa = normalizeAlias(a);
+      if (!aa) continue;
+      if (q === aa) best = Math.max(best, 100);
+      else if (aa.includes(q)) best = Math.max(best, 70);
+      else if (q.includes(aa) && aa.length >= 4) best = Math.max(best, 65);
+    }
+
+    if (best > 0) scored.push({spec: sp, score: best});
+  }
+  scored.sort((a,b)=>b.score-a.score);
+  return scored;
+}
+
+function renderSpecsResult(spec){
+  // Same card container; no SPEC badge; no TTS; labels hidden
+  resultBody.className = "";
+  const title = escapeHtml(String(spec.title || "Spec"));
+
+  const groups = Array.isArray(spec.groups) ? spec.groups : [];
+
+  const parts = [];
+  parts.push(`<div class="partName">${title}</div>`);
+
+  // Optional note at topic level? (not in our json) - skip
+
+  for (const g of groups){
+    const gTitle = String(g.group_title || "").trim();
+    const fmt = String(g.format || "").trim();
+
+    if (gTitle){
+      parts.push(`<div class="subTitle">${escapeHtml(gTitle)}</div>`);
+    }
+
+    if (fmt === "kv"){
+      const pairs = Array.isArray(g.pairs) ? g.pairs : [];
+      if (pairs.length){
+        parts.push(`<div class="twoCol">`);
+        for (const p of pairs){
+          const leftRaw  = (p && (p.kv_label ?? p.label ?? ""));
+          const rightRaw = (p && (p.kv_value ?? p.value ?? ""));
+          const left = escapeHtml(String(leftRaw).trim());
+          const right = escapeHtml(String(rightRaw).trim());
+          parts.push(`<div class="row"><div class="k">${left}</div><div class="v">${right}</div></div>`);
+        }
+        parts.push(`</div>`);
+      }
+    } else { // table default
+      const rows = Array.isArray(g.rows) ? g.rows : [];
+      if (rows.length){
+        parts.push(`<div class="twoCol">`);
+        for (const r of rows){
+          const c1v = String(r.col_1_value || "").trim();
+          const c2v = String(r.col_2_value || "").trim();
+          const c3v = String(r.col_3_value || "").trim();
+          const c4v = String(r.col_4_value || "").trim();
+
+          // 2-col list policy, label hidden:
+          // left = best row key, right = value (and optional extra)
+          let left = c2v || c1v || "";
+          let right = c3v || "";
+          if (c4v){
+            right = right ? (right + " · " + c4v) : c4v;
+          }
+          parts.push(`<div class="row"><div class="k">${escapeHtml(left)}</div><div class="v">${escapeHtml(right)}</div></div>`);
+        }
+        parts.push(`</div>`);
+      }
+    }
+
+    if (g.note){
+      parts.push(`
+        <div class="note">
+          <span class="icon">ⓘ</span>
+          <span class="text">${escapeHtml(String(g.note))}</span>
+        </div>
+      `);
+    }
+  }
+
+  const card = document.createElement("div");
+  card.className = "resultCard";
+  card.innerHTML = parts.join("");
+  addResultCard(card);
+  setRepeatStop(false);
+}
+
+    async function loadTorqueData(datasetFile){
+
+try{
+  setStatus("Loading dataset…", true, false);
+  let fileToLoad = datasetFile || CURRENT_DATASET_FILE;
+  if (!fileToLoad){ throw new Error("No dataset selected"); }
+  // Normalize relative path for GitHub Pages
+  if (!/^https?:\/\//i.test(fileToLoad) && !fileToLoad.startsWith("./") && !fileToLoad.startsWith("/") ){
+    fileToLoad = "./" + fileToLoad;
+  }
+  const res = await fetch(fileToLoad, { cache: "no-store" });
+  if (!res.ok){
+    throw new Error(`HTTP ${res.status} while fetching ${fileToLoad}`);
+  }
+  const data = await res.json();
+
+  // Support both schemas:
+  // (A) legacy: { manufacturer, model, year_start, year_end, torque_data: [...] }
+  // (B) current: { dataset: { make, model, years:{from,to} }, items:[...] }
+  const meta = extractDatasetMeta(data);
+  bikeMeta = meta;
+  torqueData = Array.isArray(meta.items) ? meta.items : [];
+
+  // Build token frequency stats for scoring (fast; runs once per dataset load)
+  try{ buildScoringIndex(torqueData); } catch(e){ console.warn('Scoring index build failed', e); }
+
+  
+
+  // Preload service specs (service.json) together with torque dataset
+  try{ await loadSpecsDataIfNeeded(); } catch(e){}const make = meta.make || "Unknown";
+  const model = meta.model || "Model";
+  const yFrom = meta.year_from ?? "";
+  const yTo   = meta.year_to ?? "";  setStatus(`Ready. (${torqueData.length} items)`, true, false);
+} catch (e){
+  console.error(e);
+  setStatus("Failed to load dataset.", true, true);
+}
+    }
+
+
+
+// -------------------------
+// Schema helpers
+// -------------------------
+function extractDatasetMeta(data){
+  // Current schema
+  if (data && typeof data === "object" && data.dataset && Array.isArray(data.items)){
+    const ds = data.dataset || {};
+    const years = ds.years || {};
+    return {
+      make: ds.make ?? ds.manufacturer ?? ds.brand ?? "Unknown",
+      model: ds.model ?? "Model",
+      year_from: years.from ?? years.start ?? ds.year_start ?? "",
+      year_to: years.to ?? years.end ?? ds.year_end ?? "",
+      items: data.items
+    };
+  }
+
+  // Legacy schema
+  return {
+    make: data?.manufacturer ?? data?.make ?? "Unknown",
+    model: data?.model ?? "Model",
+    year_from: data?.year_start ?? data?.year_from ?? "",
+    year_to: data?.year_end ?? data?.year_to ?? "",
+    items: Array.isArray(data?.torque_data) ? data.torque_data : []
+  };
+}
+
+function splitList(val){
+  if (val == null) return [];
+  if (Array.isArray(val)) return val.map(x => String(x ?? "").trim()).filter(Boolean);
+  return String(val)
+    .split(/[;,]+/)
+    .map(s => s.trim())
+    .filter(Boolean);
+}
+
+// --- Torque helpers (support tightening_type + string/array torque_steps) ---
+function parseTorqueStepsText(text){
+  // Accept separators: newline or semicolon. Preserve user-entered content as much as possible.
+  return String(text)
+    .split(/\r?\n|;/)
+    .map(s => s.trim())
+    .filter(Boolean);
+}
+
+function getTorqueStepsRows(item){
+  // Returns rows for UI in the form [{label, value}] for multi-step; [] otherwise.
+  const tt = (item && item.tightening_type ? String(item.tightening_type).trim().toLowerCase() : "");
+  if (tt !== "multi_step") return [];
+
+  // If torque_steps is an array of objects (structured), keep existing behavior.
+  if (Array.isArray(item.torque_steps) && item.torque_steps.length){
+    return item.torque_steps.map((s, idx) => {
+      const rawLabel = (s.step != null ? String(s.step) : String(idx + 1)).trim();
+      const parts = [];
+      if (s.torque_nm != null) parts.push(`${s.torque_nm} Nm`);
+      if (s.angle_deg != null) parts.push(`+ ${s.angle_deg}°`);
+      const value = parts.length ? parts.join(" ") : (s.raw || "Follow manual");
+      return { label: rawLabel, value };
+    });
+  }
+
+  // If torque_steps is a string, parse lines into rows.
+  if (item.torque_steps != null && String(item.torque_steps).trim()){
+    const lines = parseTorqueStepsText(item.torque_steps);
+    return lines.map((line, idx) => {
+      // If the line already has a label (e.g., "Step 1: 5 Nm"), keep it.
+      const parts = line.split(":");
+      if (parts.length >= 2){
+        const label = parts.shift().trim();
+        const value = parts.join(":").trim();
+        return { label: label || String(idx + 1), value: value || "Follow manual" };
+      }
+      return { label: String(idx + 1), value: line };
+    });
+  }
+
+  return [];
+}
+
+// --- Multi-step vs Multi-size classification (string torque_steps) ---
+function classifyTorqueStepsRows(rows){
+  // Returns "multi_step" or "multi_size" (default multi_step)
+  if (!Array.isArray(rows) || !rows.length) return "multi_step";
+  const labels = rows.map(r => String(r?.label ?? "").trim());
+  const allSize = labels.length > 0 && labels.every(l => /^m\d+$/i.test(l));
+  if (allSize) return "multi_size";
+
+  const allStep = labels.length > 0 && labels.every(l => /^step\s*\d+$/i.test(l) || /^step\d+$/i.test(l) || /^\d+$/.test(l));
+  if (allStep) return "multi_step";
+
+  // Mixed/unknown → treat as multi_step (safer)
+  return "multi_step";
+}
+
+function normalizeStepLabel(label){
+  let s = String(label ?? "").trim();
+  if (!s) return "";
+  // "1" -> "STEP1", "Step 1" -> "STEP1", "Step1" -> "STEP1"
+  const m = s.match(/(\d+)/);
+  if (m) return `STEP${m[1]}`;
+  return s.toUpperCase();
+}
+
+function normalizeSizeLabel(label){
+  const s = String(label ?? "").trim();
+  return s ? s.toUpperCase() : "";
+}
+
+function extractNmNumber(text){
+  // Returns string number ONLY when an explicit "Nm" unit is present.
+  // Prevents angle-only steps like "100°" from being treated as "100 Nm".
+  const s = String(text ?? "");
+  const m = s.match(/(-?\d+(?:\.\d+)?)\s*nm\b/i);
+  return m ? m[1] : null;
+}
+
+function formatTorqueValueHtml(valueText){
+  const s = String(valueText ?? "");
+
+  // Angle-only step (e.g., "100°") should display degrees, not Nm.
+  const deg = s.match(/(-?\d+(?:\.\d+)?)\s*°/);
+  const hasNm = /\bnm\b/i.test(s);
+
+  if (deg && !hasNm){
+    return `<span class="stepNum">${escapeHtml(deg[1])}</span><span class="stepUnit">°</span>`;
+  }
+
+  const num = extractNmNumber(s);
+  if (!num) return escapeHtml(s);
+  return `<span class="stepNum">${escapeHtml(num)}</span><span class="stepUnit">Nm</span>`;
+}
+
+
+function getExtraNotesList(item){
+  const v = item?.extra_notes;
+  if (v == null) return [];
+  if (Array.isArray(v)) return v.map(x => String(x ?? "").trim()).filter(Boolean);
+  const s = String(v).trim();
+  return s ? [s] : [];
+}
+
+
+function getSpecialTools(item){
+  // Preferred: array of objects [{special_tool_name, special_tool_number}, ...]
+  if (Array.isArray(item?.special_tools)){
+    return item.special_tools.map(t => ({
+      special_tool_name: (t?.special_tool_name ?? t?.name ?? "").toString().trim(),
+      special_tool_number: (t?.special_tool_number ?? t?.number ?? t?.tool_number ?? "").toString().trim()
+    })).filter(t => t.special_tool_name || t.special_tool_number);
+  }
+
+  // Current dataset fields: special_tool_numbers / special_tool_name (strings)
+  const nums = splitList(item?.special_tool_numbers ?? item?.special_tool_number ?? item?.tool_number);
+  const names = splitList(item?.special_tool_name ?? item?.special_tool_names ?? item?.tool_name);
+
+  const out = [];
+  const n = Math.max(nums.length, names.length);
+  for (let i=0; i<n; i++){
+    out.push({
+      special_tool_name: names[i] || "",
+      special_tool_number: nums[i] || ""
+    });
+  }
+  return out.filter(t => t.special_tool_name || t.special_tool_number);
+}
+
+// =========================
+    // Scoring v2 (token overlap + coverage + phrase bonus + rare token bonus)
+    // =========================
+
+    function escapeRegExp(str){
+      return String(str).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }
+
+    function normTextForTokens(s){
+      let out = String(s || "").toLowerCase();
+
+      // Remove common intent filler phrases (e.g., "tell me about", "show me").
+      // This keeps scoring focused on part-relevant tokens.
+      for (const ph of QUERY_FILLER_PHRASES){
+        if (!ph) continue;
+        // Escape any regex characters so phrases remain plain text matches.
+        // Use word boundaries at both ends to avoid nuking substrings.
+        const rePh = new RegExp("\\b" + escapeRegExp(ph) + "\\b", "gi");
+        out = out.replace(rePh, " ");
+      }
+
+      return out
+        .replace(/[“”"']/g, "")
+        .replace(/[^a-z0-9]+/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function tokenize(s){
+      const t = normTextForTokens(s);
+      if (!t) return [];
+      const raw = t.split(" ");
+      // Keep "m6", "m10" etc (len 2+), drop 1-char noise
+      return raw.filter(w => w.length >= 2);
+    }
+
+// Fast path tokenizer for already-normalized strings (output of normalizeQuery()).
+// Assumes: lowercase, single-space separated tokens, filler phrases already removed, STOPWORDS already removed.
+function tokenizeNormalized(s){
+  const t = String(s || "").trim();
+  if (!t) return [];
+  return t.split(/\s+/).filter(w => w.length >= 2);
+}
+
+
+    // Tokenizer used ONLY inside normalizeQuery() to remove STOPWORDS.
+    // It intentionally does NOT apply STOPWORDS filtering itself; normalizeQuery decides what to drop.
+    function tokenizeForNormalize(s){
+      const t = normTextForTokens(s);
+      if (!t) return [];
+      return t.split(" ").filter(Boolean);
+    }
+
+
+    function uniq(arr){
+      return Array.from(new Set(arr));
+    }
+
+    function buildItemSearchText(item){
+      const parts = [];
+      if (item?.component_name) parts.push(String(item.component_name));
+      if (Array.isArray(item?.common_name) && item.common_name.length){
+        parts.push(item.common_name.map(x=>String(x||"")).join(" "));
+      } else if (item?.common_name){
+        parts.push(String(item.common_name));
+      }
+      return normTextForTokens(parts.join(" "));
+    }
+
+    function buildScoringIndex(items){
+      TOKEN_FREQ = new Map();
+      TOKEN_TOTAL_ITEMS = Array.isArray(items) ? items.length : 0;
+      SCORING_INDEX_READY = false;
+
+      if (!Array.isArray(items) || !items.length) return;
+
+      for (const it of items){
+        // cache normalized text and tokens per item for fast scoring
+        const txt = buildItemSearchText(it);
+        it.__searchText = txt; // normalized full text
+        const toks = uniq(tokenize(txt));
+        it.__tokens = toks;
+
+        for (const tok of toks){
+          TOKEN_FREQ.set(tok, (TOKEN_FREQ.get(tok) || 0) + 1);
+        }
+      }
+      SCORING_INDEX_READY = true;
+    }
+
+    function ngrams(tokens, n){
+      const out = [];
+      if (!Array.isArray(tokens) || tokens.length < n) return out;
+      for (let i=0; i<=tokens.length - n; i++){
+        out.push(tokens.slice(i, i+n).join(" "));
+      }
+      return out;
+    }
+
+    function phraseBonus(queryTokens, itemSearchText){
+      // Conservative bonuses; cap to avoid overpowering overlap/coverage
+      let b = 0;
+      const q3 = ngrams(queryTokens, 3);
+      const q2 = ngrams(queryTokens, 2);
+
+      for (const p of q3){
+        if (itemSearchText.includes(p)) b += 10;
+      }
+      for (const p of q2){
+        if (itemSearchText.includes(p)) b += 6;
+      }
+      return Math.min(b, 24);
+    }
+
+    function rareTokenBonus(matchedTokens){
+      // Tie-breaker: reward discriminative terms, never penalize missing role words
+      let b = 0;
+      for (const t of matchedTokens){
+        const f = TOKEN_FREQ.get(t) || 9999;
+        if (f <= 2) b += 8;
+        else if (f <= 5) b += 5;
+        else if (f <= 12) b += 2;
+      }
+      return Math.min(b, 20);
+    }
+
+    function exactMatchBonus(queryNorm, item){
+      // "equal" match gets a strong boost, but we still require other signals in most cases
+      let b = 0;
+
+      const cn = normTextForTokens(item?.component_name || "");
+      if (cn){
+        if (queryNorm === cn) b = Math.max(b, 18);
+        else if (queryNorm.includes(cn) || cn.includes(queryNorm)) b = Math.max(b, 6);
+      }
+
+      const ca = Array.isArray(item?.common_name) ? item.common_name : (item?.common_name ? [item.common_name] : []);
+      for (const aRaw of ca){
+        const a = normTextForTokens(aRaw);
+        if (!a) continue;
+        if (queryNorm === a) b = Math.max(b, 18);
+        else if (queryNorm.includes(a) || a.includes(queryNorm)) b = Math.max(b, 6);
+      }
+      return b;
+    }
+
+
+    function llmTokenBonus(bonusTokens, itemSet){
+      if (!bonusTokens || !bonusTokens.length) return {score:0, hits:[]};
+      const hits = [];
+      // Treat part_candidates as soft hints. We never penalize if missing.
+      for (const bc of bonusTokens){
+        const toks = tokenize(normTextForTokens(String(bc||"")));
+        for (const t of toks){
+          if (itemSet.has(t)){
+            hits.push(t);
+          }
+        }
+      }
+      const uniqHits = uniq(hits);
+      // Small, capped bonus to avoid overpowering deterministic scoring.
+      const score = Math.min(10, uniqHits.length * 3); // 0..10
+      return {score, hits: uniqHits};
+    }
+
+    function scoreItemV2(queryNorm, item, bonusTokens){
+      // queryNorm is expected to be the already-normalized nq (output of normalizeQuery).
+      const qTokens = tokenizeNormalized(queryNorm);
+      if (!qTokens.length) return { score: 0, breakdown: { reason: "NO_TOKENS" } };
+
+      const itemText = item?.__searchText || buildItemSearchText(item);
+      const itemTokens = item?.__tokens || uniq(tokenize(itemText));
+
+      if (!itemText || !itemTokens.length) return { score: 0, breakdown: { reason: "EMPTY_ITEM" } };
+
+      const itemSet = new Set(itemTokens);
+
+      const matched = [];
+      for (const t of qTokens){
+        if (itemSet.has(t)) matched.push(t);
+      }
+
+      const overlapCount = matched.length;
+      if (!overlapCount) return { score: 0, breakdown: { overlap: 0 } };
+
+      // Components
+      const overlapScore = overlapCount * 6; // main driver
+      const coverage = overlapCount / qTokens.length;
+      const coverageScore = Math.round(coverage * 30); // 0..30
+      const pBonus = phraseBonus(qTokens, itemText);   // 0..24
+      const rBonus = rareTokenBonus(uniq(matched));    // 0..20
+      const eBonus = exactMatchBonus(queryNorm, item); // 0..18
+      const llm = llmTokenBonus(bonusTokens, itemSet); // 0..10
+
+      let total = overlapScore + coverageScore + pBonus + rBonus + eBonus + (llm.score||0);
+
+      // Floor only (no 100 cap)
+      if (total < 0) total = 0;
+
+      const breakdown = {
+        overlap: overlapScore,
+        coverage: coverageScore,
+        phrase: pBonus,
+        rare: rBonus,
+        exact: eBonus,
+        llm_bonus: llm.score || 0,
+        llm_hits: llm.hits || [],
+        matched_tokens: uniq(matched),
+        q_tokens: qTokens
+      };
+
+      return { score: total, breakdown };
+    }
+
+    function findCandidates(queryNorm, bonusTokens){
+      // queryNorm is expected to be the already-normalized nq (output of normalizeQuery).
+      const qNorm = String(queryNorm || "").trim();
+      const qTokens = tokenizeNormalized(qNorm);
+
+      // Rail #1 helper: if query has no meaningful tokens, treat as too generic
+      if (!qTokens.length){
+        return [{__special:"NO_SIG_WORDS"}];
+      }
+
+      const scored = [];
+      for (const item of torqueData){
+        const r = scoreItemV2(qNorm, item, bonusTokens);
+        if (r.score > 0){
+          scored.push({ item, score: r.score, breakdown: r.breakdown });
+        }
+      }
+      scored.sort((a,b)=>b.score-a.score);
+      return scored;
+    }
+// =========================
+    // Result rendering (voice-first)
+    // =========================
+    function renderEmpty(text){
+      if (resultBody.children.length > 0) return;
+      const card = document.createElement("div");
+      card.className = "resultCard";
+      card.innerHTML = `<div class="subLine emptyLine">${escapeHtml(String(text||""))}</div>`;
+      addResultCard(card);
+      setRepeatStop(false);
+    }
+
+    function setRepeatStop(enabled){
+      repeatBtn.disabled = !enabled;
+      stopBtn.disabled = !enabled;
+      lastSpokenEnabled = enabled;
+    }
+
+    const VOICE_READ_STORAGE_KEY = "TESA_voice_read_enabled";
+    function updateVoiceReadToggle(){
+      if (!voiceReadToggle) return;
+      voiceReadToggle.textContent = VOICE_READ_ENABLED ? "Audio On" : "Audio Off";
+      voiceReadToggle.classList.toggle("on", !!VOICE_READ_ENABLED);
+      voiceReadToggle.setAttribute("aria-pressed", VOICE_READ_ENABLED ? "true" : "false");
+    }
+    function setVoiceReadEnabled(next){
+      VOICE_READ_ENABLED = !!next;
+      try{ localStorage.setItem(VOICE_READ_STORAGE_KEY, VOICE_READ_ENABLED ? "1" : "0"); }catch(e){}
+      updateVoiceReadToggle();
+      if (!VOICE_READ_ENABLED) stopSpeak();
+    }
+    function initVoiceReadPreference(){
+      let saved = null;
+      try{ saved = localStorage.getItem(VOICE_READ_STORAGE_KEY); }catch(e){}
+      VOICE_READ_ENABLED = (saved === "1");
+      updateVoiceReadToggle();
+    }
+
+    // =========================
+    // Query log (torque + specs)
+    // =========================
+    const QUERY_LOG_KEY = "TESA_query_log_v1";
+    function logQuery(entry){
+      try{
+        const e = Object.assign({
+          ts: Date.now(),
+          model_id: CURRENT_MODEL_ID || "",
+          dataset_file: CURRENT_DATASET_FILE || ""
+        }, entry || {});
+        const raw = localStorage.getItem(QUERY_LOG_KEY);
+        const arr = raw ? JSON.parse(raw) : [];
+        arr.unshift(e);
+        // keep last 80
+        if (arr.length > 80) arr.length = 80;
+        localStorage.setItem(QUERY_LOG_KEY, JSON.stringify(arr));
+      } catch(err){
+        // ignore storage/log errors
+      }
+    }
+
+    function stopSpeak(){
+      if ("speechSynthesis" in window){
+        window.speechSynthesis.cancel();
+      }
+    }
+
+    function speak(text, opts={}){
+      lastSpokenText = text || "";
+      setRepeatStop(!!lastSpokenText);
+
+      if (!("speechSynthesis" in window) || !text) return;
+      if (!opts.force && !VOICE_READ_ENABLED) return;
+      stopSpeak();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = "en-US";
+      u.rate = 1.0;
+      u.pitch = 1.0;
+      window.speechSynthesis.speak(u);
+    }
+
+    function speakNumbersDigitByDigit(text){
+      if (text == null) return "";
+      const s = String(text);
+
+      // 문자열 안의 연속 숫자(\d+)만 찾아서 "2 4 3" 형태로 변환
+      return s.replace(/\d+/g, (num) => num.split("").join(" "));
+    }
+
+function buildSpokenAnswerParts(item){
+  if (!item) return { base:"No matching fastener found.", info:"" };
+
+  const name = item.component_name || "this fastener";
+  const tt = (item.tightening_type ? String(item.tightening_type).trim().toLowerCase() : "");
+
+  const baseParts = [];
+  const infoParts = [];
+
+  // Part name first
+  baseParts.push(`${name}.`);
+
+  // -----------------------
+  // Torque / tightening
+  // -----------------------
+  if (tt === "multi_step"){
+    const rows = getTorqueStepsRows(item);
+    const caseType = classifyTorqueStepsRows(rows);
+
+    if (rows.length){
+      if (caseType === "multi_size"){
+        baseParts.push("Torque by size.");
+        rows.forEach(r=>{
+          const size = normalizeSizeLabel(r.label);
+          const nm = extractNmNumber(r.value);
+          const degMatch = String(r.value ?? "").match(/(\d+(?:\.\d+)?)\s*°/);
+          const deg = degMatch ? degMatch[1] : null;
+
+          if (nm && deg){
+            baseParts.push(`${size}. ${nm} newton meters, plus ${deg} degrees.`);
+          } else if (nm){
+            baseParts.push(`${size}. ${nm} newton meters.`);
+          } else {
+            baseParts.push(`${size}. ${String(r.value ?? "").trim()}.`);
+          }
+        });
+      } else {
+        // Multi-Step case
+        rows.forEach(r=>{
+          const stepTag = normalizeStepLabel(r.label); // STEP1
+          const stepNumMatch = stepTag.match(/STEP(\d+)/i);
+          const stepNum = stepNumMatch ? stepNumMatch[1] : "";
+          const nm = extractNmNumber(r.value);
+          const degMatch = String(r.value ?? "").match(/(\d+(?:\.\d+)?)\s*°/);
+          const deg = degMatch ? degMatch[1] : null;
+
+          const spokenLabel = stepNum ? `Step ${stepNum}` : "Step";
+          if (nm && deg){
+            baseParts.push(`${spokenLabel}. ${nm} newton meters, then add ${deg} degrees.`);
+          } else if (nm){
+            baseParts.push(`${spokenLabel}. ${nm} newton meters.`);
+          } else {
+            baseParts.push(`${spokenLabel}. ${String(r.value ?? "").trim()}.`);
+          }
+        });
+      }
+    } else {
+      baseParts.push("Torque is not specified in this dataset.");
+    }
+  } else {
+    // Single (or unknown → treat like single)
+    if (item.torque_nm_single != null && String(item.torque_nm_single).trim() !== ""){
+      baseParts.push(`${item.torque_nm_single} newton meters.`);
+    } else {
+      baseParts.push("Torque is not specified in this dataset.");
+    }
+  }
+
+  // -----------------------
+  // Chemistry (values only)
+  // -----------------------
+  const chemVals = [];
+
+  if (item.threadlock) {
+    chemVals.push(speakNumbersDigitByDigit(item.threadlock));
+  }
+  const lubeSpoken = item.lubrication_symbol || item.lubrication;
+  if (lubeSpoken) {
+    chemVals.push(String(lubeSpoken));
+  }
+  if (item.sealant) {
+    chemVals.push(speakNumbersDigitByDigit(item.sealant));
+  }
+  if (chemVals.length) {
+    baseParts.push(`Apply ${chemVals.join(", ")}.`);
+  }
+
+  // -----------------------
+  // Info block (spoken only when user says YES)
+  // -----------------------
+  const tools = getSpecialTools(item);
+  if (tools.length){
+    tools.forEach(t => {
+      const toolName = (t?.special_tool_name ?? "").toString().trim();
+      const toolNum  = (t?.special_tool_number ?? "").toString().trim();
+
+      if (toolName){
+        infoParts.push(`${toolName} is required.`);
+      } else if (toolNum){
+        infoParts.push(`Special tool ${toolNum} is required.`);
+      }
+    });
+  }
+
+  if (item.tightening_seq){
+    const seq = String(item.tightening_seq).trim();
+    if (seq) infoParts.push(/[.?!]$/.test(seq) ? seq : (seq + "."));
+  }
+
+  const notes = getExtraNotesList(item);
+  if (notes.length){
+    notes.forEach(note => {
+      const n = String(note || "").trim();
+      if (!n) return;
+      infoParts.push(/[.?!]$/.test(n) ? n : (n + "."));
+    });
+  }
+
+  return {
+    base: baseParts.join(" "),
+    info: infoParts.join(" ")
+  };
+}
+
+
+
+    function renderResult(item, info){
+      const name = item.component_name || "Unknown fastener";
+
+      // ----- Chemistry line (threadlock / lube / sealant) -----
+      const chemItems = [];
+      if (item.threadlock)  chemItems.push({k:"Threadlock", v:item.threadlock});
+
+        // ✅ show symbol instead of full lubrication text
+      const lubeDisplay = item.lubrication_symbol || item.lubrication;
+      if (lubeDisplay) chemItems.push({k:"Lubrication", v:lubeDisplay});
+
+      if (item.sealant)     chemItems.push({k:"Sealant", v:item.sealant});
+
+      // ----- Steps normalize (by tightening_type) -----
+      const rows = getTorqueStepsRows(item);
+
+      const isBoltSizeVariant =
+        rows.length > 0 &&
+        rows.every(r => /^m\d+$/i.test(r.label));
+
+      const hasSingle = (item.torque_nm_single != null);
+
+      // ----- Pills: Type, Thread, Group, Score (in that order) -----
+      const pills = [];
+
+      // Type
+      const tt = (item.tightening_type ? String(item.tightening_type).toLowerCase() : "");
+      if (tt === "multi_step") pills.push("Type: multi");
+      else if (tt === "single" || hasSingle) pills.push("Type: single");
+
+      // Thread
+      if (item.thread_spec) pills.push(`Thread: ${item.thread_spec}`);
+
+      // Group
+      if (item.group) pills.push(`Group: ${item.group}`);
+
+      // Score
+      if (info && typeof info.bestScore === "number") pills.push(`Score: ${info.bestScore}`);
+
+      // ----- Special tools + Extra notes (new block) -----
+      const toolLines = [];
+      const _toolsForScreen = getSpecialTools(item);
+      if (_toolsForScreen.length){
+        _toolsForScreen.forEach(t=>{
+          const toolName = (t?.special_tool_name ?? "").toString().trim();
+          const toolNum  = (t?.special_tool_number ?? "").toString().trim();
+
+          // Screen exposure rules:
+          // - name+number: "name - number"
+          // - name only: "name"
+          // - number only: "number"
+          if (toolName && toolNum) toolLines.push(`${toolName} - ${toolNum}`);
+          else if (toolName) toolLines.push(`${toolName}`);
+          else if (toolNum) toolLines.push(`${toolNum}`);
+        });
+      }
+      const extraNotes = getExtraNotesList(item);
+
+      // ----- Build HTML -----
+      let html = `<div class="partName">${escapeHtml(name)}</div>`;
+
+      // ✅ multi-step: show steps in the single-torque area
+      if (rows.length){
+        html += `<div class="stepList multi" style="margin-top:8px;padding-top:0;border-top:none;">`;
+
+        const caseType = classifyTorqueStepsRows(rows);
+
+        rows.forEach(r => {
+          let tag = r.label;
+
+          if (caseType === "multi_size"){
+            tag = normalizeSizeLabel(tag);
+          } else {
+            // multi_step
+            tag = normalizeStepLabel(tag);
+          }
+
+          html += `
+            <div class="stepRow">
+              <div class="stepTag">${escapeHtml(tag)}</div>
+              <div class="stepVal">${formatTorqueValueHtml(r.value)}</div>
+            </div>
+          `;
+        });
+
+        html += `</div>`;
+      } else {
+        // ✅ single: big torque number only (no "Single torque" line)
+        if (hasSingle){
+          html += `
+            <div class="torqueBig">
+              ${escapeHtml(String(item.torque_nm_single))}<span class="torqueUnit">Nm</span>
+            </div>
+          `;
+        } else {
+          html += `
+            <div class="torqueBig">—</div>
+          `;
+        }
+      }
+
+      // Chemistry line (threadlock/lube/sealant)
+      if (chemItems.length){
+        html += `<div class="chemLine">` + chemItems.map(ci => (
+          `<div class="chemItem"><span class="chemKey">${escapeHtml(ci.k)}:</span> ${escapeHtml(ci.v)}</div>`
+        )).join("") + `</div>`;
+      }
+
+      // ✅ Info block (Special tool → Tightening sequence → Extra notes)
+      const _toolsForInfo = getSpecialTools(item);
+      const hasToolDataForInfo = _toolsForInfo.length > 0;
+      const hasSeqDataForInfo  = !!(item.tightening_seq && String(item.tightening_seq).trim());
+      const hasNoteDataForInfo = getExtraNotesList(item).length > 0;
+      const hasInfoBlock = (hasToolDataForInfo || hasSeqDataForInfo || hasNoteDataForInfo);
+
+if (hasInfoBlock){
+        html += `<div class="infoBlock" id="infoBlock">`;
+
+        // 1) Special tool
+        const _toolsInfo = getSpecialTools(item);
+        if (_toolsInfo.length){
+          const toolLines = _toolsInfo.map(t=>{
+            const toolName = (t?.special_tool_name ?? "").toString().trim();
+            const toolNum  = (t?.special_tool_number ?? "").toString().trim();
+            if (toolName && toolNum) return `${toolName} - ${toolNum}`;
+            if (toolName) return `${toolName}`;
+            if (toolNum) return `${toolNum}`;
+            return "";
+          }).filter(Boolean);
+
+          if (toolLines.length){
+            html += `<div class="infoLine"><span class="infoKey">Special tool:</span> ${escapeHtml(toolLines.join(", "))}</div>`;
+          }
+        }
+
+        // 2) Tightening sequence
+        if (item.tightening_seq){
+          html += `<div class="infoLine"><span class="infoKey">Sequence:</span> ${escapeHtml(String(item.tightening_seq))}</div>`;
+        }
+
+        // 3) Extra notes
+        const _notesForScreen = getExtraNotesList(item);
+        if (_notesForScreen.length){
+          _notesForScreen.forEach(n=>{
+            html += `<div class="infoLine"><span class="infoKey">Note:</span> ${escapeHtml(n)}</div>`;
+          });
+        }
+
+        html += `</div>`;
+      }
+
+
+      // ----- Item number + reference images (between infoBlock and pills) -----
+      const itemNumber = (item?.item_number ?? "").toString().trim();
+      if (itemNumber){
+        html += `<div class="itemNumber"><span class="itemLabel">Ref. image:</span>${escapeHtml(itemNumber)}</div>`;
+      }
+
+      let refImgs = [];
+      if (Array.isArray(item?.ref_images)) {
+        refImgs = item.ref_images;
+      } else if (typeof item?.ref_image === "string") {
+        refImgs = item.ref_image.split(";");
+      }
+      refImgs = (refImgs || []).map(x => (x ?? "").toString().trim()).filter(Boolean);
+
+      if (refImgs.length){
+        html += `<div class="refImages">` +
+          refImgs.map(fn => `<img class="refImage" src="${getRefImageUrl(fn)}" alt="Reference image">`).join("") +
+          `</div>`;
+      }
+
+      // Meta pills
+      if (pills.length){
+        html += `<div class="metaRow">` + pills.map(p=>(
+          `<span class="meta"><span class="mDot"></span>${escapeHtml(p)}</span>`
+        )).join("") + `</div>`;
+      }
+
+
+      resultBody.className = "";
+      const spoken = buildSpokenAnswerParts(item);
+      // append as a new result card
+      const card = document.createElement("div");
+      card.className = "resultCard";
+      card.innerHTML = html;
+      addResultCard(card);
+      // Always speak base + info (info gate removed)
+      const fullSpeech = spoken.info ? `${spoken.base} ${spoken.info}` : spoken.base;
+      speak(fullSpeech);
+
+}
+
+    function renderAmbiguous(cands, info){
+      resultBody.className = "";
+      const top = cands.slice(0, MAX_CANDIDATES_UI);
+      let html = `
+        <div class="partName">Multiple matches</div>
+        <div class="subLine">Select the correct part.</div>
+      `;
+
+      html += `<div class="candidates">` + top.map(({item, score})=>{
+        const title = item.component_name || item.id || "Candidate";
+        const group = item.group ? ` · ${item.group}` : "";
+
+        // Reference image (first image only for list view)
+// Keep parsing logic consistent with renderResult()
+let refImgs = [];
+if (Array.isArray(item?.ref_images)) {
+  refImgs = item.ref_images;
+} else if (typeof item?.ref_images === "string") {
+  refImgs = item.ref_images.split(";");
+} else if (typeof item?.ref_image === "string") {
+  refImgs = item.ref_image.split(";");
+}
+refImgs = (refImgs || []).map(x => (x ?? "").toString().trim()).filter(Boolean);
+const thumb = refImgs.length ? getRefImageUrl(refImgs[0]) : "";
+
+        // Item number (OEM / internal item no.)
+        const itemNo = (item?.item_number ?? "").toString().trim();
+
+        return `<button class="candBtn candCard" type="button" data-id="${escapeHtml(String(item.id || ""))}">
+          <div class="candRow">
+            <div class="candInfoTop">
+              <strong>${escapeHtml(title)}</strong>
+              ${itemNo ? `<span class="pillMini">${escapeHtml(itemNo)}</span>` : ``}
+            </div>
+            <div class="candThumbWrap">
+              ${thumb ? `<img class="candThumb" src="${thumb}" alt="Reference image">` : `<div class="candThumbPh">No image</div>`}
+            </div>
+          </div>
+        </button>`;
+      }).join("") + `</div>`;
+
+      const card = document.createElement("div");
+      card.className = "resultCard";
+      card.innerHTML = html;
+      addResultCard(card);
+      setRepeatStop(false);
+      speak("Multiple matches. Please select the correct part.");
+
+      // bind inside this card only
+      const btns = card.querySelectorAll(".candBtn");
+      btns.forEach((b, idx)=>{
+        b.addEventListener("click", ()=>{
+          markRequestStart();
+          const chosen = top[idx];
+          if (chosen && chosen.item) renderResult(chosen.item, {bestScore: chosen.score});
+        });
+      });
+    }
+
+
+    // =========================
+
+function getRefImageUrl(filename){
+      const fn = (filename ?? "").toString().trim();
+      if (!fn) return "";
+      // If dataset already provides a full/relative path, respect it.
+      if (/^https?:\/\//i.test(fn) || fn.startsWith("/") || fn.startsWith("./")) return fn;
+
+      // Build base from CURRENT_DATASET_FILE (e.g. datasets/<model>/dataset.json -> datasets/<model>/images/)
+      const df = (CURRENT_DATASET_FILE ?? "").toString();
+      const slash = df.lastIndexOf("/");
+      const baseDir = (slash >= 0) ? df.slice(0, slash + 1) : "";
+      const imgBase = baseDir + "images/";
+      return imgBase + encodeURIComponent(fn);
+    }
+
+// Utilities
+// =========================
+function escapeHtml(s){
+      return String(s ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    // =========================
+    // Z2: Requery hint (local-only)
+    // =========================
+    function showRequeryHint(msg){
+      const text = "Enter more detail.";
+      const el = document.getElementById("fallbackNoticeText")
+        || document.getElementById("fallbackNotice")
+        || document.getElementById("fallbackHint")
+        || document.getElementById("waitingText")
+        || document.getElementById("statusText");
+      if (el){
+        el.textContent = text;
+        const wrap = el.closest(".fallbackNotice") || el.closest(".notice") || el.parentElement;
+        if (wrap && wrap.style) wrap.style.display = "";
+      } else {
+        setStatus(text, true, true);
+      }
+    }
+
+    function normalizeQuery(q){
+      let s = String(q || "").toLowerCase();
+
+      const glueMap = {
+        "subframe": "sub frame",
+        "swingarm": "swing arm",
+        "headstock": "head stock",
+        "oilpan": "oil pan",
+        "wheelbase": "wheel base"
+      };
+
+      for (const [k,v] of Object.entries(glueMap)){
+        s = s.replaceAll(k, v);
+      }
+
+      // 1) Basic cleanup + filler-phrase removal (via normTextForTokens)
+      const base = normTextForTokens(s);
+      if (!base) return "";
+
+      // 2) Tokenize + remove STOPWORDS (normalize-only process)
+      const tokens = tokenizeForNormalize(base);
+      const kept = tokens.filter(w => w.length >= 2 && !STOPWORDS.has(w));
+
+      // 3) Join with single spaces. No further whitespace cleanup needed.
+      return kept.join(" ");
+    }
+
+    // =========================
+    // Query handler (uses safety rails)
+    // =========================
+
+    // =========================
+// Torque query + rendering
+// =========================
+async function handleQuery(raw, __preRoute){
+      const q = String(raw || "").trim();
+
+      // Ensure query-cleanup lexicon is loaded before normalization/tokenization
+      await loadLexiconOnce();
+
+      const localNq = normalizeQuery(q);
+
+      // Empty query guard (avoid unnecessary /api/route calls; check normalized query)
+      if (!localNq){
+        setStatus("Enter a part name.", true, true);
+        renderEmpty("Torque results will appear here.");
+        return;
+      }
+
+
+      // LLM router (intent + optional normalized query)
+      const routeInput = (localNq && localNq.trim()) ? localNq : q;
+      
+      // === Route v2 preprocess (optional) ===
+      const pre = __preRoute ? __preRoute : await callRouteAPI(routeInput);
+
+      // Decide which query string to use for trigger scanning (spec/fast/part)
+      let llmQuery = "";
+      let qConf = 0;
+      let pConf = 0;
+      let oConf = 0;
+      let partPhrasesRaw = [];
+      if (pre){
+        llmQuery = normalizeQuery(pre.llm_query || "");
+        qConf = typeof pre.llm_query_confidence === "number" ? pre.llm_query_confidence : 0;
+        pConf = typeof pre.part_phrases_confidence === "number" ? pre.part_phrases_confidence : 0;
+        oConf = (typeof pre.overall_confidence === "number") ? pre.overall_confidence : Math.max(0, Math.min(1, ((qConf + pConf) / 2)));
+        partPhrasesRaw = Array.isArray(pre.part_phrases) ? pre.part_phrases : [];
+      }
+
+      const useLlmQueryForTriggers =
+        (oConf >= LLM_QUERY_CONF_MIN) &&
+        llmQuery &&
+        __llmQueryPassesGuard(localNq, llmQuery);
+
+      const triggerQuery = useLlmQueryForTriggers ? llmQuery : localNq;
+
+      // Base lexical extraction (deterministic) from triggerQuery
+      try{ await loadPartTriggers(); }catch(e){}
+      try{ await loadSpecTriggers(); }catch(e){}
+      try{ await loadFastenerTriggers(); }catch(e){}
+      const lr = localLexicalRoute(triggerQuery);
+      const spec_terms_found = Array.isArray(lr?.spec_terms_found) ? lr.spec_terms_found : [];
+      const fastener_terms_found = Array.isArray(lr?.fastener_terms_found) ? lr.fastener_terms_found : [];
+
+      // Part terms selection policy (LLM vs local)
+      // - If triggerQuery is localNq: use local triggers (lr.part_terms_found)
+      // - If triggerQuery is llmQuery: keep only original LLM phrases whose tokens remain
+      //   after dropping spec/fastener trigger tokens (>= 1 token left). If none remain,
+      //   part_terms_found stays [] (no local fallback by design).
+      let part_terms_found = [];
+      let usedLlmPartPhrases = false;
+
+      if (!useLlmQueryForTriggers){
+        part_terms_found = Array.isArray(lr?.part_terms_found) ? lr.part_terms_found : [];
+        usedLlmPartPhrases = false;
+      }else{
+        const dropSet = new Set([ ...SPEC_TRIGGER_TOKENS, ...FASTENER_TRIGGER_TOKENS ]);
+        const kept = [];
+        const seen = new Set();
+
+        for (const phr of (Array.isArray(partPhrasesRaw) ? partPhrasesRaw : [])){
+          const original = String(phr || "").trim();
+          if (!original) continue;
+
+          const toks = __tokenizeNormalized(normalizeQuery(original));
+          const remaining = toks.filter(t => !dropSet.has(t));
+
+          if (remaining.length >= 1){
+            const key = original.toLowerCase();
+            if (!seen.has(key)){
+              seen.add(key);
+              kept.push(original);
+              if (kept.length >= 20) break;
+            }
+          }
+        }
+
+        part_terms_found = kept;
+        usedLlmPartPhrases = (part_terms_found.length > 0);
+      }
+
+// Safety: remove single-token trigger words from part_terms_found
+      part_terms_found = __filterSingleTokenTriggers(part_terms_found, spec_terms_found, fastener_terms_found);
+
+      // Intent: your P/F/S rule (deterministic)
+      const __intent = __decideIntentFromPFS(part_terms_found, fastener_terms_found, spec_terms_found);
+      const __itemCandidates = __buildItemCandidates(__intent, part_terms_found, fastener_terms_found, spec_terms_found);
+
+      // Route v2-only pipeline variables (no v1 / no v1-like bridge)
+      const routeIntent = __intent;
+      const itemCandidates = Array.isArray(__itemCandidates) ? __itemCandidates : [];
+      const bonusTokens = itemCandidates;
+      const hasItems = !!(itemCandidates && itemCandidates.length > 0);
+
+      // LLM normalized query adoption (v2): use the SAME gate as triggerQuery (llm vs local) decision.
+// This intentionally aligns specQuery + scoringQuery to triggerQuery gating.
+      const llmAccepted = !!useLlmQueryForTriggers;
+      const llmNq = llmAccepted ? normalizeQuery(llmQuery) : "";
+
+      // Scoring query: use the SAME gate as triggerQuery.
+      const nq = (llmAccepted && llmNq && llmNq.trim()) ? llmNq : localNq;
+
+// =========================
+      // Debug: decision summary (DEV ONLY)
+      // =========================
+      if (DEBUG_ROUTE_TRACE){
+        try{
+          console.groupCollapsed("[TESA decision] " + (routeInput || ""));
+          console.log("nq_decision", {
+            chosen: nq,
+            source: (llmNq && llmNq.trim()) ? "llmNq" : "localNq",
+            localNq,
+            llmNq,
+            llmAccepted,
+            usedLlmPartPhrases,
+            useLlmQueryForTriggers,
+            triggerQuery,
+            oConf,
+            qConf,
+            pConf,
+            LLM_QUERY_CONF_MIN,
+            ROUTE_CONF_MIN
+          });
+          console.log("intent", routeIntent);
+          console.log("spec_terms_found", spec_terms_found);
+          console.log("fastener_terms_found", fastener_terms_found);
+          console.log("part_terms_found", part_terms_found);
+          console.log("item_candidates", itemCandidates);
+          console.groupEnd();
+        }catch(e){}
+      }
+
+      // =========================
+      // D: decide path based on intent + item_candidates presence (Route OFF safe)
+      // Z2: intent unknown OR no item candidates -> ask user to requery with more info.
+      // =========================
+      if (!hasItems || routeIntent === "unknown"){
+        showRequeryHint("Ask again w/ more information.");
+        return;
+      }
+// // Dataset presence checks (intent-based)
+      const isTorqueIntent = (routeIntent === "torque_lookup");
+      const isSpecIntent = (routeIntent === "spec_lookup");
+
+      if (isTorqueIntent && !torqueData.length){
+        setStatus("Torque dataset not loaded yet.", true, true);
+        renderEmpty("Torque dataset not loaded yet.");
+        return;
+      }
+
+      if (isSpecIntent){
+        const sp = await loadSpecsDataIfNeeded();
+        const hasSpecs = !!(sp && Array.isArray(sp.specs) && sp.specs.length);
+        if (!hasSpecs){
+          setStatus("Service dataset not loaded yet.", true, true);
+          renderEmpty("Service specs dataset not loaded yet.");
+          return;
+        }
+      }
+// =========================
+      // Intent gate: service specs (service.json)
+      // =========================
+      // If the router is confident this is a spec/service question, try service lookup first.
+// If no spec match is found, ask the user to rephrase (no torque fallback from spec).
+      const specQuery = (llmAccepted && llmNq && llmNq.trim()) ? llmNq : localNq;
+                  const specGate = (routeIntent === "spec_lookup");
+
+      if (specGate){
+        if (DEBUG_ROUTE){
+          console.log(`[TESA spec] intent=spec_lookup (accepted). specQuery=`, specQuery);
+        }
+        try{
+          const sp = await loadSpecsDataIfNeeded();
+          if (sp){
+            const specCandidates = findSpecCandidates(specQuery);
+            if (specCandidates.length){
+              const bestSpec = specCandidates[0].spec;
+              setStatus("Match found.", true, false);
+              renderSpecsResult(bestSpec);
+              logQuery({ type: "spec", query: q, normalized: specQuery, match: (bestSpec.topic_id || bestSpec.id || bestSpec.title || "") });
+              return;  // spec found; stop here (do not continue to torque scoring)
+            }
+          }
+          if (DEBUG_ROUTE){
+            console.warn("[TESA spec] spec_lookup gated but no spec match; asking user to rephrase.");
+          }
+          showRequeryHint("I couldn't find that spec. Try asking with more detail.");
+          return;
+        }catch(e){
+          if (DEBUG_ROUTE){
+            console.warn("[TESA spec] spec lookup failed; asking user to rephrase.", e);
+          }
+          showRequeryHint("I couldn't find that spec. Try asking with more detail.");
+          return;
+        }
+      }
+      // Intent gate: torque path (torque_lookup)
+      const torqueGate = (routeIntent === "torque_lookup");
+      if (!torqueGate){
+        if (DEBUG_ROUTE){
+          console.log(`[TESA torque] not gated (intent=${routeIntent}).`);
+        }
+        showRequeryHint("Ask again w/ more information.");
+        renderEmpty("Try asking about torque or spec with more detail.");
+        return;
+      }
+
+      setStatus("Searching…", true, false);
+
+      const candidates = findCandidates(nq, bonusTokens);
+
+      if (DEBUG_ROUTE){
+        console.log(`[TESA torque] gated (intent=${routeIntent}).`);
+      }
+
+      // Debug: show top matches with score breakdown
+      try{
+        const topN = candidates.filter(x=>!x.__special).slice(0, 5);
+        if (topN.length){
+          console.groupCollapsed(`[TESA match] "${q}" → "${nq}" (top ${topN.length})`);
+          topN.forEach((c, i)=>{
+            const title = c.item?.component_name || c.item?.id || `#${i+1}`;
+            console.log(`#${i+1}  score=${c.score}`, title, c.breakdown);
+          });
+          console.groupEnd();
+        }
+      } catch(e){}
+
+      // Rail #1: too generic
+      if (candidates.length && candidates[0].__special === "NO_SIG_WORDS"){
+        setStatus("Too generic. Add a part name.", true, true);
+        renderEmpty("Too generic. Include a part name (example: “rear brake caliper”).");
+        speak("Too generic. Please add more detail.");
+        return;
+      }
+
+// No torque candidates
+if (!candidates.length){
+    setStatus("No match in dataset.", true, true);
+    renderEmpty("No match. This part may not be in the current dataset.");
+    speak("No matching data found.");
+    logQuery({ type: "none", query: q, normalized: nq, match: "" });
+    return;
+}
+
+      const best = candidates[0];
+      const second = candidates[1] || null;
+      const bestScore = best.score;
+      const gap = second ? (best.score - second.score) : best.score;
+
+      // Rail #2: low score → refuse
+      if (bestScore < MIN_SCORE_TO_ANSWER){
+        setStatus("Low confidence. Be more specific.", true, true);
+        renderEmpty("No confident match. Try a more specific part name (add location/system).");
+        speak("No confident match. Please add more detail.");
+        logQuery({ type: "none", query: q, normalized: nq, match: "" });
+        return;
+      }
+
+
+      // Rail #3: ambiguous → user choose
+      if (second && gap < MIN_GAP_TO_ANSWER){
+        // In multi-match mode, hide low-score candidates that are effectively noise.
+        const meaningful = candidates.filter(c => (c.score ?? 0) >= MULTI_MIN_SCORE);
+
+        // If filtering leaves only one meaningful candidate, treat it as a single match.
+        if (meaningful.length <= 1){
+          setStatus("Matched.", true, true);
+          renderResult(candidates[0].item);
+          logQuery({ type: "torque", query: q, normalized: nq, match: candidates[0].item.id || candidates[0].item.component_name || "" });
+          return;
+        }
+
+        setStatus("Multiple matches found.", true, true);
+        renderAmbiguous(meaningful, {bestScore, gap, multiMinScore: MULTI_MIN_SCORE});
+        return;
+      }
+// Confident
+      setStatus("Match found.", true, false);
+      renderResult(best.item, {bestScore, gap});
+      logQuery({ type: "torque", query: q, normalized: nq, match: (best.item && (best.item.component_name || best.item.id || "")) });
+    }
+
+    // =========================
+    // Events
+    // =========================
+    sendBtn.addEventListener("click", ()=>{
+      markRequestStart();
+      handleQuery(questionInput.value);
+    });
+    questionInput.addEventListener("keydown", (e)=>{
+      if (e.key === "Enter"){
+        markRequestStart();
+
+        e.preventDefault();
+        handleQuery(questionInput.value);
+      }
+    });
+
+    repeatBtn.addEventListener("click", ()=>{
+      if (lastSpokenEnabled && lastSpokenText) speak(lastSpokenText, {force:true});
+    });
+    stopBtn.addEventListener("click", ()=>{
+      stopSpeak();
+    });
+    if (voiceReadToggle){
+      voiceReadToggle.addEventListener("click", ()=>{
+        setVoiceReadEnabled(!VOICE_READ_ENABLED);
+      });
+    }
+
+
+
+
+    // Make / Model badges tap -> open selector
+    if (makeBadgeEl){
+      makeBadgeEl.addEventListener("click", ()=>{
+        ensureModelIndexLoaded().then(()=>openSheet("make"));
+      });
+    }
+    if (modelBadgeEl){
+      modelBadgeEl.addEventListener("click", ()=>{
+        ensureModelIndexLoaded().then(()=>openSheet("model"));
+      });
+    }
+sheetClose.addEventListener("click", closeSheet);
+    if (sheetBack){
+      sheetBack.addEventListener("click", ()=>{
+        // Back to make selection
+        setSheetMode("make");
+        renderSheet();
+      });
+    }
+    sheetOverlay.addEventListener("click", (e)=>{
+      if (e.target === sheetOverlay) closeSheet();
+    });
+
+    
+// Speech recognition (desktop chrome)
+
+    // =========================
+// Voice: Big MIC (torque query only)
+// =========================
+function initSpeech(){
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition){
+        micBig.disabled = true;
+        setStatus("Speech recognition not supported here (iPhone Safari limitation). Use keyboard mic.", true, true);
+        return;
+      }
+      recognition = new SpeechRecognition();
+      recognition.lang = "en-US";
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.onstart = ()=>{
+        recognizing = true;
+        voiceTranscript = "";
+        voiceRequestSubmitted = false;
+        setStatus("Listening…", true, false);
+      };
+      recognition.onerror = (ev)=>{
+        recognizing = false;
+        voiceTranscript = "";
+        voiceRequestSubmitted = false;
+        setStatus("Speech error: " + ev.error, true, true);
+      };
+      recognition.onend = ()=>{
+        recognizing = false;
+        const t = String(voiceTranscript || "").trim();
+        if (t && !voiceRequestSubmitted){
+          voiceRequestSubmitted = true;
+          questionInput.value = t;
+          handleQuery(t);
+          return;
+        }
+        setStatus("Ready.", true, false);
+      };
+      recognition.onresult = (ev)=>{
+        const parts = [];
+        for (let i = 0; i < ev.results.length; i++){
+          const alt = ev.results[i] && ev.results[i][0];
+          if (alt && alt.transcript) parts.push(String(alt.transcript).trim());
+        }
+        const t = parts.join(" ").replace(/\s+/g, " ").trim();
+        if (t){
+          voiceTranscript = t;
+          questionInput.value = t;
+        }
+      };
+    }
+
+    micBig.addEventListener("click", ()=>{
+      markRequestStart();
+
+      if (!recognition) initSpeech();
+      if (!recognition) return;
+
+      if (recognizing){
+        recognition.stop();
+        return;
+      }
+      recognition.start();
+    });
+
+    // Init
+    initVoiceReadPreference();
+    renderEmpty("Torque results will appear here.");
+    setStatus("");
+    initApp().catch((e)=>{ console.error(e); });
+</script>
+
+</body>
+</html>
