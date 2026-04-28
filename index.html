@@ -91,47 +91,73 @@
     }
     .card > *{position:relative;z-index:1}
 
-    /* Voice center */
+    .inputCard{
+      padding:22px 20px 18px;
+      min-height:178px;
+    }
+
+    /* Input center */
     .voiceArea{
       display:flex;
       flex-direction:column;
-      gap:12px;
-      align-items:center;
-      text-align:center;
-      padding:8px 6px 4px;
+      gap:14px;
+      align-items:stretch;
+      text-align:left;
+      padding:0;
+    }
+
+    .fallbackRow{
+      width:100%;
+      display:flex;
+      gap:8px;
+      align-items:stretch;
     }
 
     .micBig{
-      width:104px;height:104px;border-radius:999px;
-      border:1px solid rgba(255,255,255,.08);
-      background:radial-gradient(circle at 30% 25%,var(--accent2),var(--accent));
-      box-shadow:0 16px 40px rgba(79,140,255,.55), 0 0 18px rgba(79,140,255,.35);
+      min-width:0;
+      height:42px;
+      padding:0 13px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(9,11,18,.85);
+      color:var(--text);
+      font-size:12px;
+      font-weight:700;
       display:flex;align-items:center;justify-content:center;
+      gap:7px;
       cursor:pointer;
       transition:transform .08s ease, box-shadow .08s ease, opacity .12s ease;
     }
+    .micBig:hover{border-color:rgba(79,140,255,.6)}
     .micBig:active{transform:scale(.97)}
 
-    /* Primary actions (Voice + Photo) */
+    /* Secondary actions (Voice + Photo) */
     .primaryActions{
       display:flex;
       align-items:center;
       justify-content:center;
-      gap:14px;
+      gap:8px;
       width:100%;
+      flex-wrap:wrap;
     }
     .camBig{
-      width:104px;height:104px;border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background:radial-gradient(circle at 30% 25%, rgba(255,255,255,.14), rgba(9,11,18,.85));
-      box-shadow:0 12px 32px rgba(0,0,0,.35);
+      min-width:0;
+      height:42px;
+      padding:0 13px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(9,11,18,.85);
+      color:var(--text);
+      font-size:12px;
+      font-weight:700;
+      gap:7px;
       display:flex;align-items:center;justify-content:center;
       cursor:pointer;
       transition:transform .08s ease, box-shadow .12s ease, border-color .12s ease;
     }
-    .camBig:hover{border-color:rgba(255,255,255,.22)}
+    .camBig:hover{border-color:rgba(79,140,255,.6)}
     .camBig:active{transform:scale(.97)}
-    .camBig svg{width:38px;height:38px}
+    .camBig svg{width:17px;height:17px}
 
     .photoPane{
       width:100%;
@@ -164,51 +190,55 @@
     }
 
     .micBig[disabled]{opacity:.35;cursor:not-allowed;box-shadow:none}
-    .micBig svg{width:34px;height:34px}
+    .micBig svg{width:16px;height:16px}
     .hint{
       font-size:12px;color:var(--sub);
       line-height:1.35;
+      text-align:center;
     }
     .hint b{color:#c2d5ff}
     .status{
-      min-height:16px;
+      height:16px;
+      line-height:16px;
       font-size:11px;
       color:var(--sub);
+      text-align:center;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      width:100%;
     }
     .status.active{color:#c2d5ff}
     .status.error{color:var(--danger)}
 
-    /* Minimal text fallback */
-    .fallbackRow{
-      width:100%;
-      display:flex;
-      gap:8px;
-      margin-top:2px;
-    }
     .q{
       flex:1;
       border-radius:999px;
       border:1px solid var(--border);
       background:rgba(5,6,12,.9);
-      padding:10px 12px;
+      padding:0 15px;
       color:var(--text);
-      font-size:13px;
+      font-size:15px;
       outline:none;
+      min-width:0;
+      height:50px;
     }
+    .q:focus{border-color:rgba(79,140,255,.7);box-shadow:0 0 0 3px rgba(79,140,255,.12)}
     .q::placeholder{color:#5e6270}
     .send{
-      width:44px;
+      width:50px;
+      min-width:50px;
       border-radius:999px;
       border:1px solid var(--border);
-      background:rgba(9,11,18,.85);
-      color:var(--text);
+      background:var(--accent);
+      color:#05060a;
       cursor:pointer;
       display:flex;align-items:center;justify-content:center;
-      transition:transform .08s ease, border-color .12s ease;
+      transition:transform .08s ease, filter .12s ease;
     }
-    .send:hover{border-color:rgba(79,140,255,.6)}
+    .send:hover{filter:brightness(1.08)}
     .send:active{transform:scale(.98)}
-    .send svg{width:18px;height:18px}
+    .send svg{width:19px;height:19px}
 
     /* step list shown in the headline area (no top divider) */
     .stepList.inline{
@@ -220,19 +250,24 @@
     /* Result card */
     .resultTop{
       display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
+      justify-content:flex-end;
+      align-items:center;
       gap:10px;
       margin-bottom:10px;
     }
-    .resultTitle{
-      font-size:12px;
-      text-transform:uppercase;
-      letter-spacing:.09em;
-      color:var(--sub);
-    }
     .controls{
-      display:flex;gap:8px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:flex-end;
+      flex-wrap:wrap;
+    }
+    .controlGroup{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      padding-right:10px;
+      border-right:1px solid rgba(255,255,255,.10);
     }
     .pillBtn{
       padding:7px 10px;
@@ -246,6 +281,14 @@
     .pillBtn:hover{border-color:rgba(79,140,255,.6)}
     .pillBtn:active{transform:scale(.99)}
     .pillBtn[disabled]{opacity:.35;cursor:not-allowed}
+    .clearBtn{
+      margin-left:0;
+    }
+    .voiceReadToggle.on{
+      border-color:rgba(39,228,159,.55);
+      color:#d9fff1;
+      box-shadow:0 0 0 2px rgba(39,228,159,.10) inset;
+    }
 
     .partName{
       font-size:16px;
@@ -634,36 +677,6 @@
 
     /* Small mic button next to model badge */
     .badgeRow{display:flex;align-items:center;justify-content:center;gap:8px;width:100%}
-/* === Toast (MVP) === */
-    .toast{
-      position: fixed;
-      top: 18px;
-      bottom: auto;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(9,11,18,.92);
-      border: 1px solid rgba(255,255,255,.10);
-      color: var(--text);
-      padding: 10px 12px;
-      border-radius: 999px;
-      font-size: 12px;
-      line-height: 1.2;
-      box-shadow: 0 18px 45px rgba(0,0,0,.55);
-      z-index: 2000;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .18s ease, transform .18s ease;
-      max-width: calc(100% - 28px);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .toast.show{
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
-
 /* === Multi-match vertical card layout override === */
 .candidates{
   display:grid;
@@ -976,27 +989,35 @@
 </div>
     </header>
 
-    <!-- Voice-first input -->
-    <section class="card">
+    <!-- Text-first input -->
+    <section class="card inputCard">
       <div class="voiceArea">
-        <div class="primaryActions">
-        <button id="micBig" class="micBig" type="button" aria-label="Speak">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path fill="#05060a" d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3z"/>
-            <path fill="#05060a" d="M17 11a1 1 0 1 0-2 0 3 3 0 0 1-6 0 1 1 0 1 0-2 0 5.002 5.002 0 0 0 4 4.9V18H9a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2h-2v-2.1A5.002 5.002 0 0 0 17 11z"/>
-          </svg>
-        </button>
-        <button id="camBtn" class="camBig" type="button" aria-label="Take photo">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path fill="currentColor" d="M9 4l1.5 2H13l1.5-2H18a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h3zm3 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/>
-          </svg>
-        </button>
-        <input id="photoInput" type="file" accept="image/*" style="display:none" />
-      </div>
+        <div class="fallbackRow">
+          <input id="questionInput" class="q" type="text"
+                 placeholder="Search tightening torque... e.g. brake caliper"
+                 autocomplete="off" />
+          <button id="sendBtn" class="send" type="button" aria-label="Ask">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M2 21l21-9L2 3v7l15 2-15 2v7z"/>
+            </svg>
+          </button>
+        </div>
 
-        <div class="hint">
-          Tap mic and ask for torque spec<br>
-	  <b>e.g. “brake caliper”</b>
+        <div class="primaryActions" aria-label="Other input methods">
+          <button id="micBig" class="micBig" type="button" aria-label="Speak">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3z"/>
+              <path fill="currentColor" d="M17 11a1 1 0 1 0-2 0 3 3 0 0 1-6 0 1 1 0 1 0-2 0 5.002 5.002 0 0 0 4 4.9V18H9a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2h-2v-2.1A5.002 5.002 0 0 0 17 11z"/>
+            </svg>
+            <span>Voice</span>
+          </button>
+          <button id="camBtn" class="camBig" type="button" aria-label="Take photo">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M9 4l1.5 2H13l1.5-2H18a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h3zm3 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/>
+            </svg>
+            <span>Photo</span>
+          </button>
+          <input id="photoInput" type="file" accept="image/*" style="display:none" />
         </div>
 
         <div id="statusLine" class="status"></div>
@@ -1008,29 +1029,19 @@
           </div>
           <div class="photoNote">Beta: photo analysis will be wired to LLM matching.</div>
         </div>
-
-
-        <div class="fallbackRow">
-          <input id="questionInput" class="q" type="text"
-                 placeholder="Type here (fallback)… e.g. brake caliper"
-                 autocomplete="off" />
-          <button id="sendBtn" class="send" type="button" aria-label="Ask">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path fill="currentColor" d="M2 21l21-9L2 3v7l15 2-15 2v7z"/>
-            </svg>
-          </button>
-        </div>
       </div>
     </section>
 
     <!-- Result -->
     <section class="card" id="resultCard">
       <div class="resultTop">
-        <div class="resultTitle">Result</div>
         <div class="controls">
-          <button id="clearBtn" class="pillBtn" type="button">Clear</button>
-          <button id="repeatBtn" class="pillBtn" type="button" disabled>Repeat</button>
-          <button id="stopBtn" class="pillBtn" type="button" disabled>Stop</button>
+          <div class="controlGroup" aria-label="Read result aloud">
+          <button id="voiceReadToggle" class="pillBtn voiceReadToggle" type="button" aria-pressed="false">Audio Off</button>
+            <button id="repeatBtn" class="pillBtn" type="button" disabled>Repeat</button>
+            <button id="stopBtn" class="pillBtn" type="button" disabled>Stop</button>
+          </div>
+          <button id="clearBtn" class="pillBtn clearBtn" type="button">Clear</button>
         </div>
       </div>
 
@@ -1674,6 +1685,7 @@ const VISION_CONF_MIN = 0.75; // confidence threshold for auto scoring (0..1)
     // =========================
     const ROUTE_CACHE_TTL_MS = 60 * 1000; // 60s
     const __routeCache = new Map(); // key -> {t:number, v:object|null}
+    const __routeInFlight = new Map(); // key -> Promise<object|null>
 
     function getRouteCache(key){
       const k = String(key || "").trim();
@@ -1740,6 +1752,10 @@ const body = { normalized_query: String(rawQuery || ""),
       const cacheKey = String(body.normalized_query || '').trim();
       const cached = getRouteCache(cacheKey);
       if (cached) return cached;
+      const pending = __routeInFlight.get(cacheKey);
+      if (pending) return await pending;
+
+      const routePromise = (async () => {
 try{
         startWorkingIndicator();
   try {
@@ -1775,7 +1791,12 @@ llm_query: (typeof data?.llm_query === "string") ? data.llm_query : "",
       }
       } finally {
     stopWorkingIndicator();
+    __routeInFlight.delete(cacheKey);
   }
+      })();
+
+      __routeInFlight.set(cacheKey, routePromise);
+      return await routePromise;
 }
 
     const MIN_SCORE_TO_ANSWER = 40;   // score too low -> refuse (raw score; no 100 cap)
@@ -1801,10 +1822,13 @@ llm_query: (typeof data?.llm_query === "string") ? data.llm_query : "",
     // Speech
     let recognition = null;
     let recognizing = false;
+    let voiceTranscript = "";
+    let voiceRequestSubmitted = false;
 
     // TTS
     let lastSpokenText = "";
     let lastSpokenEnabled = false;
+    let VOICE_READ_ENABLED = false;
 
     // DOM
     const makeBadgeEl = document.getElementById("makeBadge");
@@ -1821,9 +1845,6 @@ llm_query: (typeof data?.llm_query === "string") ? data.llm_query : "",
       if (routeToggleWrapEl) routeToggleWrapEl.classList.toggle("on", ROUTE_ENABLED);
       if (routeToggleEl) routeToggleEl.setAttribute("aria-checked", ROUTE_ENABLED ? "true" : "false");
       if (routeToggleInputEl) routeToggleInputEl.checked = ROUTE_ENABLED;
-      if (typeof showToast === "function"){
-        showToast(ROUTE_ENABLED ? "Route: ON" : "Route: OFF");
-      }
     }
 
     function setupRouteToggle(){
@@ -1917,7 +1938,6 @@ function stopStatusDots(){
         if (usePhotoBtn) usePhotoBtn.disabled = false;
 
         if (statusLine) statusLine.textContent = "Photo captured — ready to analyze (beta).";
-        if (typeof showToast === "function") showToast("Photo captured (beta)");
       });
     }
 
@@ -1933,11 +1953,11 @@ function stopStatusDots(){
     if (usePhotoBtn){
       usePhotoBtn.addEventListener("click", async () => {
         if (!lastPhotoFile){
-          if (typeof showToast === "function") showToast("No photo selected");
+          setStatus("No photo selected.", true, true);
           return;
         }
         if (!VISION_ENABLED){
-          if (typeof showToast === "function") showToast("Vision is disabled");
+          setStatus("Vision is disabled.", true, true);
           return;
         }
 
@@ -1983,8 +2003,7 @@ function stopStatusDots(){
           if (DEBUG_VISION) console.log("[vision]", { vision_query, confidence, warnings, raw: vision });
 
           if (warnings.length){
-            // show first warning only, keep UI simple
-            if (typeof showToast === "function") showToast(`Vision warning: ${warnings[0]}`);
+            if (DEBUG_VISION) console.warn("[vision warning]", warnings[0]);
           }
 
           if (vision_query){
@@ -2012,14 +2031,12 @@ function stopStatusDots(){
             } else {
               const confText = (confidence == null) ? "" : ` (conf ${Math.round(confidence*100)}%)`;
               if (statusLine) statusLine.textContent = `Photo unclear${confText}. Retake closer / better light, or type a short hint.`;
-              if (typeof showToast === "function") showToast("Vision confidence low — please retry.");
               stopStatusDots();
               // keep photo pane open so user can retry quickly
               try{ questionInput?.focus(); }catch(e){}
               return;
             }} else {
             if (statusLine) statusLine.textContent = "Vision couldn't extract a reliable query. Try another photo or type manually.";
-            if (typeof showToast === "function") showToast("Vision: no result");
             try{ questionInput?.focus(); }catch(e){}
           }
 
@@ -2029,7 +2046,6 @@ function stopStatusDots(){
           stopStatusDots();
           console.error("Vision call failed:", e);
           if (statusLine) statusLine.textContent = "Vision failed. Please try again, or type manually.";
-          if (typeof showToast === "function") showToast("Vision failed");
           usePhotoBtn.disabled = false;
         }
       });
@@ -2047,12 +2063,7 @@ function stopStatusDots(){
       autoScrollToRequest = true;
     }
     function scrollRequestArea(){
-      const anchor = document.querySelector(".voiceArea") || document.querySelector(".fallbackRow") || document.querySelector("header");
-      if (!anchor) {
-        window.scrollTo({top:0, behavior:"smooth"});
-        return;
-      }
-      anchor.scrollIntoView({behavior:"smooth", block:"start"});
+      window.scrollTo({top:0, behavior:"smooth"});
     }
 
 
@@ -2074,6 +2085,7 @@ function stopStatusDots(){
 
     const repeatBtn = document.getElementById("repeatBtn");
     const stopBtn = document.getElementById("stopBtn");
+    const voiceReadToggle = document.getElementById("voiceReadToggle");
 
     const clearBtn = document.getElementById("clearBtn");
 
@@ -2088,7 +2100,7 @@ function stopStatusDots(){
       repeatPayload = null;
       setRepeatStop(false);
       // show waiting message again
-      renderEmpty("Waiting for your question.");
+      renderEmpty("Torque results will appear here.");
     }
 
 
@@ -2151,7 +2163,7 @@ async function loadModelIndex(){
         return modelIndex;
       } catch(e){
         console.error("index.json load failed:", e);
-        setStatus("Model list failed to load (index.json missing). Make sure index.json is in the same folder as index.html.", true, true);
+        setStatus("Model list failed to load (index.json missing).", true, true);
         throw e;
       }
     }
@@ -2260,7 +2272,6 @@ async function loadModelIndex(){
       // Step 1: pick manufacturer
       if (sheetMode === "make" || !SELECTED_MAKE_ID){
         let html = '';
-        html += `<div class="makeLabel">Manufacturers</div>`;
         makes
           .slice()
           .sort((a,b)=>String(a.label).localeCompare(String(b.label)))
@@ -2320,7 +2331,6 @@ async function loadModelIndex(){
       });
 
       let html = '';
-      html += `<div class="makeLabel">${escapeHtml(mk.label)}</div>`;
 
       groupKeys.forEach(gk=>{
         html += `<div class="groupLabel">${escapeHtml(groupLabelForKey(gk))}</div>`;
@@ -2402,7 +2412,7 @@ async function loadModelIndex(){
       if (prevModelId && prevModelId !== CURRENT_MODEL_ID){
         clearResultHistory();
       } else {
-        renderEmpty("Waiting for your question.");
+        renderEmpty("Torque results will appear here.");
         // Clear typed fallback input
         if (questionInput) questionInput.value = "";
       }
@@ -2469,7 +2479,6 @@ async function initApp(){
       SELECTED_MAKE_LABEL = null;
       updateBadges();
       setStatus("Select a manufacturer to begin.", true, false);
-      showToast("Select a manufacturer");
       openSheet("make");
     }
 
@@ -2687,7 +2696,7 @@ try{
   const yTo   = meta.year_to ?? "";  setStatus(`Ready. (${torqueData.length} items)`, true, false);
 } catch (e){
   console.error(e);
-  setStatus("Failed to load dataset. Use a local server (python http.server).", true, true);
+  setStatus("Failed to load dataset.", true, true);
 }
     }
 
@@ -3112,6 +3121,26 @@ function tokenizeNormalized(s){
       lastSpokenEnabled = enabled;
     }
 
+    const VOICE_READ_STORAGE_KEY = "TESA_voice_read_enabled";
+    function updateVoiceReadToggle(){
+      if (!voiceReadToggle) return;
+      voiceReadToggle.textContent = VOICE_READ_ENABLED ? "Audio On" : "Audio Off";
+      voiceReadToggle.classList.toggle("on", !!VOICE_READ_ENABLED);
+      voiceReadToggle.setAttribute("aria-pressed", VOICE_READ_ENABLED ? "true" : "false");
+    }
+    function setVoiceReadEnabled(next){
+      VOICE_READ_ENABLED = !!next;
+      try{ localStorage.setItem(VOICE_READ_STORAGE_KEY, VOICE_READ_ENABLED ? "1" : "0"); }catch(e){}
+      updateVoiceReadToggle();
+      if (!VOICE_READ_ENABLED) stopSpeak();
+    }
+    function initVoiceReadPreference(){
+      let saved = null;
+      try{ saved = localStorage.getItem(VOICE_READ_STORAGE_KEY); }catch(e){}
+      VOICE_READ_ENABLED = (saved === "1");
+      updateVoiceReadToggle();
+    }
+
     // =========================
     // Query log (torque + specs)
     // =========================
@@ -3140,11 +3169,12 @@ function tokenizeNormalized(s){
       }
     }
 
-    function speak(text){
+    function speak(text, opts={}){
       lastSpokenText = text || "";
       setRepeatStop(!!lastSpokenText);
 
       if (!("speechSynthesis" in window) || !text) return;
+      if (!opts.force && !VOICE_READ_ENABLED) return;
       stopSpeak();
       const u = new SpeechSynthesisUtterance(text);
       u.lang = "en-US";
@@ -3485,8 +3515,7 @@ if (hasInfoBlock){
       const top = cands.slice(0, MAX_CANDIDATES_UI);
       let html = `
         <div class="partName">Multiple matches</div>
-        <div class="subLine">Tap the correct one (safer than guessing).</div>
-        ${info && info.multiMinScore ? `<div class="subLine muted">Showing candidates with score ≥ ${info.multiMinScore}.</div>` : ``}
+        <div class="subLine">Select the correct part.</div>
       `;
 
       html += `<div class="candidates">` + top.map(({item, score})=>{
@@ -3527,7 +3556,7 @@ const thumb = refImgs.length ? getRefImageUrl(refImgs[0]) : "";
       card.innerHTML = html;
       addResultCard(card);
       setRepeatStop(false);
-      speak("Multiple matches. Please select the correct fastener on the screen.");
+      speak("Multiple matches. Please select the correct part.");
 
       // bind inside this card only
       const btns = card.querySelectorAll(".candBtn");
@@ -3569,34 +3598,10 @@ function escapeHtml(s){
     }
 
     // =========================
-    // Toast (MVP)
-    // =========================
-    let __toastTimer = null;
-    function showToast(message, ms=2200){
-      let el = document.getElementById("toast");
-      // If toast element is not yet in DOM (script runs before it), create it.
-      if (!el){
-        el = document.createElement("div");
-        el.id = "toast";
-        el.className = "toast";
-        el.setAttribute("role","status");
-        el.setAttribute("aria-live","polite");
-        document.body.appendChild(el);
-      }
-
-      el.textContent = String(message || "");
-      el.classList.add("show");
-      if (__toastTimer) clearTimeout(__toastTimer);
-      __toastTimer = setTimeout(()=>{
-        el.classList.remove("show");
-      }, ms);
-    }
-
-    // =========================
     // Z2: Requery hint (local-only)
     // =========================
     function showRequeryHint(msg){
-      const text = msg || "Ask again w/ more information.";
+      const text = "Enter more detail.";
       const el = document.getElementById("fallbackNoticeText")
         || document.getElementById("fallbackNotice")
         || document.getElementById("fallbackHint")
@@ -3607,7 +3612,7 @@ function escapeHtml(s){
         const wrap = el.closest(".fallbackNotice") || el.closest(".notice") || el.parentElement;
         if (wrap && wrap.style) wrap.style.display = "";
       } else {
-        if (typeof showToast === "function") showToast(text);
+        setStatus(text, true, true);
       }
     }
 
@@ -3655,8 +3660,8 @@ async function handleQuery(raw, __preRoute){
 
       // Empty query guard (avoid unnecessary /api/route calls; check normalized query)
       if (!localNq){
-        setStatus("Say a part name, or type in the box.", true, true);
-        renderEmpty("Waiting for your question.");
+        setStatus("Enter a part name.", true, true);
+        renderEmpty("Torque results will appear here.");
         return;
       }
 
@@ -3806,7 +3811,7 @@ async function handleQuery(raw, __preRoute){
         const sp = await loadSpecsDataIfNeeded();
         const hasSpecs = !!(sp && Array.isArray(sp.specs) && sp.specs.length);
         if (!hasSpecs){
-          setStatus("Service specs dataset not loaded yet.", true, true);
+          setStatus("Service dataset not loaded yet.", true, true);
           renderEmpty("Service specs dataset not loaded yet.");
           return;
         }
@@ -3884,7 +3889,7 @@ async function handleQuery(raw, __preRoute){
       if (candidates.length && candidates[0].__special === "NO_SIG_WORDS"){
         setStatus("Too generic. Add a part name.", true, true);
         renderEmpty("Too generic. Include a part name (example: “rear brake caliper”).");
-        speak("Too generic. Please include a part name, for example: rear brake caliper.");
+        speak("Too generic. Please add more detail.");
         return;
       }
 
@@ -3892,7 +3897,7 @@ async function handleQuery(raw, __preRoute){
 if (!candidates.length){
     setStatus("No match in dataset.", true, true);
     renderEmpty("No match. This part may not be in the current dataset.");
-    speak("No matching data found. This may not be in the current dataset.");
+    speak("No matching data found.");
     logQuery({ type: "none", query: q, normalized: nq, match: "" });
     return;
 }
@@ -3906,7 +3911,7 @@ if (!candidates.length){
       if (bestScore < MIN_SCORE_TO_ANSWER){
         setStatus("Low confidence. Be more specific.", true, true);
         renderEmpty("No confident match. Try a more specific part name (add location/system).");
-        speak("No confident match. Try a more specific part name.");
+        speak("No confident match. Please add more detail.");
         logQuery({ type: "none", query: q, normalized: nq, match: "" });
         return;
       }
@@ -3925,7 +3930,7 @@ if (!candidates.length){
           return;
         }
 
-        setStatus("Ambiguous. Select the correct one.", true, true);
+        setStatus("Multiple matches found.", true, true);
         renderAmbiguous(meaningful, {bestScore, gap, multiMinScore: MULTI_MIN_SCORE});
         return;
       }
@@ -3952,11 +3957,16 @@ if (!candidates.length){
     });
 
     repeatBtn.addEventListener("click", ()=>{
-      if (lastSpokenEnabled && lastSpokenText) speak(lastSpokenText);
+      if (lastSpokenEnabled && lastSpokenText) speak(lastSpokenText, {force:true});
     });
     stopBtn.addEventListener("click", ()=>{
       stopSpeak();
     });
+    if (voiceReadToggle){
+      voiceReadToggle.addEventListener("click", ()=>{
+        setVoiceReadEnabled(!VOICE_READ_ENABLED);
+      });
+    }
 
 
 
@@ -4004,20 +4014,38 @@ function initSpeech(){
 
       recognition.onstart = ()=>{
         recognizing = true;
+        voiceTranscript = "";
+        voiceRequestSubmitted = false;
         setStatus("Listening…", true, false);
       };
       recognition.onerror = (ev)=>{
         recognizing = false;
+        voiceTranscript = "";
+        voiceRequestSubmitted = false;
         setStatus("Speech error: " + ev.error, true, true);
       };
       recognition.onend = ()=>{
         recognizing = false;
+        const t = String(voiceTranscript || "").trim();
+        if (t && !voiceRequestSubmitted){
+          voiceRequestSubmitted = true;
+          questionInput.value = t;
+          handleQuery(t);
+          return;
+        }
         setStatus("Ready.", true, false);
       };
       recognition.onresult = (ev)=>{
-        const t = ev.results[0][0].transcript;
-        questionInput.value = t;
-        handleQuery(t);
+        const parts = [];
+        for (let i = 0; i < ev.results.length; i++){
+          const alt = ev.results[i] && ev.results[i][0];
+          if (alt && alt.transcript) parts.push(String(alt.transcript).trim());
+        }
+        const t = parts.join(" ").replace(/\s+/g, " ").trim();
+        if (t){
+          voiceTranscript = t;
+          questionInput.value = t;
+        }
       };
     }
 
@@ -4035,13 +4063,11 @@ function initSpeech(){
     });
 
     // Init
-    renderEmpty("Waiting for your question.");
+    initVoiceReadPreference();
+    renderEmpty("Torque results will appear here.");
     setStatus("");
     initApp().catch((e)=>{ console.error(e); });
 </script>
-
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
-
 
 </body>
 </html>
