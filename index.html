@@ -902,29 +902,196 @@
 }
 
 
-/* Hamburger menu icon (top right) */
-.menuIcon{
-  width:28px;
-  height:22px;
+.authBtn{
+  border:1px solid var(--border);
+  background:rgba(9,11,18,.85);
+  color:var(--text);
+  border-radius:999px;
+  padding:7px 10px;
+  font-size:11px;
+  cursor:pointer;
+  max-width:180px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.authBtn:hover{border-color:rgba(79,140,255,.6)}
+.topActions{
+  display:flex;
+  align-items:center;
+}
+body.authLocked .wrap{
+  opacity:.35;
+  pointer-events:none;
+  user-select:none;
+}
+.authOverlay{
+  position:fixed;
+  inset:0;
+  z-index:3000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  background:rgba(3,4,8,.72);
+  backdrop-filter:blur(12px);
+}
+.authOverlay.show{display:flex}
+.authPanel{
+  width:100%;
+  max-width:380px;
+  border:1px solid var(--border);
+  border-radius:18px;
+  background:linear-gradient(145deg,var(--panel),var(--panel2));
+  box-shadow:0 24px 70px rgba(0,0,0,.7);
+  padding:20px;
+}
+.authPanel h2{
+  margin:0;
+  font-size:18px;
+  line-height:1.2;
+}
+.authLead{
+  margin:6px 0 14px;
+  color:var(--sub);
+  font-size:12px;
+  line-height:1.4;
+}
+.authLeadWarn{
+  color:var(--danger);
+  font-weight:700;
+}
+.authAccountEmail{
+  margin:10px 0 16px;
+  color:var(--text);
+  font-size:14px;
+  line-height:1.35;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.authAccountActions{
+  display:none;
+  gap:10px;
+  align-items:center;
+}
+.authAccountActions.show{
+  display:flex;
+}
+.authForm{
   display:flex;
   flex-direction:column;
-  justify-content:space-between;
-  background:none;
-  border:none;
-  padding:0;
-  cursor:pointer;
-  opacity:0.8;
+  gap:10px;
 }
-.menuIcon span{
-  display:block;
-  height:2px;
+.authInput{
   width:100%;
-  background:var(--text);
-  border-radius:2px;
+  height:46px;
+  border-radius:12px;
+  border:1px solid #34394a;
+  background:rgba(5,6,12,.9);
+  color:var(--text);
+  padding:0 12px;
+  font-size:14px;
+  outline:none;
 }
-.menuIcon:hover{
-  opacity:1;
+.authInput:focus{border-color:rgba(79,140,255,.7);box-shadow:0 0 0 3px rgba(79,140,255,.12)}
+.authPasswordWrap{
+  position:relative;
 }
+.authPasswordWrap .authInput{
+  padding-right:44px;
+}
+.authEyeBtn{
+  position:absolute;
+  top:50%;
+  right:8px;
+  transform:translateY(-50%);
+  width:32px;
+  height:32px;
+  border:0;
+  border-radius:999px;
+  background:transparent;
+  color:var(--sub);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+}
+.authEyeBtn:hover{
+  color:var(--text);
+}
+.authEyeBtn svg{
+  width:18px;
+  height:18px;
+}
+.authEyeBtn .eyeOn{
+  display:none;
+}
+.authEyeBtn .eyeOff{
+  display:block;
+}
+.authEyeBtn.showing .eyeOn{
+  display:block;
+}
+.authEyeBtn.showing .eyeOff{
+  display:none;
+}
+.authConfirmRow{
+  display:none;
+}
+.authConfirmRow.show{
+  display:block;
+}
+.authSubmit{
+  height:46px;
+  border:1px solid rgba(79,140,255,.7);
+  border-radius:12px;
+  background:var(--accent);
+  color:#05060a;
+  font-weight:800;
+  cursor:pointer;
+}
+.authSubmit:disabled{opacity:.55;cursor:not-allowed}
+.authSwitch{
+  border:1px solid var(--border);
+  background:rgba(9,11,18,.85);
+  color:var(--text);
+  border-radius:12px;
+  padding:10px 12px;
+  font-size:12px;
+  cursor:pointer;
+}
+.authSwitch:hover{border-color:rgba(79,140,255,.6)}
+.authForm + .authSwitch{
+  border:0;
+  background:transparent;
+  color:#c2d5ff;
+  padding:8px 0 0;
+}
+.authGuestBtn{
+  width:100%;
+  border:0;
+  background:transparent;
+  color:var(--sub);
+  padding:6px 0 0;
+  font-size:12px;
+  cursor:pointer;
+}
+.authGuestBtn:hover{
+  color:#c2d5ff;
+}
+.authDanger:hover{
+  border-color:rgba(255,79,106,.55);
+}
+.authMessage{
+  min-height:17px;
+  margin-top:8px;
+  color:var(--sub);
+  font-size:12px;
+  line-height:1.35;
+}
+.authMessage.error{color:var(--danger)}
+.authMessage.ok{color:var(--ok)}
 
 
 /* Header layout: brand left, menu right */
@@ -1043,11 +1210,9 @@
             <div class="t2">Tech Spec Assistant</div>
           </div>
         </div>
-        <button class="menuIcon" aria-label="Open menu" title="Menu" type="button">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
+        <div class="topActions">
+          <button id="authMenuBtn" class="authBtn" type="button">Sign in</button>
+        </div>
       </div>
       <div class="badgeRow">
       <div class="badge" id="makeBadge">
@@ -1155,7 +1320,48 @@
     </div>
   </div>
 
+  <div id="authOverlay" class="authOverlay" role="dialog" aria-modal="true" aria-label="Account">
+    <div class="authPanel">
+      <h2 id="authTitle">Welcome to TESA</h2>
+      <div id="authLead" class="authLead">Sign in to access torque data.</div>
+      <form id="authForm" class="authForm">
+        <input id="authEmail" class="authInput" type="email" placeholder="Email" autocomplete="email" required />
+        <div class="authPasswordWrap">
+          <input id="authPassword" class="authInput" type="password" placeholder="Password" autocomplete="current-password" required minlength="6" />
+          <button id="authPasswordToggle" class="authEyeBtn" type="button" aria-label="Show password" title="Show password">
+            <svg class="eyeOn" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M12 5c5.2 0 8.7 4.2 9.8 5.8.5.7.5 1.7 0 2.4C20.7 14.8 17.2 19 12 19s-8.7-4.2-9.8-5.8a2 2 0 0 1 0-2.4C3.3 9.2 6.8 5 12 5zm0 2c-4.1 0-7 3.3-8.1 4.7a.5.5 0 0 0 0 .6C5 13.7 7.9 17 12 17s7-3.3 8.1-4.7a.5.5 0 0 0 0-.6C19 10.3 16.1 7 12 7zm0 2.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5z"/>
+            </svg>
+            <svg class="eyeOff" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M12 5c5.2 0 8.7 4.2 9.8 5.8.5.7.5 1.7 0 2.4a16.2 16.2 0 0 1-2.7 3l-1.4-1.4a13.7 13.7 0 0 0 2.5-2.7.5.5 0 0 0 0-.6C19 10.3 16.1 7 12 7c-1.4 0-2.7.4-3.8 1L6.7 6.5A10.3 10.3 0 0 1 12 5zM2.3 3.7a1 1 0 0 1 1.4-1.4l18 18a1 1 0 0 1-1.4 1.4l-3.1-3.1A10.5 10.5 0 0 1 12 19c-5.2 0-8.7-4.2-9.8-5.8a2 2 0 0 1 0-2.4 16 16 0 0 1 3-3.2L2.3 3.7zm4.3 5.4a13.5 13.5 0 0 0-2.7 2.6.5.5 0 0 0 0 .6C5 13.7 7.9 17 12 17c1.4 0 2.6-.4 3.7-1l-2-2A2.5 2.5 0 0 1 10 10.3L6.6 9.1z"/>
+            </svg>
+          </button>
+        </div>
+        <div id="authConfirmRow" class="authPasswordWrap authConfirmRow">
+          <input id="authPasswordConfirm" class="authInput" type="password" placeholder="Confirm password" autocomplete="new-password" minlength="6" />
+          <button id="authPasswordConfirmToggle" class="authEyeBtn" type="button" aria-label="Show confirm password" title="Show password">
+            <svg class="eyeOn" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M12 5c5.2 0 8.7 4.2 9.8 5.8.5.7.5 1.7 0 2.4C20.7 14.8 17.2 19 12 19s-8.7-4.2-9.8-5.8a2 2 0 0 1 0-2.4C3.3 9.2 6.8 5 12 5zm0 2c-4.1 0-7 3.3-8.1 4.7a.5.5 0 0 0 0 .6C5 13.7 7.9 17 12 17s7-3.3 8.1-4.7a.5.5 0 0 0 0-.6C19 10.3 16.1 7 12 7zm0 2.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5z"/>
+            </svg>
+            <svg class="eyeOff" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M12 5c5.2 0 8.7 4.2 9.8 5.8.5.7.5 1.7 0 2.4a16.2 16.2 0 0 1-2.7 3l-1.4-1.4a13.7 13.7 0 0 0 2.5-2.7.5.5 0 0 0 0-.6C19 10.3 16.1 7 12 7c-1.4 0-2.7.4-3.8 1L6.7 6.5A10.3 10.3 0 0 1 12 5zM2.3 3.7a1 1 0 0 1 1.4-1.4l18 18a1 1 0 0 1-1.4 1.4l-3.1-3.1A10.5 10.5 0 0 1 12 19c-5.2 0-8.7-4.2-9.8-5.8a2 2 0 0 1 0-2.4 16 16 0 0 1 3-3.2L2.3 3.7zm4.3 5.4a13.5 13.5 0 0 0-2.7 2.6.5.5 0 0 0 0 .6C5 13.7 7.9 17 12 17c1.4 0 2.6-.4 3.7-1l-2-2A2.5 2.5 0 0 1 10 10.3L6.6 9.1z"/>
+            </svg>
+          </button>
+        </div>
+        <button id="authSubmitBtn" class="authSubmit" type="submit">Sign in</button>
+      </form>
+      <button id="authToggleBtn" class="authSwitch" type="button">Create an account</button>
+      <button id="authGuestBtn" class="authGuestBtn" type="button">Continue as guest · 3 free searches</button>
+      <div id="authAccountEmail" class="authAccountEmail" style="display:none"></div>
+      <div id="authAccountActions" class="authAccountActions">
+        <button id="authLogoutBtn" class="authSwitch authDanger" type="button">Sign out</button>
+        <button id="authCloseBtn" class="authSwitch" type="button">Close</button>
+      </div>
+      <div id="authMessage" class="authMessage"></div>
+    </div>
+  </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     // =========================
     // URL param utility (MVP)
@@ -1174,6 +1380,7 @@
             "TESA_last_dataset_file",
             "TESA_LAST_MODEL_ID",
             "TESA_LAST_DATASET_FILE",
+            "TESA_guest_query_count",
             "lastSelectedModelId",
             "lastSelectedDatasetFile"
           ];
@@ -1203,6 +1410,380 @@
     // Persist last selected model (Structure A)
     const STORAGE_KEY_MODEL_ID = "TESA_last_model_id";
     const STORAGE_KEY_DATASET_FILE = "TESA_last_dataset_file";
+
+    // =========================
+    // Auth (Supabase)
+    // =========================
+    const SUPABASE_URL = "https://dlphjrdukumyjgfiijrq.supabase.co";
+    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_5RIMIMM2lV6wTXFnNtmKrw_iSeNfVtp";
+    let supabaseAuth = null;
+    let CURRENT_USER = null;
+    let authMode = "login";
+    let authPromptReason = null;
+    let GUEST_MODE = false;
+    let appStarted = false;
+    let appStartPromise = null;
+    const GUEST_QUERY_LIMIT = 3;
+    const GUEST_QUERY_COUNT_KEY = "TESA_guest_query_count";
+
+    const authOverlay = document.getElementById("authOverlay");
+    const authTitle = document.getElementById("authTitle");
+    const authLead = document.getElementById("authLead");
+    const authForm = document.getElementById("authForm");
+    const authEmail = document.getElementById("authEmail");
+    const authPassword = document.getElementById("authPassword");
+    const authPasswordToggle = document.getElementById("authPasswordToggle");
+    const authConfirmRow = document.getElementById("authConfirmRow");
+    const authPasswordConfirm = document.getElementById("authPasswordConfirm");
+    const authPasswordConfirmToggle = document.getElementById("authPasswordConfirmToggle");
+    const authSubmitBtn = document.getElementById("authSubmitBtn");
+    const authToggleBtn = document.getElementById("authToggleBtn");
+    const authGuestBtn = document.getElementById("authGuestBtn");
+    const authAccountEmail = document.getElementById("authAccountEmail");
+    const authAccountActions = document.getElementById("authAccountActions");
+    const authLogoutBtn = document.getElementById("authLogoutBtn");
+    const authCloseBtn = document.getElementById("authCloseBtn");
+    const authMessage = document.getElementById("authMessage");
+    const authMenuBtn = document.getElementById("authMenuBtn");
+
+    function setAuthMessage(text, type=""){
+      if (!authMessage) return;
+      authMessage.textContent = text || "";
+      authMessage.classList.toggle("error", type === "error");
+      authMessage.classList.toggle("ok", type === "ok");
+    }
+
+    function isAlreadyRegisteredAuthError(error){
+      const msg = String(error?.message || "").toLowerCase();
+      return msg.includes("already registered")
+        || msg.includes("already exists")
+        || msg.includes("user already")
+        || msg.includes("email already");
+    }
+
+    function getGuestQueryCount(){
+      try{
+        const n = Number(localStorage.getItem(GUEST_QUERY_COUNT_KEY) || "0");
+        return Number.isFinite(n) ? Math.max(0, Math.min(GUEST_QUERY_LIMIT, Math.floor(n))) : 0;
+      }catch(e){
+        return 0;
+      }
+    }
+
+    function setGuestQueryCount(next){
+      const n = Math.max(0, Math.min(GUEST_QUERY_LIMIT, Math.floor(Number(next) || 0)));
+      try{ localStorage.setItem(GUEST_QUERY_COUNT_KEY, String(n)); }catch(e){}
+      updateAuthMenuLabel();
+      return n;
+    }
+
+    function getGuestRemaining(){
+      return Math.max(0, GUEST_QUERY_LIMIT - getGuestQueryCount());
+    }
+
+    function updateAuthMenuLabel(){
+      if (!authMenuBtn) return;
+      if (CURRENT_USER){
+        authMenuBtn.textContent = CURRENT_USER.email || "Account";
+        authMenuBtn.title = CURRENT_USER.email || "Account";
+      } else if (GUEST_MODE){
+        const remain = getGuestRemaining();
+        authMenuBtn.textContent = `Guest · ${remain}/${GUEST_QUERY_LIMIT}`;
+        authMenuBtn.title = `Guest mode · ${remain}/${GUEST_QUERY_LIMIT}`;
+      } else {
+        authMenuBtn.textContent = "Sign in";
+        authMenuBtn.title = "Sign in";
+      }
+    }
+
+    function setAuthIntro(){
+      if (!authTitle || !authLead) return;
+      if (CURRENT_USER){
+        authTitle.textContent = "Account";
+        authLead.textContent = "";
+        authLead.style.display = "none";
+        return;
+      }
+      if (authPromptReason === "guest_limit"){
+        authTitle.textContent = "Create an account to continue";
+        authLead.innerHTML = `<span class="authLeadWarn">You've used 3 free searches.</span><br>Sign in or create an account to keep using TESA.`;
+        return;
+      }
+      authTitle.textContent = authMode === "signup" ? "Create account" : "Welcome to TESA";
+      authLead.textContent = authMode === "signup" ? "A verification email will be sent after signup." : "Sign in to access torque data.";
+    }
+
+    function setAuthMode(mode){
+      authMode = mode === "signup" ? "signup" : "login";
+      setAuthIntro();
+      if (authSubmitBtn) authSubmitBtn.textContent = authMode === "signup" ? "Create account" : "Sign in";
+      if (authToggleBtn) authToggleBtn.textContent = authMode === "signup" ? "Already have an account?" : "Create an account";
+      if (authPassword) authPassword.autocomplete = authMode === "signup" ? "new-password" : "current-password";
+      if (authConfirmRow) authConfirmRow.classList.toggle("show", authMode === "signup");
+      if (authPasswordConfirm) {
+        authPasswordConfirm.required = authMode === "signup";
+        if (authMode !== "signup") authPasswordConfirm.value = "";
+      }
+      if (authGuestBtn) authGuestBtn.style.display = authPromptReason === "guest_limit" ? "none" : "";
+      setAuthMessage("");
+    }
+
+    function openAuthOverlay(reason=null){
+      authPromptReason = reason;
+      setAuthIntro();
+      if (CURRENT_USER){
+        if (authForm) authForm.style.display = "none";
+        if (authToggleBtn) authToggleBtn.style.display = "none";
+        if (authGuestBtn) authGuestBtn.style.display = "none";
+        if (authAccountActions) authAccountActions.classList.add("show");
+        if (authAccountEmail){
+          authAccountEmail.style.display = "";
+          authAccountEmail.textContent = CURRENT_USER.email || "";
+        }
+        if (authLogoutBtn) authLogoutBtn.style.display = "";
+        if (authCloseBtn) authCloseBtn.style.display = "";
+      }
+      if (authOverlay) authOverlay.classList.add("show");
+      if (authGuestBtn && !CURRENT_USER) authGuestBtn.style.display = authPromptReason === "guest_limit" ? "none" : "";
+      try{ authEmail?.focus(); }catch(e){}
+    }
+
+    function closeAuthOverlay(){
+      if (authOverlay) authOverlay.classList.remove("show");
+      authPromptReason = null;
+    }
+
+    function setAuthUi(session){
+      CURRENT_USER = session?.user || null;
+      const signedIn = !!CURRENT_USER;
+      if (signedIn) GUEST_MODE = false;
+      document.body.classList.toggle("authLocked", !(signedIn || GUEST_MODE));
+      updateAuthMenuLabel();
+      if (authLogoutBtn) authLogoutBtn.style.display = signedIn ? "" : "none";
+      if (authCloseBtn) authCloseBtn.style.display = signedIn ? "" : "none";
+      if (authAccountActions) authAccountActions.classList.toggle("show", signedIn);
+      if (authAccountEmail){
+        authAccountEmail.style.display = signedIn ? "" : "none";
+        authAccountEmail.textContent = CURRENT_USER?.email || "";
+      }
+      if (authForm) authForm.style.display = signedIn ? "none" : "";
+      if (authToggleBtn) authToggleBtn.style.display = signedIn ? "none" : "";
+      if (authGuestBtn) authGuestBtn.style.display = signedIn ? "none" : "";
+      if (authLead) authLead.style.display = signedIn ? "none" : "";
+      if (authTitle) authTitle.textContent = signedIn ? "Account" : (authPromptReason === "guest_limit" ? "Create an account to continue" : (authMode === "signup" ? "Create account" : "Welcome to TESA"));
+      if (signedIn){
+        setAuthMessage("");
+        closeAuthOverlay();
+      } else {
+        setAuthMode(authMode);
+        openAuthOverlay();
+      }
+    }
+
+    async function startGuestMode(){
+      GUEST_MODE = true;
+      CURRENT_USER = null;
+      document.body.classList.remove("authLocked");
+      updateAuthMenuLabel();
+      closeAuthOverlay();
+      setStatus(`Guest · ${getGuestRemaining()}/${GUEST_QUERY_LIMIT}`, true, false);
+      await startAppAfterAuth();
+    }
+
+    function showGuestLimitAuth(){
+      GUEST_MODE = false;
+      document.body.classList.add("authLocked");
+      updateAuthMenuLabel();
+      setAuthMode("signup");
+      openAuthOverlay("guest_limit");
+      setAuthMessage("");
+    }
+
+    function consumeGuestSearchIfNeeded(){
+      if (CURRENT_USER || !GUEST_MODE) return true;
+      const used = getGuestQueryCount();
+      if (used >= GUEST_QUERY_LIMIT){
+        showGuestLimitAuth();
+        return false;
+      }
+      const next = setGuestQueryCount(used + 1);
+      const remaining = Math.max(0, GUEST_QUERY_LIMIT - next);
+      setStatus(`Guest · ${remaining}/${GUEST_QUERY_LIMIT}`, true, false);
+      return true;
+    }
+
+    function initSupabaseAuth(){
+      if (supabaseAuth) return supabaseAuth;
+      const factory = window.supabase && window.supabase.createClient;
+      if (!factory) return null;
+      supabaseAuth = factory(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: true
+        }
+      });
+      return supabaseAuth;
+    }
+
+    async function startAppAfterAuth(){
+      if (appStarted) {
+        document.body.classList.remove("authLocked");
+        return;
+      }
+      if (appStartPromise) return appStartPromise;
+      appStartPromise = initApp()
+        .then(()=>{ appStarted = true; })
+        .finally(()=>{ appStartPromise = null; });
+      return appStartPromise;
+    }
+
+    async function initAuth(){
+      bindAuthEvents();
+      const client = initSupabaseAuth();
+      if (!client){
+        document.body.classList.add("authLocked");
+        openAuthOverlay();
+        setAuthMessage("Auth SDK failed to load. Check your connection and refresh.", "error");
+        return false;
+      }
+
+      const { data, error } = await client.auth.getSession();
+      if (error) console.warn("Supabase session error:", error);
+      setAuthUi(data?.session || null);
+
+      client.auth.onAuthStateChange((_event, session)=>{
+        setAuthUi(session);
+        if (session?.user) {
+          startAppAfterAuth().catch((e)=>{
+            console.error(e);
+            setStatus("App failed to start.", true, true);
+          });
+        } else {
+          setStatus("Sign in to continue.", true, false);
+        }
+      });
+
+      return !!data?.session?.user;
+    }
+
+    function bindAuthEvents(){
+      if (bindAuthEvents.done) return;
+      bindAuthEvents.done = true;
+
+      if (authMenuBtn){
+        authMenuBtn.addEventListener("click", ()=>{
+          openAuthOverlay();
+        });
+      }
+      if (authToggleBtn){
+        authToggleBtn.addEventListener("click", ()=>{
+          setAuthMode(authMode === "signup" ? "login" : "signup");
+        });
+      }
+      if (authGuestBtn){
+        authGuestBtn.addEventListener("click", ()=>{
+          startGuestMode().catch((e)=>{
+            console.error(e);
+            setAuthMessage("Guest mode failed to start. Try signing in.", "error");
+          });
+        });
+      }
+      if (authLogoutBtn){
+        authLogoutBtn.addEventListener("click", async ()=>{
+          if (!supabaseAuth) return;
+          await supabaseAuth.auth.signOut();
+        });
+      }
+      if (authCloseBtn){
+        authCloseBtn.addEventListener("click", closeAuthOverlay);
+      }
+      const bindPasswordToggle = (input, btn, labelBase)=>{
+        if (!input || !btn) return;
+        btn.addEventListener("click", ()=>{
+          const show = input.type === "password";
+          input.type = show ? "text" : "password";
+          btn.classList.toggle("showing", show);
+          btn.setAttribute("aria-label", `${show ? "Hide" : "Show"} ${labelBase}`);
+          btn.title = show ? "Hide password" : "Show password";
+        });
+      };
+      bindPasswordToggle(authPassword, authPasswordToggle, "password");
+      bindPasswordToggle(authPasswordConfirm, authPasswordConfirmToggle, "confirm password");
+      if (authForm){
+        authForm.addEventListener("submit", async (ev)=>{
+          ev.preventDefault();
+          const client = initSupabaseAuth();
+          if (!client){
+            setAuthMessage("Auth SDK failed to load. Refresh and try again.", "error");
+            return;
+          }
+          const email = String(authEmail?.value || "").trim();
+          const password = String(authPassword?.value || "");
+          const passwordConfirm = String(authPasswordConfirm?.value || "");
+          if (!email || !password){
+            setAuthMessage("Enter email and password.", "error");
+            return;
+          }
+          if (authMode === "signup" && password !== passwordConfirm){
+            setAuthMessage("Passwords do not match.", "error");
+            return;
+          }
+          if (authSubmitBtn) authSubmitBtn.disabled = true;
+          setAuthMessage(authMode === "signup" ? "Creating account..." : "Signing in...");
+          try{
+            if (authMode === "signup"){
+              const redirectTo = window.location.origin + window.location.pathname;
+              const { data, error } = await client.auth.signUp({
+                email,
+                password,
+                options: { emailRedirectTo: redirectTo }
+              });
+              if (error) throw error;
+              const noNewIdentity = Array.isArray(data?.user?.identities) && data.user.identities.length === 0;
+              if (noNewIdentity){
+                setAuthMode("login");
+                if (authEmail) authEmail.value = email;
+                setAuthMessage("This email is already registered. Sign in instead.", "error");
+                return;
+              }
+              if (data?.session){
+                setAuthUi(data.session);
+                await startAppAfterAuth();
+              } else {
+                setAuthMode("login");
+                if (authEmail) authEmail.value = email;
+                setAuthMessage("Account created. Check your email to verify your account, then sign in.", "ok");
+              }
+            } else {
+              const { data, error } = await client.auth.signInWithPassword({ email, password });
+              if (error) throw error;
+              setAuthUi(data?.session || null);
+              await startAppAfterAuth();
+            }
+          } catch(e){
+            if (authMode === "signup" && isAlreadyRegisteredAuthError(e)){
+              setAuthMode("login");
+              if (authEmail) authEmail.value = email;
+              setAuthMessage("This email is already registered. Sign in instead.", "error");
+            } else {
+              setAuthMessage(e?.message || "Authentication failed.", "error");
+            }
+          } finally {
+            if (authSubmitBtn) authSubmitBtn.disabled = false;
+          }
+        });
+      }
+    }
+
+    async function bootstrapApp(){
+      initVoiceReadPreference();
+      renderEmpty("Torque results will appear here.");
+      setStatus("");
+      const authed = await initAuth();
+      if (authed) await startAppAfterAuth();
+      else setStatus("Sign in to continue.", true, false);
+    }
 
     
     // =========================
@@ -3789,6 +4370,10 @@ async function handleQuery(raw, __preRoute){
         return;
       }
 
+      if (!consumeGuestSearchIfNeeded()){
+        return;
+      }
+
 
       // LLM router (intent + optional normalized query)
       const routeInput = (localNq && localNq.trim()) ? localNq : q;
@@ -4187,10 +4772,7 @@ function initSpeech(){
     });
 
     // Init
-    initVoiceReadPreference();
-    renderEmpty("Torque results will appear here.");
-    setStatus("");
-    initApp().catch((e)=>{ console.error(e); });
+    bootstrapApp().catch((e)=>{ console.error(e); });
 </script>
 
 </body>
