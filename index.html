@@ -962,7 +962,7 @@ body.authLocked .wrap{
   font-weight:700;
 }
 .authAccountEmail{
-  margin:10px 0 16px;
+  margin:2px 0 12px;
   color:var(--text);
   font-size:14px;
   line-height:1.35;
@@ -972,8 +972,9 @@ body.authLocked .wrap{
 }
 .authAccountActions{
   display:none;
-  gap:10px;
+  gap:8px;
   align-items:center;
+  justify-content:center;
   flex-wrap:wrap;
 }
 .authAccountActions.show{
@@ -991,9 +992,9 @@ body.authLocked .wrap{
   display:block;
 }
 .authInfoRow{
-  display:flex;
-  justify-content:space-between;
-  gap:14px;
+  display:grid;
+  grid-template-columns:94px 1fr;
+  gap:12px;
   padding:10px 12px;
   font-size:12px;
   line-height:1.35;
@@ -1007,7 +1008,8 @@ body.authLocked .wrap{
 }
 .authInfoValue{
   color:var(--text);
-  text-align:right;
+  text-align:left;
+  min-width:0;
 }
 .authBillingBtn[disabled]{
   opacity:.55;
@@ -1416,7 +1418,6 @@ body.authLocked .wrap{
       <div id="authAccountEmail" class="authAccountEmail" style="display:none"></div>
       <div id="authAccountSummary" class="authAccountSummary"></div>
       <div id="authAccountActions" class="authAccountActions">
-        <button id="authUpgradeBtn" class="authSwitch authBillingBtn" type="button" disabled>Upgrade</button>
         <button id="authBillingBtn" class="authSwitch authBillingBtn" type="button" disabled>Manage billing</button>
         <button id="authLogoutBtn" class="authSwitch authDanger" type="button">Sign out</button>
         <button id="authCloseBtn" class="authSwitch" type="button">Close</button>
@@ -1592,7 +1593,8 @@ body.authLocked .wrap{
         const planLabel = isAdmin ? "Admin" : isPaid ? "Paid" : "Trial";
         const used = Number(usageRows?.[0]?.search_count || 0);
         const limit = Number(entitlement?.search_limit || 0);
-        const usageText = limit > 0 ? `${used}/${limit}` : (isAdmin ? "Unlimited" : `${used}`);
+        const remaining = limit > 0 ? Math.max(0, limit - used) : 0;
+        const usageText = limit > 0 ? `${remaining}/${limit}` : (isAdmin ? "Unlimited" : `${used}`);
         const statusLabel = statusRaw ? statusRaw.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase()) : "Active";
 
         const rows = [["Plan", planLabel]];
