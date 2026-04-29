@@ -974,9 +974,44 @@ body.authLocked .wrap{
   display:none;
   gap:10px;
   align-items:center;
+  flex-wrap:wrap;
 }
 .authAccountActions.show{
   display:flex;
+}
+.authAccountSummary{
+  display:none;
+  margin:0 0 16px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:12px;
+  background:rgba(255,255,255,.035);
+  overflow:hidden;
+}
+.authAccountSummary.show{
+  display:block;
+}
+.authInfoRow{
+  display:flex;
+  justify-content:space-between;
+  gap:14px;
+  padding:10px 12px;
+  font-size:12px;
+  line-height:1.35;
+}
+.authInfoRow + .authInfoRow{
+  border-top:1px solid rgba(255,255,255,.07);
+}
+.authInfoLabel{
+  color:var(--sub);
+  white-space:nowrap;
+}
+.authInfoValue{
+  color:var(--text);
+  text-align:right;
+}
+.authBillingBtn[disabled]{
+  opacity:.55;
+  cursor:not-allowed;
 }
 .authForm{
   display:flex;
@@ -1042,6 +1077,28 @@ body.authLocked .wrap{
 .authConfirmRow.show{
   display:block;
 }
+.authHidden{
+  display:none !important;
+}
+.authForgotBtn{
+  align-self:flex-end;
+  border:0;
+  background:transparent;
+  color:#c2d5ff;
+  padding:0;
+  font-size:12px;
+  cursor:pointer;
+}
+.authForgotBtn:hover{
+  color:var(--text);
+}
+.authSecondaryRow{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-top:8px;
+}
 .authSubmit{
   height:46px;
   border:1px solid rgba(79,140,255,.7);
@@ -1062,18 +1119,18 @@ body.authLocked .wrap{
   cursor:pointer;
 }
 .authSwitch:hover{border-color:rgba(79,140,255,.6)}
-.authForm + .authSwitch{
+.authSecondaryRow .authSwitch{
   border:0;
   background:transparent;
   color:#c2d5ff;
-  padding:8px 0 0;
+  padding:0;
 }
 .authGuestBtn{
   width:100%;
   border:0;
   background:transparent;
   color:var(--sub);
-  padding:6px 0 0;
+  padding:14px 0 0;
   font-size:12px;
   cursor:pointer;
 }
@@ -1326,7 +1383,7 @@ body.authLocked .wrap{
       <div id="authLead" class="authLead">Sign in to access torque data.</div>
       <form id="authForm" class="authForm">
         <input id="authEmail" class="authInput" type="email" placeholder="Email" autocomplete="email" required />
-        <div class="authPasswordWrap">
+        <div id="authPasswordRow" class="authPasswordWrap">
           <input id="authPassword" class="authInput" type="password" placeholder="Password" autocomplete="current-password" required minlength="6" />
           <button id="authPasswordToggle" class="authEyeBtn" type="button" aria-label="Show password" title="Show password">
             <svg class="eyeOn" viewBox="0 0 24 24" aria-hidden="true">
@@ -1350,14 +1407,20 @@ body.authLocked .wrap{
         </div>
         <button id="authSubmitBtn" class="authSubmit" type="submit">Sign in</button>
       </form>
-      <button id="authToggleBtn" class="authSwitch" type="button">Create an account</button>
+      <div id="authSecondaryRow" class="authSecondaryRow">
+        <button id="authToggleBtn" class="authSwitch" type="button">Create an account</button>
+        <button id="authForgotBtn" class="authForgotBtn" type="button">Forgot password?</button>
+      </div>
+      <div id="authMessage" class="authMessage"></div>
       <button id="authGuestBtn" class="authGuestBtn" type="button">Continue as guest · 3 free searches</button>
       <div id="authAccountEmail" class="authAccountEmail" style="display:none"></div>
+      <div id="authAccountSummary" class="authAccountSummary"></div>
       <div id="authAccountActions" class="authAccountActions">
+        <button id="authUpgradeBtn" class="authSwitch authBillingBtn" type="button" disabled>Upgrade</button>
+        <button id="authBillingBtn" class="authSwitch authBillingBtn" type="button" disabled>Manage billing</button>
         <button id="authLogoutBtn" class="authSwitch authDanger" type="button">Sign out</button>
         <button id="authCloseBtn" class="authSwitch" type="button">Close</button>
       </div>
-      <div id="authMessage" class="authMessage"></div>
     </div>
   </div>
 
@@ -1431,15 +1494,19 @@ body.authLocked .wrap{
     const authLead = document.getElementById("authLead");
     const authForm = document.getElementById("authForm");
     const authEmail = document.getElementById("authEmail");
+    const authPasswordRow = document.getElementById("authPasswordRow");
     const authPassword = document.getElementById("authPassword");
     const authPasswordToggle = document.getElementById("authPasswordToggle");
     const authConfirmRow = document.getElementById("authConfirmRow");
     const authPasswordConfirm = document.getElementById("authPasswordConfirm");
     const authPasswordConfirmToggle = document.getElementById("authPasswordConfirmToggle");
     const authSubmitBtn = document.getElementById("authSubmitBtn");
+    const authForgotBtn = document.getElementById("authForgotBtn");
+    const authSecondaryRow = document.getElementById("authSecondaryRow");
     const authToggleBtn = document.getElementById("authToggleBtn");
     const authGuestBtn = document.getElementById("authGuestBtn");
     const authAccountEmail = document.getElementById("authAccountEmail");
+    const authAccountSummary = document.getElementById("authAccountSummary");
     const authAccountActions = document.getElementById("authAccountActions");
     const authLogoutBtn = document.getElementById("authLogoutBtn");
     const authCloseBtn = document.getElementById("authCloseBtn");
@@ -1459,6 +1526,92 @@ body.authLocked .wrap{
         || msg.includes("already exists")
         || msg.includes("user already")
         || msg.includes("email already");
+    }
+
+    function getAuthRedirectTo(){
+      return window.location.origin + window.location.pathname;
+    }
+
+    function isPasswordRecoveryUrl(){
+      const combined = `${window.location.search || ""} ${window.location.hash || ""}`;
+      return /(?:[?&#]|\b)type=recovery\b/.test(combined);
+    }
+
+    function formatAccountDate(value){
+      if (!value) return "Not set";
+      const date = new Date(value);
+      if (!Number.isFinite(date.getTime())) return "Not set";
+      return date.toLocaleDateString(undefined, { year:"numeric", month:"short", day:"numeric" });
+    }
+
+    function escapeAttrText(value){
+      return String(value ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;");
+    }
+
+    function accountInfoRow(label, value){
+      return `
+        <div class="authInfoRow">
+          <div class="authInfoLabel">${escapeAttrText(label)}</div>
+          <div class="authInfoValue">${escapeAttrText(value)}</div>
+        </div>`;
+    }
+
+    function renderAccountSummary(rows, message=""){
+      if (!authAccountSummary) return;
+      if (message){
+        authAccountSummary.innerHTML = accountInfoRow("Status", message);
+      } else {
+        authAccountSummary.innerHTML = rows.map(row => accountInfoRow(row[0], row[1])).join("");
+      }
+      authAccountSummary.classList.add("show");
+    }
+
+    async function loadAccountSummary(){
+      if (!supabaseAuth || !CURRENT_USER) return;
+      renderAccountSummary([], "Loading account details...");
+      try{
+        const userId = CURRENT_USER.id;
+        const [{ data: profile, error: profileError }, { data: entitlement, error: entitlementError }, { data: usageRows, error: usageError }] = await Promise.all([
+          supabaseAuth.from("profiles").select("id,email,role").eq("id", userId).maybeSingle(),
+          supabaseAuth.from("entitlements").select("*").eq("user_id", userId).maybeSingle(),
+          supabaseAuth.from("usage_counters").select("search_count,period_start,period_end").eq("user_id", userId).order("period_start", { ascending:false }).limit(1)
+        ]);
+        if (profileError) throw profileError;
+        if (entitlementError) throw entitlementError;
+        if (usageError) throw usageError;
+
+        const role = String(profile?.role || "").toLowerCase();
+        const planRaw = String(entitlement?.plan || "trial").toLowerCase();
+        const statusRaw = String(entitlement?.status || "active").toLowerCase();
+        const isAdmin = role === "admin" || planRaw === "admin";
+        const isPaid = !isAdmin && planRaw === "paid";
+        const planLabel = isAdmin ? "Admin" : isPaid ? "Paid" : "Trial";
+        const used = Number(usageRows?.[0]?.search_count || 0);
+        const limit = Number(entitlement?.search_limit || 0);
+        const usageText = limit > 0 ? `${used}/${limit}` : (isAdmin ? "Unlimited" : `${used}`);
+        const statusLabel = statusRaw ? statusRaw.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase()) : "Active";
+
+        const rows = [["Plan", planLabel]];
+        if (isAdmin){
+          rows.push(["Access", "Unlimited"]);
+        } else if (isPaid){
+          rows.push(["Status", statusLabel]);
+          rows.push(["Searches", usageText]);
+          rows.push(["Next billing", formatAccountDate(entitlement?.current_period_end)]);
+          rows.push(["Amount", "Not connected yet"]);
+        } else {
+          rows.push(["Searches", usageText]);
+          rows.push(["Trial ends", formatAccountDate(entitlement?.trial_ends_at)]);
+        }
+        renderAccountSummary(rows);
+      } catch(e){
+        console.error("Account summary failed:", e);
+        renderAccountSummary([], "Account details unavailable.");
+      }
     }
 
     function getGuestQueryCount(){
@@ -1498,7 +1651,7 @@ body.authLocked .wrap{
 
     function setAuthIntro(){
       if (!authTitle || !authLead) return;
-      if (CURRENT_USER){
+      if (CURRENT_USER && authMode !== "update_password"){
         authTitle.textContent = "Account";
         authLead.textContent = "";
         authLead.style.display = "none";
@@ -1509,42 +1662,85 @@ body.authLocked .wrap{
         authLead.innerHTML = `<span class="authLeadWarn">You've used 3 free searches.</span><br>Sign in or create an account to keep using TESA.`;
         return;
       }
-      authTitle.textContent = authMode === "signup" ? "Create account" : "Welcome to TESA";
-      authLead.textContent = authMode === "signup" ? "A verification email will be sent after signup." : "Sign in to access torque data.";
+      if (authMode === "recovery"){
+        authTitle.textContent = "Reset password";
+        authLead.textContent = "Enter your email and we'll send a reset link.";
+      } else if (authMode === "update_password"){
+        authTitle.textContent = "Set new password";
+        authLead.textContent = "Enter a new password to finish resetting your account.";
+      } else {
+        authTitle.textContent = authMode === "signup" ? "Create account" : "Welcome to TESA";
+        authLead.textContent = authMode === "signup" ? "A verification email will be sent after signup." : "Sign in to access torque data.";
+      }
     }
 
     function setAuthMode(mode){
-      authMode = mode === "signup" ? "signup" : "login";
+      authMode = ["signup", "recovery", "update_password"].includes(mode) ? mode : "login";
+      const needsPassword = authMode !== "recovery";
+      const needsConfirm = authMode === "signup" || authMode === "update_password";
+      const needsEmail = authMode !== "update_password";
       setAuthIntro();
-      if (authSubmitBtn) authSubmitBtn.textContent = authMode === "signup" ? "Create account" : "Sign in";
-      if (authToggleBtn) authToggleBtn.textContent = authMode === "signup" ? "Already have an account?" : "Create an account";
-      if (authPassword) authPassword.autocomplete = authMode === "signup" ? "new-password" : "current-password";
-      if (authConfirmRow) authConfirmRow.classList.toggle("show", authMode === "signup");
-      if (authPasswordConfirm) {
-        authPasswordConfirm.required = authMode === "signup";
-        if (authMode !== "signup") authPasswordConfirm.value = "";
+      if (authSubmitBtn) {
+        authSubmitBtn.textContent =
+          authMode === "signup" ? "Create account" :
+          authMode === "recovery" ? "Send reset email" :
+          authMode === "update_password" ? "Update password" :
+          "Sign in";
       }
-      if (authGuestBtn) authGuestBtn.style.display = authPromptReason === "guest_limit" ? "none" : "";
+      if (authToggleBtn) {
+        authToggleBtn.textContent =
+          authMode === "signup" ? "Already have an account?" :
+          authMode === "recovery" || authMode === "update_password" ? "Back to sign in" :
+          "Create an account";
+      }
+      if (authEmail) {
+        authEmail.classList.toggle("authHidden", !needsEmail);
+        authEmail.required = needsEmail;
+      }
+      if (authPasswordRow) authPasswordRow.classList.toggle("authHidden", !needsPassword);
+      if (authPassword) {
+        authPassword.required = needsPassword;
+        authPassword.placeholder = authMode === "update_password" ? "New password" : "Password";
+        authPassword.autocomplete = authMode === "signup" || authMode === "update_password" ? "new-password" : "current-password";
+        if (!needsPassword) authPassword.value = "";
+      }
+      if (authForgotBtn) authForgotBtn.classList.toggle("authHidden", authMode !== "login");
+      if (authSecondaryRow) authSecondaryRow.classList.toggle("authHidden", CURRENT_USER && authMode !== "update_password");
+      if (authConfirmRow) authConfirmRow.classList.toggle("show", needsConfirm);
+      if (authPasswordConfirm) {
+        authPasswordConfirm.required = needsConfirm;
+        authPasswordConfirm.placeholder = authMode === "update_password" ? "Confirm new password" : "Confirm password";
+        if (!needsConfirm) authPasswordConfirm.value = "";
+      }
+      if (authGuestBtn) authGuestBtn.style.display = authPromptReason === "guest_limit" || authMode === "update_password" ? "none" : "";
       setAuthMessage("");
     }
 
     function openAuthOverlay(reason=null){
       authPromptReason = reason;
       setAuthIntro();
-      if (CURRENT_USER){
+      if (CURRENT_USER && authMode !== "update_password"){
         if (authForm) authForm.style.display = "none";
-        if (authToggleBtn) authToggleBtn.style.display = "none";
+        if (authSecondaryRow) authSecondaryRow.style.display = "none";
         if (authGuestBtn) authGuestBtn.style.display = "none";
         if (authAccountActions) authAccountActions.classList.add("show");
         if (authAccountEmail){
           authAccountEmail.style.display = "";
           authAccountEmail.textContent = CURRENT_USER.email || "";
         }
+        if (authAccountSummary) authAccountSummary.classList.add("show");
+        loadAccountSummary().catch((e)=>console.error(e));
         if (authLogoutBtn) authLogoutBtn.style.display = "";
         if (authCloseBtn) authCloseBtn.style.display = "";
+      } else {
+        if (authForm) authForm.style.display = "";
+        if (authSecondaryRow) authSecondaryRow.style.display = "";
+        if (authAccountActions) authAccountActions.classList.remove("show");
+        if (authAccountEmail) authAccountEmail.style.display = "none";
+        if (authAccountSummary) authAccountSummary.classList.remove("show");
       }
       if (authOverlay) authOverlay.classList.add("show");
-      if (authGuestBtn && !CURRENT_USER) authGuestBtn.style.display = authPromptReason === "guest_limit" ? "none" : "";
+      if (authGuestBtn && !CURRENT_USER) authGuestBtn.style.display = authPromptReason === "guest_limit" || authMode === "update_password" ? "none" : "";
       try{ authEmail?.focus(); }catch(e){}
     }
 
@@ -1566,12 +1762,21 @@ body.authLocked .wrap{
         authAccountEmail.style.display = signedIn ? "" : "none";
         authAccountEmail.textContent = CURRENT_USER?.email || "";
       }
-      if (authForm) authForm.style.display = signedIn ? "none" : "";
-      if (authToggleBtn) authToggleBtn.style.display = signedIn ? "none" : "";
-      if (authGuestBtn) authGuestBtn.style.display = signedIn ? "none" : "";
-      if (authLead) authLead.style.display = signedIn ? "none" : "";
-      if (authTitle) authTitle.textContent = signedIn ? "Account" : (authPromptReason === "guest_limit" ? "Create an account to continue" : (authMode === "signup" ? "Create account" : "Welcome to TESA"));
-      if (signedIn){
+      if (authAccountSummary) authAccountSummary.classList.toggle("show", signedIn && authMode !== "update_password");
+      if (authForm) authForm.style.display = signedIn && authMode !== "update_password" ? "none" : "";
+      if (authSecondaryRow) authSecondaryRow.style.display = signedIn && authMode !== "update_password" ? "none" : "";
+      if (authGuestBtn) authGuestBtn.style.display = signedIn || authMode === "update_password" ? "none" : "";
+      if (authLead) authLead.style.display = signedIn && authMode !== "update_password" ? "none" : "";
+      if (authTitle) {
+        authTitle.textContent =
+          signedIn && authMode !== "update_password" ? "Account" :
+          authMode === "update_password" ? "Set new password" :
+          authMode === "recovery" ? "Reset password" :
+          authPromptReason === "guest_limit" ? "Create an account to continue" :
+          authMode === "signup" ? "Create account" :
+          "Welcome to TESA";
+      }
+      if (signedIn && authMode !== "update_password"){
         setAuthMessage("");
         closeAuthOverlay();
       } else {
@@ -1645,11 +1850,30 @@ body.authLocked .wrap{
         return false;
       }
 
+      const recoveryRedirect = isPasswordRecoveryUrl();
       const { data, error } = await client.auth.getSession();
       if (error) console.warn("Supabase session error:", error);
+      if (recoveryRedirect && data?.session?.user){
+        CURRENT_USER = data.session.user;
+        GUEST_MODE = false;
+        document.body.classList.add("authLocked");
+        setAuthMode("update_password");
+        openAuthOverlay();
+        setAuthMessage("Enter a new password for your account.", "ok");
+        return false;
+      }
       setAuthUi(data?.session || null);
 
       client.auth.onAuthStateChange((_event, session)=>{
+        if (_event === "PASSWORD_RECOVERY" && session?.user){
+          CURRENT_USER = session.user;
+          GUEST_MODE = false;
+          document.body.classList.add("authLocked");
+          setAuthMode("update_password");
+          openAuthOverlay();
+          setAuthMessage("Enter a new password for your account.", "ok");
+          return;
+        }
         setAuthUi(session);
         if (session?.user) {
           startAppAfterAuth().catch((e)=>{
@@ -1674,8 +1898,19 @@ body.authLocked .wrap{
         });
       }
       if (authToggleBtn){
-        authToggleBtn.addEventListener("click", ()=>{
-          setAuthMode(authMode === "signup" ? "login" : "signup");
+        authToggleBtn.addEventListener("click", async ()=>{
+          if (authMode === "update_password"){
+            if (supabaseAuth) await supabaseAuth.auth.signOut();
+            setAuthMode("login");
+            openAuthOverlay();
+            return;
+          }
+          setAuthMode(authMode === "login" ? "signup" : "login");
+        });
+      }
+      if (authForgotBtn){
+        authForgotBtn.addEventListener("click", ()=>{
+          setAuthMode("recovery");
         });
       }
       if (authGuestBtn){
@@ -1718,23 +1953,37 @@ body.authLocked .wrap{
           const email = String(authEmail?.value || "").trim();
           const password = String(authPassword?.value || "");
           const passwordConfirm = String(authPasswordConfirm?.value || "");
-          if (!email || !password){
+          if (authMode === "recovery"){
+            if (!email){
+              setAuthMessage("Enter your email.", "error");
+              return;
+            }
+          } else if (authMode === "update_password"){
+            if (!password){
+              setAuthMessage("Enter a new password.", "error");
+              return;
+            }
+          } else if (!email || !password){
             setAuthMessage("Enter email and password.", "error");
             return;
           }
-          if (authMode === "signup" && password !== passwordConfirm){
+          if ((authMode === "signup" || authMode === "update_password") && password !== passwordConfirm){
             setAuthMessage("Passwords do not match.", "error");
             return;
           }
           if (authSubmitBtn) authSubmitBtn.disabled = true;
-          setAuthMessage(authMode === "signup" ? "Creating account..." : "Signing in...");
+          setAuthMessage(
+            authMode === "signup" ? "Creating account..." :
+            authMode === "recovery" ? "Sending reset email..." :
+            authMode === "update_password" ? "Updating password..." :
+            "Signing in..."
+          );
           try{
             if (authMode === "signup"){
-              const redirectTo = window.location.origin + window.location.pathname;
               const { data, error } = await client.auth.signUp({
                 email,
                 password,
-                options: { emailRedirectTo: redirectTo }
+                options: { emailRedirectTo: getAuthRedirectTo() }
               });
               if (error) throw error;
               const noNewIdentity = Array.isArray(data?.user?.identities) && data.user.identities.length === 0;
@@ -1752,6 +2001,21 @@ body.authLocked .wrap{
                 if (authEmail) authEmail.value = email;
                 setAuthMessage("Account created. Check your email to verify your account, then sign in.", "ok");
               }
+            } else if (authMode === "recovery"){
+              const { error } = await client.auth.resetPasswordForEmail(email, {
+                redirectTo: getAuthRedirectTo()
+              });
+              if (error) throw error;
+              setAuthMode("login");
+              if (authEmail) authEmail.value = email;
+              setAuthMessage("If this email is registered, a password reset link has been sent. If not, create an account.", "ok");
+            } else if (authMode === "update_password"){
+              const { error } = await client.auth.updateUser({ password });
+              if (error) throw error;
+              setAuthMessage("Password updated. You can continue using TESA.", "ok");
+              setAuthMode("login");
+              setAuthUi((await client.auth.getSession()).data?.session || null);
+              await startAppAfterAuth();
             } else {
               const { data, error } = await client.auth.signInWithPassword({ email, password });
               if (error) throw error;
