@@ -181,12 +181,19 @@
       justify-content:center;
       flex-wrap:wrap;
     }
-    .photoNote{
-      font-size:11px;
-      color:var(--muted);
-      line-height:1.25;
+    .photoAnalyzeBtn{
+      min-width:104px;
+      border-color:rgba(79,140,255,.75);
+      background:var(--accent) !important;
+      color:#05060a !important;
     }
-
+    .photoAnalyzeBtn:hover{
+      filter:brightness(1.08);
+    }
+    .photoAnalyzeBtn:disabled{
+      opacity:.55;
+      cursor:not-allowed;
+    }
     .micBig[disabled]{opacity:.35;cursor:not-allowed;box-shadow:none}
     .micBig svg{width:20px;height:20px}
     .hint{
@@ -196,14 +203,13 @@
     }
     .hint b{color:#c2d5ff}
     .status{
-      height:16px;
-      line-height:16px;
+      min-height:16px;
+      line-height:1.25;
       font-size:12px;
       color:var(--sub);
       text-align:center;
       overflow:hidden;
-      text-overflow:ellipsis;
-      white-space:nowrap;
+      white-space:pre-line;
       width:100%;
     }
     .status.active{color:#c2d5ff}
@@ -216,7 +222,7 @@
       background:rgba(5,6,12,.9);
       padding:0 15px;
       color:var(--text);
-      font-size:14px;
+      font-size:16px;
       outline:none;
       min-width:0;
       height:50px;
@@ -788,8 +794,8 @@
 
 /* === Multi-match layout tweaks (wide image, title above) === */
 .candThumbWrap{
-  width: 260px !important;
-  height: 170px !important;
+  width: min(100%, 300px) !important;
+  height: 200px !important;
   flex: 0 0 auto !important;
   border-radius: 12px !important;
   overflow: hidden !important;
@@ -799,13 +805,13 @@
   background:#0f1118 !important;
 }
 .candThumb{
-  width: 260px !important;
-  height: 170px !important;
+  width: 100% !important;
+  height: 200px !important;
   object-fit: contain !important;
 }
 .candThumbPh{
-  width: 260px !important;
-  height: 170px !important;
+  width: 100% !important;
+  height: 200px !important;
 }
 /* Title/ItemNo above image */
 .candCard{
@@ -820,8 +826,12 @@
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:8px;
-  margin-bottom:2px;
+  gap:6px;
+  margin-bottom:4px;
+}
+.candInfoTop strong{
+  font-size:16px;
+  line-height:1.25;
 }
 .candInfoTop .pillMini{
   font-size:12px;
@@ -1028,7 +1038,7 @@ body.authLocked .wrap{
   background:rgba(5,6,12,.9);
   color:var(--text);
   padding:0 12px;
-  font-size:14px;
+  font-size:16px;
   outline:none;
 }
 .authInput:focus{border-color:rgba(79,140,255,.7);box-shadow:0 0 0 3px rgba(79,140,255,.12)}
@@ -1290,7 +1300,7 @@ body.authLocked .wrap{
       <div class="voiceArea">
         <div class="fallbackRow">
           <input id="questionInput" class="q" type="text"
-                 placeholder="Search torque... e.g. Oil drain bolt"
+                 placeholder="Search torque... e.g. Drain plug"
                  autocomplete="off" />
           <button id="sendBtn" class="send" type="button" aria-label="Ask">
             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -1316,12 +1326,11 @@ body.authLocked .wrap{
 
         <div id="statusLine" class="status"></div>
         <div id="photoPane" class="photoPane" aria-live="polite">
-          <img id="photoPreview" class="photoPreview" alt="Captured photo preview" />
           <div class="photoActions">
-            <button id="usePhotoBtn" class="pillBtn" type="button" disabled>Use photo</button>
+            <button id="usePhotoBtn" class="pillBtn photoAnalyzeBtn" type="button" disabled>Analyze</button>
             <button id="retakePhotoBtn" class="pillBtn" type="button">Retake</button>
           </div>
-          <div class="photoNote">Beta: photo analysis will be wired to LLM matching.</div>
+          <img id="photoPreview" class="photoPreview" alt="Captured photo preview" />
         </div>
       </div>
     </section>
@@ -2625,6 +2634,21 @@ const VISION_CONF_MIN = 0.75; // confidence threshold for auto scoring (0..1)
       return data;
     }
 
+    function isNonSearchVisionQuery(value){
+      const s = String(value || "").trim().toLowerCase();
+      if (!s) return false;
+      return [
+        "non-motorcycle image",
+        "non motorcycle image",
+        "not a motorcycle image",
+        "not motorcycle image",
+        "no motorcycle",
+        "not a motorcycle",
+        "unrelated image",
+        "irrelevant image"
+      ].some(phrase => s === phrase || s.includes(phrase));
+    }
+
     // =========================
     // Router cache (avoid double /api/route calls per query)
     // =========================
@@ -2832,10 +2856,10 @@ function startStatusDots(baseText){
   if (!statusLine) return;
   const frames = ["", ".", "..", "..."];
   let i = 0;
-  statusLine.textContent = baseText + frames[i];
+  setStatus(baseText + frames[i], true, false);
   __statusDotsTimer = setInterval(() => {
     i = (i + 1) % frames.length;
-    statusLine.textContent = baseText + frames[i];
+    setStatus(baseText + frames[i], true, false);
   }, 380);
 }
 function stopStatusDots(){
@@ -2871,6 +2895,7 @@ function stopStatusDots(){
 
     if (camBtn && photoInput){
       camBtn.addEventListener("click", () => {
+        if (questionInput) questionInput.value = "";
         // open camera / picker
         photoInput.click();
       });
@@ -2884,7 +2909,7 @@ function stopStatusDots(){
         openPhotoPane();
         if (usePhotoBtn) usePhotoBtn.disabled = false;
 
-        if (statusLine) statusLine.textContent = "Photo captured — ready to analyze (beta).";
+        setStatus("Photo captured — ready to analyze (beta).", true, false);
       });
     }
 
@@ -2910,7 +2935,7 @@ function stopStatusDots(){
 
         try{
           usePhotoBtn.disabled = true;
-          startStatusDots("Analyzing photo");
+          startStatusDots("AI is analyzing the photo");
 
           // Downscale/compress to reduce payload size and avoid frequent timeouts.
           let image_data_url = await fileToVisionDataUrl(lastPhotoFile, 1280, 0.82);
@@ -2929,7 +2954,7 @@ function stopStatusDots(){
             const isTimeout = /timeout|aborted|aborterror/i.test(msg);
             if (isTimeout){
               // One retry with a smaller image.
-              if (statusLine) statusLine.textContent = "Still working… retrying…";
+              setStatus("Still working… retrying…", true, false);
               let smaller = await fileToVisionDataUrl(lastPhotoFile, 960, 0.78);
               if (!smaller) smaller = image_data_url;
               vision = await callVisionAPI({
@@ -2953,13 +2978,19 @@ function stopStatusDots(){
             if (DEBUG_VISION) console.warn("[vision warning]", warnings[0]);
           }
 
+          if (isNonSearchVisionQuery(vision_query)){
+            setStatus("This doesn't look like a motorcycle photo.\nRetake or type a part name.", true, true);
+            stopStatusDots();
+            if (questionInput) questionInput.value = "";
+            try{ questionInput?.focus(); }catch(e){}
+            return;
+          }
+
           if (vision_query){
             if (questionInput) questionInput.value = vision_query;
 
-            if (statusLine){
-              const confText = (confidence == null) ? "" : ` (conf ${Math.round(confidence*100)}%)`;
-              statusLine.textContent = `Vision → "${vision_query}"${confText}`;
-            }
+            const confText = (confidence == null) ? "" : ` (conf ${Math.round(confidence*100)}%)`;
+            setStatus(`Vision → "${vision_query}"${confText}`, true, false);
 
             if (Number(confidence || 0) >= VISION_CONF_MIN) {
               if (VISION_AUTO_SEND) {
@@ -2977,13 +3008,13 @@ function stopStatusDots(){
               }
             } else {
               const confText = (confidence == null) ? "" : ` (conf ${Math.round(confidence*100)}%)`;
-              if (statusLine) statusLine.textContent = `Photo unclear${confText}. Retake closer / better light, or type a short hint.`;
+              setStatus(`Photo unclear${confText}. Retake closer / better light, or type a short hint.`, true, true);
               stopStatusDots();
               // keep photo pane open so user can retry quickly
               try{ questionInput?.focus(); }catch(e){}
               return;
             }} else {
-            if (statusLine) statusLine.textContent = "Vision couldn't extract a reliable query. Try another photo or type manually.";
+            setStatus("Vision couldn't extract a reliable query. Try another photo or type manually.", true, true);
             try{ questionInput?.focus(); }catch(e){}
           }
 
@@ -2992,7 +3023,7 @@ function stopStatusDots(){
         } catch(e){
           stopStatusDots();
           console.error("Vision call failed:", e);
-          if (statusLine) statusLine.textContent = "Vision failed. Please try again, or type manually.";
+          setStatus("Vision failed. Please try again, or type manually.", true, true);
           usePhotoBtn.disabled = false;
         }
       });
@@ -3487,7 +3518,7 @@ async function initApp(){
     let __tesaWorkingTimer = null;
     function startWorkingIndicator(){
       if (__tesaWorkingTimer) return;
-      const base = "Working on it";
+      const base = "AI is searching the dataset";
       let dots = 0;
       setStatus(base + "...", true, false);
       __tesaWorkingTimer = setInterval(()=>{
@@ -4518,14 +4549,10 @@ if (Array.isArray(item?.ref_images)) {
 refImgs = (refImgs || []).map(x => (x ?? "").toString().trim()).filter(Boolean);
 const thumb = refImgs.length ? getRefImageUrl(refImgs[0]) : "";
 
-        // Item number (OEM / internal item no.)
-        const itemNo = (item?.item_number ?? "").toString().trim();
-
         return `<button class="candBtn candCard" type="button" data-id="${escapeHtml(String(item.id || ""))}">
           <div class="candRow">
             <div class="candInfoTop">
               <strong>${escapeHtml(title)}</strong>
-              ${itemNo ? `<span class="pillMini">${escapeHtml(itemNo)}</span>` : ``}
             </div>
             <div class="candThumbWrap">
               ${thumb ? `<img class="candThumb" src="${thumb}" alt="Reference image">` : `<div class="candThumbPh">No image</div>`}
@@ -4991,7 +5018,7 @@ function initSpeech(){
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SpeechRecognition){
         micBig.disabled = true;
-        setStatus("Speech recognition not supported here (iPhone Safari limitation). Use keyboard mic.", true, true);
+        setStatus("Voice recognition isn't supported here.\nUse the keyboard mic or input box.", true, true);
         return;
       }
       recognition = new SpeechRecognition();
@@ -5037,6 +5064,7 @@ function initSpeech(){
     }
 
     micBig.addEventListener("click", ()=>{
+      if (questionInput) questionInput.value = "";
       markRequestStart();
 
       if (!recognition) initSpeech();
