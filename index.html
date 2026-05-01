@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>TESA – Torque Assistant MVP</title>
+  <title>SAM. – Torque Spec Assistant</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <style>
@@ -1275,8 +1275,8 @@ body.authLocked .wrap{
         </div>
 </div>
           <div class="brandText">
-            <div class="t1">TESA</div>
-            <div class="t2">Tech Spec Assistant</div>
+            <div class="t1">SAM.</div>
+            <div class="t2">Torque Spec Assistant</div>
           </div>
         </div>
         <div class="topActions">
@@ -1390,7 +1390,7 @@ body.authLocked .wrap{
 
   <div id="authOverlay" class="authOverlay" role="dialog" aria-modal="true" aria-label="Account">
     <div class="authPanel">
-      <h2 id="authTitle">Welcome to TESA</h2>
+      <h2 id="authTitle">Welcome to SAM.</h2>
       <div id="authLead" class="authLead">Sign in to access torque data.</div>
       <form id="authForm" class="authForm">
         <input id="authEmail" class="authInput" type="email" placeholder="Email" autocomplete="email" required />
@@ -1670,7 +1670,7 @@ body.authLocked .wrap{
       }
       if (authPromptReason === "guest_limit"){
         authTitle.textContent = "Create an account to continue";
-        authLead.innerHTML = `<span class="authLeadWarn">You've used 3 free searches.</span><br>Sign in or create an account to keep using TESA.`;
+        authLead.innerHTML = `<span class="authLeadWarn">You've used 3 free searches.</span><br>Sign in or create an account to keep using SAM.`;
         return;
       }
       if (authMode === "recovery"){
@@ -1680,7 +1680,7 @@ body.authLocked .wrap{
         authTitle.textContent = "Set new password";
         authLead.textContent = "Enter a new password to finish resetting your account.";
       } else {
-        authTitle.textContent = authMode === "signup" ? "Create account" : "Welcome to TESA";
+        authTitle.textContent = authMode === "signup" ? "Create account" : "Welcome to SAM.";
         authLead.textContent = authMode === "signup" ? "A verification email will be sent after signup." : "Sign in to access torque data.";
       }
     }
@@ -1785,7 +1785,7 @@ body.authLocked .wrap{
           authMode === "recovery" ? "Reset password" :
           authPromptReason === "guest_limit" ? "Create an account to continue" :
           authMode === "signup" ? "Create account" :
-          "Welcome to TESA";
+          "Welcome to SAM.";
       }
       if (signedIn && authMode !== "update_password"){
         setAuthMessage("");
@@ -2023,7 +2023,7 @@ body.authLocked .wrap{
             } else if (authMode === "update_password"){
               const { error } = await client.auth.updateUser({ password });
               if (error) throw error;
-              setAuthMessage("Password updated. You can continue using TESA.", "ok");
+              setAuthMessage("Password updated. You can continue using SAM.", "ok");
               setAuthMode("login");
               setAuthUi((await client.auth.getSession()).data?.session || null);
               await startAppAfterAuth();
