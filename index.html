@@ -48,7 +48,7 @@
     }
     .brandText .t1{
       font-weight:800;letter-spacing:.04em;font-size:16px;
-      text-transform:uppercase;color:var(--accent);
+      text-transform:uppercase;color:var(--text);
       line-height:1.1;
     }
     .brandText .t2{
@@ -1251,6 +1251,25 @@ body.authLocked .wrap{
 
 /* Hide ROUTE ON/OFF toggle UI (functionality remains) */
 #routeToggleWrap{ display:none !important; }
+
+@media (max-width: 480px){
+  .wrap{
+    padding-left:8px;
+    padding-right:8px;
+  }
+  .card{
+    padding-left:12px;
+    padding-right:12px;
+  }
+  .inputCard{
+    padding-left:14px;
+    padding-right:14px;
+  }
+  .resultCard{
+    padding-left:10px;
+    padding-right:10px;
+  }
+}
 
 </style>
 </head>
