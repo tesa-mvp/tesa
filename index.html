@@ -576,7 +576,10 @@
       font-size:12px;
       line-height:1.25;
     }
-    .candBtn:hover{border-color:rgba(79,140,255,.6)}
+    .candBtn:focus{outline:none}
+    @media (hover: hover) and (pointer: fine){
+      .candBtn:hover{border-color:rgba(79,140,255,.6)}
+    }
     .candSub{display:block;margin-top:4px;font-size:11px;color:var(--sub)}
     .candCard{padding:14px}
     .candRow{display:flex;gap:14px;align-items:flex-start}
@@ -799,7 +802,7 @@
 .candThumb{
   width: 100% !important;
   height: 200px !important;
-  object-fit: contain !important;
+  object-fit: cover !important;
 }
 .candThumbPh{
   width: 100% !important;
@@ -822,7 +825,9 @@
   margin-bottom:4px;
 }
 .candInfoTop strong{
-  font-size:16px;
+  font-size:14px;
+  font-weight:650;
+  color:#d7d8df;
   line-height:1.25;
 }
 .candInfoTop .pillMini{
@@ -1190,6 +1195,52 @@ body.authLocked .wrap{
   box-shadow: 0 10px 30px rgba(0,0,0,0.35);
   padding:14px 14px 16px 14px;
 }
+.historyDivider{
+  display:none;
+  margin:2px 0 -2px;
+  color:var(--sub);
+  font-size:11px;
+  line-height:1;
+  font-weight:800;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  text-align:center;
+}
+.historyDivider.show{
+  display:flex;
+}
+.historyDivider::before,
+.historyDivider::after{
+  content:"";
+  flex:1;
+  border-top:1px dashed rgba(255,255,255,.14);
+}
+.historyDivider .historyHint{
+  color:var(--muted);
+  font-weight:700;
+  letter-spacing:.02em;
+  text-transform:none;
+}
+.resultCard.previous{
+  opacity:.62;
+  box-shadow:none;
+}
+.resultCard.previous:hover{
+  opacity:.9;
+}
+.resultCard.previous .candBtn{
+  background:rgba(7,9,16,.45);
+  border-color:rgba(255,255,255,.06);
+}
+.resultCard.previous .candThumb{
+  filter:grayscale(.15) brightness(.75);
+}
+.resultCard.previous .candInfoTop strong{
+  color:var(--muted);
+}
 
 
 /* Route on/off toggle (top center) */
@@ -1406,7 +1457,7 @@ body.authLocked .wrap{
       <h2 id="authTitle">Welcome to SAM.</h2>
       <div id="authSubtitle" class="authSubtitle">SAM. - Torque Spec Assistant</div>
       <div id="authLead" class="authLead">Sign in to access torque data.</div>
-      <form id="authForm" class="authForm">
+      <form id="authForm" class="authForm" novalidate>
         <input id="authEmail" class="authInput" type="email" placeholder="Email" autocomplete="email" required />
         <div id="authPasswordRow" class="authPasswordWrap">
           <input id="authPassword" class="authInput" type="password" placeholder="Password" autocomplete="current-password" required minlength="6" />
@@ -1551,6 +1602,10 @@ body.authLocked .wrap{
         || msg.includes("already exists")
         || msg.includes("user already")
         || msg.includes("email already");
+    }
+
+    function isValidEmail(value){
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || "").trim());
     }
 
     function getAuthRedirectTo(){
@@ -1988,6 +2043,10 @@ body.authLocked .wrap{
               setAuthMessage("Enter your email.", "error");
               return;
             }
+            if (!isValidEmail(email)){
+              setAuthMessage("Enter a valid email address.", "error");
+              return;
+            }
           } else if (authMode === "update_password"){
             if (!password){
               setAuthMessage("Enter a new password.", "error");
@@ -1995,6 +2054,10 @@ body.authLocked .wrap{
             }
           } else if (!email || !password){
             setAuthMessage("Enter email and password.", "error");
+            return;
+          }
+          if (authMode !== "update_password" && !isValidEmail(email)){
+            setAuthMessage("Enter a valid email address.", "error");
             return;
           }
           if ((authMode === "signup" || authMode === "update_password") && password !== passwordConfirm){
@@ -3053,6 +3116,7 @@ function stopStatusDots(){
   const MAX_RESULT_CARDS = 5; // keep most recent N cards
     const sendBtn = document.getElementById("sendBtn");
     const resultBody = document.getElementById("resultBody");
+    let queryInFlight = false;
 
     // Auto-scroll so the request controls stay at the top when a new request is made
     let autoScrollToRequest = false;
@@ -3064,16 +3128,40 @@ function stopStatusDots(){
     }
 
 
+    function syncHistoryDivider(){
+      if (!resultBody) return;
+      resultBody.querySelectorAll(".historyDivider").forEach(el => el.remove());
+      const cards = Array.from(resultBody.querySelectorAll(".resultCard:not(.resultNotice)"));
+      if (cards.length < 2) return;
+      const divider = document.createElement("div");
+      divider.className = "historyDivider show";
+      divider.innerHTML = `Search history <span class="historyHint">· up to 5</span>`;
+      cards[0].after(divider);
+    }
+
+    function trimResultCards(){
+      const cards = Array.from(resultBody.querySelectorAll(".resultCard"));
+      while (cards.length > MAX_RESULT_CARDS) {
+        const card = cards.pop();
+        if (card && card.parentElement) card.parentElement.removeChild(card);
+      }
+    }
+
     function addResultCard(cardEl){
       if (!cardEl) return;
       // remove empty state
       resultBody.classList.remove("empty");
+      resultBody.querySelectorAll(".resultCard").forEach((card)=>{
+        card.classList.remove("current");
+        card.classList.add("previous");
+      });
+      cardEl.classList.remove("previous");
+      cardEl.classList.add("current");
       // prepend newest card
       resultBody.prepend(cardEl);
       // limit cards
-      while (resultBody.children.length > MAX_RESULT_CARDS) {
-        resultBody.removeChild(resultBody.lastElementChild);
-      }
+      trimResultCards();
+      syncHistoryDivider();
       if (autoScrollToRequest) {
         autoScrollToRequest = false;
         scrollRequestArea();
@@ -4153,7 +4241,7 @@ function tokenizeNormalized(s){
     function renderEmpty(text){
       if (resultBody.children.length > 0) return;
       const card = document.createElement("div");
-      card.className = "resultCard";
+      card.className = "resultCard resultNotice";
       card.innerHTML = `<div class="subLine emptyLine">${escapeHtml(String(text||""))}</div>`;
       addResultCard(card);
       setRepeatStop(false);
@@ -4590,7 +4678,8 @@ const thumb = refImgs.length ? getRefImageUrl(refImgs[0]) : "";
       // bind inside this card only
       const btns = card.querySelectorAll(".candBtn");
       btns.forEach((b, idx)=>{
-        b.addEventListener("click", ()=>{
+        b.addEventListener("click", (ev)=>{
+          try{ ev.currentTarget.blur(); }catch(e){}
           markRequestStart();
           const chosen = top[idx];
           if (chosen && chosen.item) renderResult(chosen.item, {bestScore: chosen.score});
@@ -4680,6 +4769,10 @@ function escapeHtml(s){
 // Torque query + rendering
 // =========================
 async function handleQuery(raw, __preRoute){
+      if (queryInFlight) return;
+      queryInFlight = true;
+      if (sendBtn) sendBtn.disabled = true;
+      try {
       const q = String(raw || "").trim();
 
       // Ensure query-cleanup lexicon is loaded before normalization/tokenization
@@ -4971,6 +5064,10 @@ if (!candidates.length){
       setStatus("Match found.", true, false);
       renderResult(best.item, {bestScore, gap});
       logQuery({ type: "torque", query: q, normalized: nq, match: (best.item && (best.item.component_name || best.item.id || "")) });
+      } finally {
+        queryInFlight = false;
+        if (sendBtn) sendBtn.disabled = false;
+      }
     }
 
     // =========================
