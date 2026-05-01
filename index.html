@@ -46,21 +46,13 @@
       justify-content:flex-start;
       gap:8px;
     }
-    .brand{display:flex;align-items:center;gap:10px}
-    .mark{
-      width:34px;height:34px;border-radius:12px;
-      background:radial-gradient(circle at 30% 30%,var(--accent2),var(--accent));
-      display:flex;align-items:center;justify-content:center;
-      color:#05060a;font-weight:800;
-      box-shadow:0 0 24px rgba(79,140,255,.65);
-    }
     .brandText .t1{
-      font-weight:700;letter-spacing:.04em;font-size:12px;
-      text-transform:uppercase;color:var(--sub);
+      font-weight:800;letter-spacing:.04em;font-size:16px;
+      text-transform:uppercase;color:var(--text);
       line-height:1.1;
     }
     .brandText .t2{
-      font-size:11px;color:var(--muted);
+      font-size:11px;color:var(--sub);
       line-height:1.1;margin-top:2px;
     }
     .badge{
@@ -961,6 +953,12 @@ body.authLocked .wrap{
   font-size:18px;
   line-height:1.2;
 }
+.authSubtitle{
+  margin:3px 0 0;
+  color:var(--sub);
+  font-size:12px;
+  line-height:1.25;
+}
 .authLead{
   margin:6px 0 14px;
   color:var(--sub);
@@ -1262,9 +1260,6 @@ body.authLocked .wrap{
     <header>
       <div class="topRow">
         <div class="leftBrand">
-          <div class="brand">
-            <div class="mark">T</div>
-          
         <!-- Route on/off toggle (default OFF) -->
         <div id="routeToggleWrap" class="routeToggleWrap" title="Router (LLM) on/off">
           <span class="label">ROUTE</span>
@@ -1273,7 +1268,6 @@ body.authLocked .wrap{
             <div class="knob"></div>
           </div>
         </div>
-</div>
           <div class="brandText">
             <div class="t1">SAM.</div>
             <div class="t2">Torque Spec Assistant</div>
@@ -1391,6 +1385,7 @@ body.authLocked .wrap{
   <div id="authOverlay" class="authOverlay" role="dialog" aria-modal="true" aria-label="Account">
     <div class="authPanel">
       <h2 id="authTitle">Welcome to SAM.</h2>
+      <div id="authSubtitle" class="authSubtitle">Torque Spec Assistant</div>
       <div id="authLead" class="authLead">Sign in to access torque data.</div>
       <form id="authForm" class="authForm">
         <input id="authEmail" class="authInput" type="email" placeholder="Email" autocomplete="email" required />
@@ -1501,6 +1496,7 @@ body.authLocked .wrap{
 
     const authOverlay = document.getElementById("authOverlay");
     const authTitle = document.getElementById("authTitle");
+    const authSubtitle = document.getElementById("authSubtitle");
     const authLead = document.getElementById("authLead");
     const authForm = document.getElementById("authForm");
     const authEmail = document.getElementById("authEmail");
@@ -1664,12 +1660,15 @@ body.authLocked .wrap{
       if (!authTitle || !authLead) return;
       if (CURRENT_USER && authMode !== "update_password"){
         authTitle.textContent = "Account";
+        if (authSubtitle) authSubtitle.style.display = "none";
         authLead.textContent = "";
         authLead.style.display = "none";
         return;
       }
+      if (authSubtitle) authSubtitle.style.display = authMode === "login" ? "" : "none";
       if (authPromptReason === "guest_limit"){
         authTitle.textContent = "Create an account to continue";
+        if (authSubtitle) authSubtitle.style.display = "none";
         authLead.innerHTML = `<span class="authLeadWarn">You've used 3 free searches.</span><br>Sign in or create an account to keep using SAM.`;
         return;
       }
@@ -1778,6 +1777,7 @@ body.authLocked .wrap{
       if (authSecondaryRow) authSecondaryRow.style.display = signedIn && authMode !== "update_password" ? "none" : "";
       if (authGuestBtn) authGuestBtn.style.display = signedIn || authMode === "update_password" ? "none" : "";
       if (authLead) authLead.style.display = signedIn && authMode !== "update_password" ? "none" : "";
+      if (authSubtitle) authSubtitle.style.display = signedIn || authMode !== "login" ? "none" : "";
       if (authTitle) {
         authTitle.textContent =
           signedIn && authMode !== "update_password" ? "Account" :
