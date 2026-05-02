@@ -923,9 +923,31 @@
   white-space:nowrap;
 }
 .authBtn:hover{border-color:rgba(79,140,255,.6)}
+.authBtn.alert{
+  border-color:rgba(255,79,106,.62);
+  box-shadow:0 0 0 2px rgba(255,79,106,.10) inset;
+}
 .topActions{
   display:flex;
   align-items:center;
+  gap:6px;
+}
+.authMenuAlertBadge{
+  display:none;
+  align-items:center;
+  justify-content:center;
+  width:16px;
+  height:16px;
+  border-radius:999px;
+  background:rgba(255,79,106,.92);
+  color:#05060a;
+  font-size:10px;
+  font-weight:900;
+  line-height:1;
+  flex:0 0 auto;
+}
+.authMenuAlertBadge.show{
+  display:inline-flex;
 }
 body.authLocked .wrap{
   opacity:.35;
@@ -942,19 +964,48 @@ body.authLocked .wrap{
   padding:18px;
   background:rgba(3,4,8,.72);
   backdrop-filter:blur(12px);
+  overflow-y:auto;
 }
 .authOverlay.show{display:flex}
 .authPanel{
+  position:relative;
   width:100%;
   max-width:380px;
+  max-height:calc(100dvh - 36px);
+  overflow-y:auto;
   border:1px solid var(--border);
   border-radius:18px;
   background:linear-gradient(145deg,var(--panel),var(--panel2));
   box-shadow:0 24px 70px rgba(0,0,0,.7);
   padding:20px;
 }
+.authPanelClose{
+  position:absolute;
+  top:12px;
+  right:12px;
+  width:30px;
+  height:30px;
+  border:1px solid var(--border);
+  border-radius:999px;
+  background:rgba(9,11,18,.85);
+  color:var(--sub);
+  font-size:18px;
+  line-height:1;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+}
+.authPanelClose.show{
+  display:flex;
+}
+.authPanelClose:hover{
+  border-color:rgba(79,140,255,.6);
+  color:var(--text);
+}
 .authPanel h2{
   margin:0;
+  padding-right:34px;
   font-size:18px;
   line-height:1.2;
 }
@@ -1024,9 +1075,86 @@ body.authLocked .wrap{
   text-align:left;
   min-width:0;
 }
+.authInfoRow.warn .authInfoLabel,
+.authInfoRow.warn .authInfoValue{
+  color:var(--danger);
+}
+.authAccountNotice{
+  display:none;
+  margin:0 0 14px;
+  color:var(--danger);
+  font-size:12px;
+  line-height:1.35;
+  text-align:center;
+  white-space:pre-line;
+}
+.authAccountNotice.show{
+  display:block;
+}
 .authBillingBtn[disabled]{
   opacity:.55;
   cursor:not-allowed;
+}
+.authContactBtn{
+  min-width:96px;
+}
+.authContactView{
+  display:none;
+  flex-direction:column;
+  gap:10px;
+}
+.authContactView.show{
+  display:flex;
+}
+.authContactTitle,
+.authContactMessage{
+  width:100%;
+  border-radius:12px;
+  border:1px solid #34394a;
+  background:rgba(5,6,12,.9);
+  color:var(--text);
+  font-size:16px;
+  outline:none;
+}
+.authContactTitle{
+  height:46px;
+  padding:0 12px;
+}
+.authContactMessage{
+  min-height:116px;
+  resize:vertical;
+  padding:12px;
+  line-height:1.35;
+}
+.authContactTitle:focus,
+.authContactMessage:focus{
+  border-color:rgba(79,140,255,.7);
+  box-shadow:0 0 0 3px rgba(79,140,255,.12);
+}
+.authContactActions{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  justify-content:flex-end;
+  flex-wrap:wrap;
+}
+.authContactActions .authSwitch,
+.authContactActions .authSubmit{
+  width:96px;
+  height:42px;
+  padding:0 12px;
+}
+.authContactMessageLine{
+  min-height:16px;
+  font-size:12px;
+  line-height:1.35;
+  color:var(--sub);
+}
+.authContactMessageLine.error{
+  color:var(--danger);
+}
+.authContactMessageLine.ok{
+  color:var(--ok);
 }
 .authForm{
   display:flex;
@@ -1194,6 +1322,7 @@ body.authLocked .wrap{
   background:rgba(255,255,255,0.04);
   box-shadow: 0 10px 30px rgba(0,0,0,0.35);
   padding:14px 14px 16px 14px;
+  scroll-margin-top:120px;
 }
 .historyDivider{
   display:none;
@@ -1344,6 +1473,7 @@ body.authLocked .wrap{
           </div>
         </div>
         <div class="topActions">
+          <span id="authMenuAlertBadge" class="authMenuAlertBadge" aria-label="Account attention required">!</span>
           <button id="authMenuBtn" class="authBtn" type="button">Sign in</button>
         </div>
       </div>
@@ -1454,6 +1584,7 @@ body.authLocked .wrap{
 
   <div id="authOverlay" class="authOverlay" role="dialog" aria-modal="true" aria-label="Account">
     <div class="authPanel">
+      <button id="authCloseBtn" class="authPanelClose" type="button" aria-label="Close account panel" title="Close">&times;</button>
       <h2 id="authTitle">Welcome to SAM.</h2>
       <div id="authSubtitle" class="authSubtitle">SAM. - Torque Spec Assistant</div>
       <div id="authLead" class="authLead">Sign in to access torque data.</div>
@@ -1491,11 +1622,21 @@ body.authLocked .wrap{
       <button id="authGuestBtn" class="authGuestBtn" type="button">Continue as guest · 3 free searches</button>
       <div id="authAccountEmail" class="authAccountEmail" style="display:none"></div>
       <div id="authAccountSummary" class="authAccountSummary"></div>
+      <div id="authAccountNotice" class="authAccountNotice"></div>
       <div id="authAccountActions" class="authAccountActions">
-        <button id="authBillingBtn" class="authSwitch authBillingBtn" type="button" disabled>Manage billing</button>
+        <button id="authBillingBtn" class="authSwitch authBillingBtn" type="button" disabled>Manage plan</button>
+        <button id="authContactBtn" class="authSwitch authContactBtn" type="button">Contact</button>
         <button id="authLogoutBtn" class="authSwitch authDanger" type="button">Sign out</button>
-        <button id="authCloseBtn" class="authSwitch" type="button">Close</button>
       </div>
+      <form id="authContactView" class="authContactView" novalidate>
+        <input id="authContactTitle" class="authContactTitle" type="text" placeholder="Title" maxlength="120" />
+        <textarea id="authContactMessage" class="authContactMessage" placeholder="Tell us what happened." maxlength="2000"></textarea>
+        <div id="authContactMessageLine" class="authContactMessageLine"></div>
+        <div class="authContactActions">
+          <button id="authContactBackBtn" class="authSwitch" type="button">Close</button>
+          <button id="authContactSubmitBtn" class="authSubmit" type="submit">Send</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -1561,6 +1702,7 @@ body.authLocked .wrap{
     let GUEST_MODE = false;
     let appStarted = false;
     let appStartPromise = null;
+    let ACCOUNT_ALERT = null;
     const GUEST_QUERY_LIMIT = 3;
     const GUEST_QUERY_COUNT_KEY = "TESA_guest_query_count";
 
@@ -1583,17 +1725,56 @@ body.authLocked .wrap{
     const authGuestBtn = document.getElementById("authGuestBtn");
     const authAccountEmail = document.getElementById("authAccountEmail");
     const authAccountSummary = document.getElementById("authAccountSummary");
+    const authAccountNotice = document.getElementById("authAccountNotice");
     const authAccountActions = document.getElementById("authAccountActions");
+    const authContactBtn = document.getElementById("authContactBtn");
+    const authContactView = document.getElementById("authContactView");
+    const authContactTitle = document.getElementById("authContactTitle");
+    const authContactMessage = document.getElementById("authContactMessage");
+    const authContactMessageLine = document.getElementById("authContactMessageLine");
+    const authContactBackBtn = document.getElementById("authContactBackBtn");
+    const authContactSubmitBtn = document.getElementById("authContactSubmitBtn");
     const authLogoutBtn = document.getElementById("authLogoutBtn");
     const authCloseBtn = document.getElementById("authCloseBtn");
     const authMessage = document.getElementById("authMessage");
     const authMenuBtn = document.getElementById("authMenuBtn");
+    const authMenuAlertBadge = document.getElementById("authMenuAlertBadge");
 
     function setAuthMessage(text, type=""){
       if (!authMessage) return;
       authMessage.textContent = text || "";
       authMessage.classList.toggle("error", type === "error");
       authMessage.classList.toggle("ok", type === "ok");
+    }
+
+    function setContactMessage(text, type=""){
+      if (!authContactMessageLine) return;
+      authContactMessageLine.textContent = text || "";
+      authContactMessageLine.classList.toggle("error", type === "error");
+      authContactMessageLine.classList.toggle("ok", type === "ok");
+    }
+
+    let contactCloseTimer = null;
+    function clearContactCloseTimer(){
+      if (!contactCloseTimer) return;
+      clearInterval(contactCloseTimer);
+      contactCloseTimer = null;
+    }
+
+    function startContactCloseCountdown(seconds=5){
+      clearContactCloseTimer();
+      let remaining = seconds;
+      setContactMessage(`Message sent. Closing in ${remaining}...`, "ok");
+      contactCloseTimer = setInterval(()=>{
+        remaining -= 1;
+        if (remaining <= 0){
+          clearContactCloseTimer();
+          closeAuthOverlay();
+          showAccountView();
+          return;
+        }
+        setContactMessage(`Message sent. Closing in ${remaining}...`, "ok");
+      }, 1000);
     }
 
     function isAlreadyRegisteredAuthError(error){
@@ -1624,6 +1805,11 @@ body.authLocked .wrap{
       return date.toLocaleDateString(undefined, { year:"numeric", month:"short", day:"numeric" });
     }
 
+    function isFutureDate(value){
+      const t = Date.parse(value || "");
+      return Number.isFinite(t) && t > Date.now();
+    }
+
     function escapeAttrText(value){
       return String(value ?? "")
         .replaceAll("&","&amp;")
@@ -1632,9 +1818,55 @@ body.authLocked .wrap{
         .replaceAll('"',"&quot;");
     }
 
-    function accountInfoRow(label, value){
+    function accountAlertFromCode(code, usage=null){
+      const c = String(code || "").trim();
+      if (c === "usage_limit_reached"){
+        return {
+          code: c,
+          row: "Searches",
+          message: "You've used all searches in your current plan.",
+          usage: usage || null
+        };
+      }
+      if (c === "trial_expired"){
+        return {
+          code: c,
+          row: "Trial ends",
+          message: "Your free trial has ended."
+        };
+      }
+      if (c === "subscription_inactive"){
+        return {
+          code: c,
+          row: "Status",
+          message: "Your subscription is not active."
+        };
+      }
+      return null;
+    }
+
+    function setAccountAlert(alert){
+      ACCOUNT_ALERT = alert || null;
+      updateAuthMenuLabel();
+    }
+
+    function handleAccountAccessBlock(code, message="", usage=null){
+      const alert = accountAlertFromCode(code, usage) || {
+        code: String(code || "access_denied"),
+        row: "Status",
+        message: message || "Your account needs attention."
+      };
+      setAccountAlert(alert);
+      setStatus(alert.message, true, true);
+      if (CURRENT_USER){
+        openAuthOverlay();
+      }
+      return { __accessBlocked: true, code: alert.code, message: alert.message, usage: usage || null };
+    }
+
+    function accountInfoRow(label, value, warn=false){
       return `
-        <div class="authInfoRow">
+        <div class="authInfoRow${warn ? " warn" : ""}">
           <div class="authInfoLabel">${escapeAttrText(label)}</div>
           <div class="authInfoValue">${escapeAttrText(value)}</div>
         </div>`;
@@ -1644,15 +1876,116 @@ body.authLocked .wrap{
       if (!authAccountSummary) return;
       if (message){
         authAccountSummary.innerHTML = accountInfoRow("Status", message);
+        if (authAccountNotice){
+          authAccountNotice.textContent = "";
+          authAccountNotice.classList.remove("show");
+        }
       } else {
-        authAccountSummary.innerHTML = rows.map(row => accountInfoRow(row[0], row[1])).join("");
+        const body = rows.map(row => accountInfoRow(row[0], row[1], !!row[2])).join("");
+        authAccountSummary.innerHTML = body;
+        if (authAccountNotice){
+          authAccountNotice.textContent = ACCOUNT_ALERT?.message ? `${ACCOUNT_ALERT.message}\nManage plan to continue.` : "";
+          authAccountNotice.classList.toggle("show", !!ACCOUNT_ALERT?.message);
+        }
       }
       authAccountSummary.classList.add("show");
     }
 
+    function showAccountView(){
+      if (authTitle) authTitle.textContent = "Account";
+      if (authAccountEmail) authAccountEmail.style.display = CURRENT_USER ? "" : "none";
+      if (authAccountSummary) authAccountSummary.classList.toggle("show", !!CURRENT_USER);
+      if (authAccountNotice) authAccountNotice.classList.toggle("show", !!ACCOUNT_ALERT?.message);
+      if (authAccountActions) authAccountActions.classList.toggle("show", !!CURRENT_USER);
+      if (authContactView) authContactView.classList.remove("show");
+      if (authCloseBtn) authCloseBtn.classList.add("show");
+      if (authContactSubmitBtn) authContactSubmitBtn.disabled = false;
+      clearContactCloseTimer();
+      setContactMessage("");
+    }
+
+    function showContactView(){
+      if (!CURRENT_USER) return;
+      if (authTitle) authTitle.textContent = "Contact";
+      if (authContactTitle) {
+        authContactTitle.disabled = false;
+        authContactTitle.value = "";
+      }
+      if (authContactMessage) {
+        authContactMessage.disabled = false;
+        authContactMessage.value = "";
+      }
+      if (authContactSubmitBtn) authContactSubmitBtn.disabled = false;
+      if (authAccountEmail) authAccountEmail.style.display = "none";
+      if (authAccountSummary) authAccountSummary.classList.remove("show");
+      if (authAccountNotice) authAccountNotice.classList.remove("show");
+      if (authAccountActions) authAccountActions.classList.remove("show");
+      if (authContactView) authContactView.classList.add("show");
+      if (authCloseBtn) authCloseBtn.classList.remove("show");
+      setAuthMessage("");
+      clearContactCloseTimer();
+      setContactMessage("");
+      const shouldAutoFocusContact = !window.matchMedia("(max-width: 768px), (pointer: coarse)").matches;
+      if (shouldAutoFocusContact){
+        try{ authContactMessage?.focus(); }catch(e){}
+      }
+    }
+
+    function buildSupportTicketPayload(){
+      const modelText = CURRENT_MODEL_DISPLAY
+        ? `${CURRENT_MODEL_DISPLAY.make || ""} ${CURRENT_MODEL_DISPLAY.label || ""} ${CURRENT_MODEL_DISPLAY.years_label || ""}`.replace(/\s+/g, " ").trim()
+        : "";
+      return {
+        user_id: CURRENT_USER?.id || null,
+        email: CURRENT_USER?.email || "",
+        title: String(authContactTitle?.value || "").trim(),
+        message: String(authContactMessage?.value || "").trim(),
+        make_id: SELECTED_MAKE_ID || null,
+        make_label: SELECTED_MAKE_LABEL || CURRENT_MODEL_DISPLAY?.make || null,
+        model_id: CURRENT_MODEL_ID || null,
+        model_label: modelText || null,
+        query_text: String(questionInput?.value || "").trim() || null,
+        page_url: window.location.href,
+        user_agent: navigator.userAgent || "",
+        metadata: {
+          account_alert: ACCOUNT_ALERT || null,
+          dataset_file: CURRENT_DATASET_FILE || null
+        }
+      };
+    }
+
+    async function submitSupportTicket(){
+      if (!supabaseAuth || !CURRENT_USER){
+        setContactMessage("Sign in before contacting support.", "error");
+        return;
+      }
+      const payload = buildSupportTicketPayload();
+      if (!payload.title){
+        setContactMessage("Enter a title.", "error");
+        return;
+      }
+      if (!payload.message){
+        setContactMessage("Enter a message.", "error");
+        return;
+      }
+      if (authContactSubmitBtn) authContactSubmitBtn.disabled = true;
+      setContactMessage("Sending...", "");
+      try{
+        const { error } = await supabaseAuth.from("support_tickets").insert(payload);
+        if (error) throw error;
+        if (authContactTitle) authContactTitle.disabled = true;
+        if (authContactMessage) authContactMessage.disabled = true;
+        startContactCloseCountdown(5);
+      }catch(e){
+        console.error("Support ticket failed:", e);
+        setContactMessage("Message failed to send. Try again later.", "error");
+      }finally{
+        if (authContactSubmitBtn) authContactSubmitBtn.disabled = false;
+      }
+    }
+
     async function loadAccountSummary(){
       if (!supabaseAuth || !CURRENT_USER) return;
-      renderAccountSummary([], "Loading account details...");
       try{
         const userId = CURRENT_USER.id;
         const [{ data: profile, error: profileError }, { data: entitlement, error: entitlementError }, { data: usageRows, error: usageError }] = await Promise.all([
@@ -1669,6 +2002,7 @@ body.authLocked .wrap{
         const statusRaw = String(entitlement?.status || "active").toLowerCase();
         const isAdmin = role === "admin" || planRaw === "admin";
         const isPaid = !isAdmin && planRaw === "paid";
+        const trialEnded = !isAdmin && !isPaid && !isFutureDate(entitlement?.trial_ends_at);
         const planLabel = isAdmin ? "Admin" : isPaid ? "Paid" : "Trial";
         const used = Number(usageRows?.[0]?.search_count || 0);
         const limit = Number(entitlement?.search_limit || 0);
@@ -1676,17 +2010,27 @@ body.authLocked .wrap{
         const usageText = limit > 0 ? `${remaining}/${limit}` : (isAdmin ? "Unlimited" : `${used}`);
         const statusLabel = statusRaw ? statusRaw.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase()) : "Active";
 
+        if (!isAdmin && !ACCOUNT_ALERT){
+          if (isPaid && statusRaw !== "active"){
+            setAccountAlert(accountAlertFromCode("subscription_inactive"));
+          } else if (!isPaid && trialEnded){
+            setAccountAlert(accountAlertFromCode("trial_expired"));
+          } else if (limit > 0 && remaining <= 0){
+            setAccountAlert(accountAlertFromCode("usage_limit_reached", { used, limit, remaining: 0 }));
+          }
+        }
+
         const rows = [["Plan", planLabel]];
         if (isAdmin){
           rows.push(["Access", "Unlimited"]);
         } else if (isPaid){
-          rows.push(["Status", statusLabel]);
-          rows.push(["Searches", usageText]);
+          rows.push(["Status", statusLabel, ACCOUNT_ALERT?.row === "Status"]);
+          rows.push(["Searches", usageText, ACCOUNT_ALERT?.row === "Searches"]);
           rows.push(["Next billing", formatAccountDate(entitlement?.current_period_end)]);
           rows.push(["Amount", "Not connected yet"]);
         } else {
-          rows.push(["Searches", usageText]);
-          rows.push(["Trial ends", formatAccountDate(entitlement?.trial_ends_at)]);
+          rows.push(["Searches", usageText, ACCOUNT_ALERT?.row === "Searches"]);
+          rows.push(["Trial ends", formatAccountDate(entitlement?.trial_ends_at), ACCOUNT_ALERT?.row === "Trial ends"]);
         }
         renderAccountSummary(rows);
       } catch(e){
@@ -1717,6 +2061,11 @@ body.authLocked .wrap{
 
     function updateAuthMenuLabel(){
       if (!authMenuBtn) return;
+      const hasAccountAlert = !!(CURRENT_USER && ACCOUNT_ALERT);
+      authMenuBtn.classList.toggle("alert", hasAccountAlert);
+      if (authMenuAlertBadge){
+        authMenuAlertBadge.classList.toggle("show", hasAccountAlert);
+      }
       if (CURRENT_USER){
         authMenuBtn.textContent = CURRENT_USER.email || "Account";
         authMenuBtn.title = CURRENT_USER.email || "Account";
@@ -1800,6 +2149,32 @@ body.authLocked .wrap{
       setAuthMessage("");
     }
 
+    let authScrollLockY = 0;
+    let authScrollLocked = false;
+    function lockPageScrollForAuth(){
+      if (authScrollLocked) return;
+      authScrollLocked = true;
+      authScrollLockY = window.scrollY || document.documentElement.scrollTop || 0;
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${authScrollLockY}px`;
+      document.body.style.left = "0";
+      document.body.style.right = "0";
+      document.body.style.width = "100%";
+      document.body.style.overflow = "hidden";
+    }
+    function unlockPageScrollForAuth(){
+      if (!authScrollLocked) return;
+      authScrollLocked = false;
+      const y = authScrollLockY || 0;
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.left = "";
+      document.body.style.right = "";
+      document.body.style.width = "";
+      document.body.style.overflow = "";
+      window.scrollTo(0, y);
+    }
+
     function openAuthOverlay(reason=null){
       authPromptReason = reason;
       setAuthIntro();
@@ -1815,21 +2190,32 @@ body.authLocked .wrap{
         if (authAccountSummary) authAccountSummary.classList.add("show");
         loadAccountSummary().catch((e)=>console.error(e));
         if (authLogoutBtn) authLogoutBtn.style.display = "";
-        if (authCloseBtn) authCloseBtn.style.display = "";
+        if (authContactBtn) authContactBtn.style.display = "";
+        if (authCloseBtn) authCloseBtn.classList.add("show");
+        showAccountView();
       } else {
         if (authForm) authForm.style.display = "";
         if (authSecondaryRow) authSecondaryRow.style.display = "";
         if (authAccountActions) authAccountActions.classList.remove("show");
         if (authAccountEmail) authAccountEmail.style.display = "none";
         if (authAccountSummary) authAccountSummary.classList.remove("show");
+        if (authAccountNotice) authAccountNotice.classList.remove("show");
+        if (authContactView) authContactView.classList.remove("show");
+        if (authCloseBtn) authCloseBtn.classList.remove("show");
       }
+      lockPageScrollForAuth();
       if (authOverlay) authOverlay.classList.add("show");
       if (authGuestBtn && !CURRENT_USER) authGuestBtn.style.display = authPromptReason === "guest_limit" || authMode === "update_password" ? "none" : "";
-      try{ authEmail?.focus(); }catch(e){}
+      const shouldAutoFocusAuth = !window.matchMedia("(max-width: 768px), (pointer: coarse)").matches;
+      if (shouldAutoFocusAuth){
+        try{ authEmail?.focus(); }catch(e){}
+      }
     }
 
     function closeAuthOverlay(){
       if (authOverlay) authOverlay.classList.remove("show");
+      clearContactCloseTimer();
+      unlockPageScrollForAuth();
       authPromptReason = null;
     }
 
@@ -1837,16 +2223,20 @@ body.authLocked .wrap{
       CURRENT_USER = session?.user || null;
       const signedIn = !!CURRENT_USER;
       if (signedIn) GUEST_MODE = false;
+      else ACCOUNT_ALERT = null;
       document.body.classList.toggle("authLocked", !(signedIn || GUEST_MODE));
       updateAuthMenuLabel();
       if (authLogoutBtn) authLogoutBtn.style.display = signedIn ? "" : "none";
-      if (authCloseBtn) authCloseBtn.style.display = signedIn ? "" : "none";
+      if (authContactBtn) authContactBtn.style.display = signedIn ? "" : "none";
+      if (authCloseBtn) authCloseBtn.classList.toggle("show", signedIn && authMode !== "update_password");
       if (authAccountActions) authAccountActions.classList.toggle("show", signedIn);
       if (authAccountEmail){
         authAccountEmail.style.display = signedIn ? "" : "none";
         authAccountEmail.textContent = CURRENT_USER?.email || "";
       }
       if (authAccountSummary) authAccountSummary.classList.toggle("show", signedIn && authMode !== "update_password");
+      if (authAccountNotice) authAccountNotice.classList.toggle("show", signedIn && authMode !== "update_password" && !!ACCOUNT_ALERT?.message);
+      if (authContactView) authContactView.classList.remove("show");
       if (authForm) authForm.style.display = signedIn && authMode !== "update_password" ? "none" : "";
       if (authSecondaryRow) authSecondaryRow.style.display = signedIn && authMode !== "update_password" ? "none" : "";
       if (authGuestBtn) authGuestBtn.style.display = signedIn || authMode === "update_password" ? "none" : "";
@@ -1864,6 +2254,7 @@ body.authLocked .wrap{
       if (signedIn && authMode !== "update_password"){
         setAuthMessage("");
         closeAuthOverlay();
+        loadAccountSummary().catch((e)=>console.error(e));
       } else {
         setAuthMode(authMode);
         openAuthOverlay();
@@ -2009,7 +2400,22 @@ body.authLocked .wrap{
       if (authLogoutBtn){
         authLogoutBtn.addEventListener("click", async ()=>{
           if (!supabaseAuth) return;
+          clearResultHistory();
           await supabaseAuth.auth.signOut();
+        });
+      }
+      if (authContactBtn){
+        authContactBtn.addEventListener("click", ()=>{
+          showContactView();
+        });
+      }
+      if (authContactBackBtn){
+        authContactBackBtn.addEventListener("click", closeAuthOverlay);
+      }
+      if (authContactView){
+        authContactView.addEventListener("submit", (e)=>{
+          e.preventDefault();
+          submitSupportTicket();
         });
       }
       if (authCloseBtn){
@@ -2130,7 +2536,20 @@ body.authLocked .wrap{
       }
     }
 
+    function warmBackend(){
+      try{
+        const url = `${getRouteApiBase()}/api/health`;
+        fetch(url, {
+          method: "GET",
+          mode: "no-cors",
+          cache: "no-store",
+          keepalive: true
+        }).catch(()=>{});
+      }catch(e){}
+    }
+
     async function bootstrapApp(){
+      warmBackend();
       initVoiceReadPreference();
       renderEmpty("Torque results will appear here.");
       setStatus("");
@@ -2826,7 +3245,15 @@ try{
         // DEV TRACE (router)
         __tesaRouteDebugStart("[TESA route] " + (body.normalized_query || ""), body, data);
 
-        if (!r.ok) throw new Error((data && (data.error || data.message)) || `route_http_${r.status}`);
+        if (!r.ok) {
+          const code = data && data.error;
+          if (["usage_limit_reached", "trial_expired", "subscription_inactive"].includes(code)){
+            if (typeof __tesaRouteDebugEnd === "function") __tesaRouteDebugEnd(data);
+            stopWorkingIndicator();
+            return handleAccountAccessBlock(code, data?.message || "", data?.usage || null);
+          }
+          throw new Error((data && (data.error || data.message)) || `route_http_${r.status}`);
+        }
 
         // Basic shape guard (Route v2 only)
         const guarded = {
@@ -3083,7 +3510,6 @@ function stopStatusDots(){
                   part_phrases_confidence: Number(confidence || 0),
                   overall_confidence: Number(confidence || 0),
                 };
-                markRequestStart();
                 await handleQuery(vision_query, preRoute); // go straight to scoring (skip /api/route)
               } else {
                 try{ questionInput?.focus(); }catch(e){}
@@ -3117,16 +3543,6 @@ function stopStatusDots(){
     const sendBtn = document.getElementById("sendBtn");
     const resultBody = document.getElementById("resultBody");
     let queryInFlight = false;
-
-    // Auto-scroll so the request controls stay at the top when a new request is made
-    let autoScrollToRequest = false;
-    function markRequestStart(){
-      autoScrollToRequest = true;
-    }
-    function scrollRequestArea(){
-      window.scrollTo({top:0, behavior:"smooth"});
-    }
-
 
     function syncHistoryDivider(){
       if (!resultBody) return;
@@ -3162,10 +3578,6 @@ function stopStatusDots(){
       // limit cards
       trimResultCards();
       syncHistoryDivider();
-      if (autoScrollToRequest) {
-        autoScrollToRequest = false;
-        scrollRequestArea();
-      }
     }
 
     const repeatBtn = document.getElementById("repeatBtn");
@@ -4450,7 +4862,7 @@ function buildSpokenAnswerParts(item){
 
 
 
-    function renderResult(item, info){
+    function renderResult(item, info, opts={}){
       const name = item.component_name || "Unknown fastener";
 
       // ----- Chemistry line (threadlock / lube / sealant) -----
@@ -4625,6 +5037,11 @@ if (hasInfoBlock){
       card.className = "resultCard";
       card.innerHTML = html;
       addResultCard(card);
+      if (opts.scrollToResult){
+        requestAnimationFrame(()=>{
+          card.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+        });
+      }
       // Always speak base + info (info gate removed)
       const fullSpeech = spoken.info ? `${spoken.base} ${spoken.info}` : spoken.base;
       speak(fullSpeech);
@@ -4680,9 +5097,8 @@ const thumb = refImgs.length ? getRefImageUrl(refImgs[0]) : "";
       btns.forEach((b, idx)=>{
         b.addEventListener("click", (ev)=>{
           try{ ev.currentTarget.blur(); }catch(e){}
-          markRequestStart();
           const chosen = top[idx];
-          if (chosen && chosen.item) renderResult(chosen.item, {bestScore: chosen.score});
+          if (chosen && chosen.item) renderResult(chosen.item, {bestScore: chosen.score}, {scrollToResult:true});
         });
       });
     }
@@ -4797,6 +5213,9 @@ async function handleQuery(raw, __preRoute){
       
       // === Route v2 preprocess (optional) ===
       const pre = __preRoute ? __preRoute : await callRouteAPI(routeInput);
+      if (pre?.__accessBlocked){
+        return;
+      }
 
       // Decide which query string to use for trigger scanning (spec/fast/part)
       let llmQuery = "";
@@ -5074,14 +5493,13 @@ if (!candidates.length){
     // Events
     // =========================
     sendBtn.addEventListener("click", ()=>{
-      markRequestStart();
+      try{ questionInput?.blur(); }catch(e){}
       handleQuery(questionInput.value);
     });
     questionInput.addEventListener("keydown", (e)=>{
       if (e.key === "Enter"){
-        markRequestStart();
-
         e.preventDefault();
+        try{ questionInput?.blur(); }catch(e){}
         handleQuery(questionInput.value);
       }
     });
@@ -5181,7 +5599,6 @@ function initSpeech(){
 
     micBig.addEventListener("click", ()=>{
       if (questionInput) questionInput.value = "";
-      markRequestStart();
 
       if (!recognition) initSpeech();
       if (!recognition) return;
