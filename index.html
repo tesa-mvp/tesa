@@ -4037,7 +4037,7 @@ async function initApp(){
     let __tesaWorkingTimer = null;
     function startWorkingIndicator(){
       if (__tesaWorkingTimer) return;
-      const base = "AI is searching the dataset";
+      const base = "AI is analyzing your request";
       let dots = 0;
       setStatus(base + "...", true, false);
       __tesaWorkingTimer = setInterval(()=>{
