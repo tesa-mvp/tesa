@@ -3443,7 +3443,7 @@ function startStatusDots(baseText, opts={}){
   let currentBase = baseText;
   setStatus(baseText + frames[i], true, false);
   if (opts.nextText){
-    const delay = Number.isFinite(Number(opts.delayMs)) ? Number(opts.delayMs) : 3500;
+    const delay = Number.isFinite(Number(opts.delayMs)) ? Number(opts.delayMs) : 3000;
     __statusMessageTimer = setTimeout(()=>{
       currentBase = opts.nextText;
       i = 0;
@@ -3542,7 +3542,7 @@ function stopStatusDots(){
           usePhotoBtn.disabled = true;
           startStatusDots("AI is analyzing the photo", {
             nextText: "Finishing analysis",
-            delayMs: 3500
+            delayMs: 3000
           });
 
           // Downscale/compress to reduce payload size and avoid frequent timeouts.
@@ -4252,7 +4252,7 @@ async function initApp(){
         base = "Finishing analysis";
         dots = 0;
         setStatus(base + "...", true, false);
-      }, 3500);
+      }, 3000);
       __tesaWorkingTimer = setInterval(()=>{
         dots = (dots + 1) % 4; // 0..3
         setStatus(base + (dots ? ".".repeat(dots) : ""), true, false);
