@@ -2768,6 +2768,7 @@ body.authLocked .wrap{
     async function bootstrapApp(){
       warmBackend();
       initVoiceReadPreference();
+      setupSpeechUnlockGestures();
       renderEmpty("Torque results will appear here.");
       setStatus("");
       const authed = await initAuth();
@@ -3588,6 +3589,7 @@ llm_query: (typeof data?.llm_query === "string") ? data.llm_query : "",
     let lastSpokenText = "";
     let lastSpokenEnabled = false;
     let VOICE_READ_ENABLED = false;
+    let speechSynthesisUnlocked = false;
 
     // DOM
     const makeBadgeEl = document.getElementById("makeBadge");
@@ -3729,6 +3731,7 @@ function stopStatusDots(){
 
     if (usePhotoBtn){
       usePhotoBtn.addEventListener("click", async () => {
+        prepareSpeechForUserGesture();
         if (!lastPhotoFile){
           setStatus("No photo selected.", true, true);
           return;
@@ -5154,6 +5157,7 @@ function tokenizeNormalized(s){
       VOICE_READ_ENABLED = !!next;
       try{ localStorage.setItem(VOICE_READ_STORAGE_KEY, VOICE_READ_ENABLED ? "1" : "0"); }catch(e){}
       updateVoiceReadToggle();
+      if (VOICE_READ_ENABLED) unlockSpeechSynthesis();
       if (!VOICE_READ_ENABLED) stopSpeak();
     }
     function initVoiceReadPreference(){
@@ -5161,6 +5165,15 @@ function tokenizeNormalized(s){
       try{ saved = localStorage.getItem(VOICE_READ_STORAGE_KEY); }catch(e){}
       VOICE_READ_ENABLED = (saved === "1");
       updateVoiceReadToggle();
+    }
+
+    function setupSpeechUnlockGestures(){
+      const unlock = ()=>prepareSpeechForUserGesture();
+      try{
+        window.addEventListener("pointerdown", unlock, {capture:true, passive:true});
+        window.addEventListener("touchstart", unlock, {capture:true, passive:true});
+        window.addEventListener("keydown", unlock, {capture:true});
+      }catch(e){}
     }
 
     // =========================
@@ -5427,12 +5440,32 @@ function tokenizeNormalized(s){
       }
     }
 
+    function unlockSpeechSynthesis(){
+      if (speechSynthesisUnlocked || !("speechSynthesis" in window)) return;
+      try{
+        const u = new SpeechSynthesisUtterance(" ");
+        u.lang = "en-US";
+        u.volume = 0;
+        u.rate = 1.0;
+        u.pitch = 1.0;
+        u.onend = ()=>{ speechSynthesisUnlocked = true; };
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(u);
+        speechSynthesisUnlocked = true;
+      }catch(e){}
+    }
+
+    function prepareSpeechForUserGesture(){
+      if (VOICE_READ_ENABLED) unlockSpeechSynthesis();
+    }
+
     function speak(text, opts={}){
       lastSpokenText = text || "";
       setRepeatStop(!!lastSpokenText);
 
       if (!("speechSynthesis" in window) || !text) return;
       if (!opts.force && !VOICE_READ_ENABLED) return;
+      unlockSpeechSynthesis();
       stopSpeak();
       const u = new SpeechSynthesisUtterance(text);
       u.lang = "en-US";
@@ -5808,6 +5841,7 @@ const thumb = refImgs.length ? getRefImageUrl(refImgs[0]) : "";
       const btns = card.querySelectorAll(".candBtn");
       btns.forEach((b, idx)=>{
         b.addEventListener("click", (ev)=>{
+          prepareSpeechForUserGesture();
           try{ ev.currentTarget.blur(); }catch(e){}
           const chosen = top[idx];
           if (chosen && chosen.item){
@@ -6371,6 +6405,7 @@ if (!candidates.length){
     // Events
     // =========================
     sendBtn.addEventListener("click", ()=>{
+      prepareSpeechForUserGesture();
       try{ questionInput?.blur(); }catch(e){}
       discardPendingPhotoForManualQuery();
       handleQuery(questionInput.value);
@@ -6378,6 +6413,7 @@ if (!candidates.length){
     questionInput.addEventListener("keydown", (e)=>{
       if (e.key === "Enter"){
         e.preventDefault();
+        prepareSpeechForUserGesture();
         try{ questionInput?.blur(); }catch(e){}
         discardPendingPhotoForManualQuery();
         handleQuery(questionInput.value);
@@ -6385,6 +6421,7 @@ if (!candidates.length){
     });
 
     repeatBtn.addEventListener("click", ()=>{
+      prepareSpeechForUserGesture();
       if (lastSpokenEnabled && lastSpokenText) speak(lastSpokenText, {force:true});
     });
     stopBtn.addEventListener("click", ()=>{
