@@ -4122,7 +4122,8 @@
       "extra_notes": null,
       "item_number": "Item A",
       "common_name": [
-        "camshaft gear"
+        "camshaft gear",
+	"cam shaft gear"
       ],
       "ref_images": [
         "bolt_camshaft_gear.png"
@@ -4204,7 +4205,8 @@
       "extra_notes": null,
       "item_number": "Iem #15",
       "common_name": [
-        "camshaft impeller"
+        "camshaft impeller",
+	"cam shaft impeller"
       ],
       "ref_images": [
         "bolt_camshaft_impeller.png"
@@ -4246,7 +4248,9 @@
       "item_number": "Item #6",
       "common_name": [
         "camshaft cap",
-        "camshaft support"
+        "camshaft support",
+	"cam shaft cap",
+	"cam shaft suppert"
       ],
       "ref_images": [
         "bolt_camshaft_cap.png"
