@@ -1057,7 +1057,7 @@ body.authLocked .wrap{
 }
 .authInfoRow{
   display:grid;
-  grid-template-columns:94px 1fr;
+  grid-template-columns:104px 1fr;
   gap:12px;
   padding:10px 12px;
   font-size:12px;
@@ -1586,8 +1586,8 @@ body.authLocked .wrap{
     <div class="authPanel">
       <button id="authCloseBtn" class="authPanelClose" type="button" aria-label="Close account panel" title="Close">&times;</button>
       <h2 id="authTitle">Welcome to SAM.</h2>
-      <div id="authSubtitle" class="authSubtitle">SAM. - Torque Spec Assistant</div>
-      <div id="authLead" class="authLead">Sign in to access torque data.</div>
+      <div id="authSubtitle" class="authSubtitle" style="display:none"></div>
+      <div id="authLead" class="authLead">SAM. is an AI-powered torque spec assistant.<br>Sign in to access torque data.</div>
       <form id="authForm" class="authForm" novalidate>
         <input id="authEmail" class="authInput" type="email" placeholder="Email" autocomplete="email" required />
         <div id="authPasswordRow" class="authPasswordWrap">
@@ -1780,6 +1780,11 @@ body.authLocked .wrap{
       }, 1000);
     }
 
+    function setAuthTitle(text){
+      if (!authTitle) return;
+      authTitle.textContent = text || "";
+    }
+
     function isAlreadyRegisteredAuthError(error){
       const msg = String(error?.message || "").toLowerCase();
       return msg.includes("already registered")
@@ -1895,7 +1900,7 @@ body.authLocked .wrap{
     }
 
     function showAccountView(){
-      if (authTitle) authTitle.textContent = "Account";
+      setAuthTitle("Account");
       if (authAccountEmail) authAccountEmail.style.display = CURRENT_USER ? "" : "none";
       if (authAccountSummary) authAccountSummary.classList.toggle("show", !!CURRENT_USER);
       if (authAccountNotice) authAccountNotice.classList.toggle("show", !!ACCOUNT_ALERT?.message);
@@ -1909,7 +1914,7 @@ body.authLocked .wrap{
 
     function showContactView(){
       if (!CURRENT_USER) return;
-      if (authTitle) authTitle.textContent = "Contact";
+      setAuthTitle("Contact");
       if (authContactTitle) {
         authContactTitle.disabled = false;
         authContactTitle.value = "";
@@ -2028,11 +2033,11 @@ body.authLocked .wrap{
           rows.push(["Access", "Unlimited"]);
         } else if (isPaid){
           rows.push(["Status", statusLabel, ACCOUNT_ALERT?.row === "Status"]);
-          rows.push(["Searches", usageText, ACCOUNT_ALERT?.row === "Searches"]);
+          rows.push(["Searches left", usageText, ACCOUNT_ALERT?.row === "Searches"]);
           rows.push(["Next billing", formatAccountDate(entitlement?.current_period_end)]);
           rows.push(["Amount", "Not connected yet"]);
         } else {
-          rows.push(["Searches", usageText, ACCOUNT_ALERT?.row === "Searches"]);
+          rows.push(["Searches left", usageText, ACCOUNT_ALERT?.row === "Searches"]);
           rows.push(["Trial ends", formatAccountDate(entitlement?.trial_ends_at), ACCOUNT_ALERT?.row === "Trial ends"]);
         }
         renderAccountSummary(rows);
@@ -2085,28 +2090,32 @@ body.authLocked .wrap{
     function setAuthIntro(){
       if (!authTitle || !authLead) return;
       if (CURRENT_USER && authMode !== "update_password"){
-        authTitle.textContent = "Account";
+        setAuthTitle("Account");
         if (authSubtitle) authSubtitle.style.display = "none";
         authLead.textContent = "";
         authLead.style.display = "none";
         return;
       }
-      if (authSubtitle) authSubtitle.style.display = authMode === "login" ? "" : "none";
+      if (authSubtitle) authSubtitle.style.display = "none";
       if (authPromptReason === "guest_limit"){
-        authTitle.textContent = "Create an account to continue";
+        setAuthTitle("Create an account to continue");
         if (authSubtitle) authSubtitle.style.display = "none";
         authLead.innerHTML = `<span class="authLeadWarn">You've used 3 free searches.</span><br>Sign in or create an account to keep using SAM.`;
         return;
       }
       if (authMode === "recovery"){
-        authTitle.textContent = "Reset password";
+        setAuthTitle("Reset password");
         authLead.textContent = "Enter your email and we'll send a reset link.";
       } else if (authMode === "update_password"){
-        authTitle.textContent = "Set new password";
+        setAuthTitle("Set new password");
         authLead.textContent = "Enter a new password to finish resetting your account.";
       } else {
-        authTitle.textContent = authMode === "signup" ? "Create account" : "Welcome to SAM.";
-        authLead.textContent = authMode === "signup" ? "A verification email will be sent after signup." : "Sign in to access torque data.";
+        setAuthTitle(authMode === "signup" ? "Create account" : "Welcome to SAM.");
+        if (authMode === "signup"){
+          authLead.textContent = "A verification email will be sent after signup.";
+        } else {
+          authLead.innerHTML = "SAM. is an AI-powered torque spec assistant.<br>Sign in to access torque data.";
+        }
       }
     }
 
@@ -2244,15 +2253,16 @@ body.authLocked .wrap{
       if (authSecondaryRow) authSecondaryRow.style.display = signedIn && authMode !== "update_password" ? "none" : "";
       if (authGuestBtn) authGuestBtn.style.display = signedIn || authMode === "update_password" ? "none" : "";
       if (authLead) authLead.style.display = signedIn && authMode !== "update_password" ? "none" : "";
-      if (authSubtitle) authSubtitle.style.display = signedIn || authMode !== "login" ? "none" : "";
+      if (authSubtitle) authSubtitle.style.display = "none";
       if (authTitle) {
-        authTitle.textContent =
+        const titleText =
           signedIn && authMode !== "update_password" ? "Account" :
           authMode === "update_password" ? "Set new password" :
           authMode === "recovery" ? "Reset password" :
           authPromptReason === "guest_limit" ? "Create an account to continue" :
           authMode === "signup" ? "Create account" :
           "Welcome to SAM.";
+        setAuthTitle(titleText);
       }
       if (signedIn && authMode !== "update_password"){
         setAuthMessage("");
@@ -3463,6 +3473,12 @@ function stopStatusDots(){
       lastPhotoFile = null;
     }
 
+    function discardPendingPhotoForManualQuery(){
+      if (!lastPhotoFile) return;
+      closePhotoPane();
+      if (photoInput) photoInput.value = "";
+    }
+
     if (camBtn && photoInput){
       camBtn.addEventListener("click", () => {
         setQueryInputValue("", "text");
@@ -3632,7 +3648,7 @@ function stopStatusDots(){
                 imageSizeBytes: visionImageInfo?.image_size_bytes || null,
                 metadata: { event_stage: "vision_low_confidence", vision_response: vision || null }
               });
-              setStatus(`Photo unclear${confText}. Retake closer / better light, or type a short hint.`, true, true);
+              setStatus("Photo unclear.\nRetake or type a part name.", true, true);
               stopStatusDots();
               // keep photo pane open so user can retry quickly
               try{ questionInput?.focus(); }catch(e){}
@@ -3654,7 +3670,7 @@ function stopStatusDots(){
               imageSizeBytes: visionImageInfo?.image_size_bytes || null,
               metadata: { event_stage: "vision_no_query", vision_response: vision || null }
             });
-            setStatus("Vision couldn't extract a reliable query. Try another photo or type manually.", true, true);
+            setStatus("Photo unclear.\nRetake or type a part name.", true, true);
             try{ questionInput?.focus(); }catch(e){}
           }
 
@@ -3676,7 +3692,7 @@ function stopStatusDots(){
             imageSizeBytes: visionImageInfo?.image_size_bytes || null,
             metadata: { event_stage: "vision_failed", error: e?.message || String(e || "") }
           });
-          setStatus("Vision failed. Please try again, or type manually.", true, true);
+          setStatus("Photo analysis failed.\nRetake or type a part name.", true, true);
           usePhotoBtn.disabled = false;
         }
       });
@@ -6068,12 +6084,14 @@ if (!candidates.length){
     // =========================
     sendBtn.addEventListener("click", ()=>{
       try{ questionInput?.blur(); }catch(e){}
+      discardPendingPhotoForManualQuery();
       handleQuery(questionInput.value);
     });
     questionInput.addEventListener("keydown", (e)=>{
       if (e.key === "Enter"){
         e.preventDefault();
         try{ questionInput?.blur(); }catch(e){}
+        discardPendingPhotoForManualQuery();
         handleQuery(questionInput.value);
       }
     });
