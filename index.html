@@ -1705,6 +1705,9 @@ body.authLocked .wrap{
     let ACCOUNT_ALERT = null;
     const GUEST_QUERY_LIMIT = 3;
     const GUEST_QUERY_COUNT_KEY = "TESA_guest_query_count";
+    let inputOrigin = "text";
+    let inputEditedAfterOrigin = false;
+    let suppressInputOriginTracking = false;
 
     const authOverlay = document.getElementById("authOverlay");
     const authTitle = document.getElementById("authTitle");
@@ -3286,18 +3289,29 @@ llm_query: (typeof data?.llm_query === "string") ? data.llm_query : "",
         const used = getGuestQueryCount();
         if (used >= GUEST_QUERY_LIMIT){
           showGuestLimitAuth();
-          return false;
+          return { ok: false, reason: "guest_limit" };
         }
-        setGuestQueryCount(used + 1);
-        return true;
+        const nextUsed = used + 1;
+        setGuestQueryCount(nextUsed);
+        return {
+          ok: true,
+          consumed: true,
+          usage: {
+            used: nextUsed,
+            limit: GUEST_QUERY_LIMIT,
+            remaining: Math.max(0, GUEST_QUERY_LIMIT - nextUsed),
+            account_plan: "guest",
+            account_status: "active"
+          }
+        };
       }
 
-      if (!CURRENT_USER) return true;
+      if (!CURRENT_USER) return { ok: true, consumed: false, usage: null };
 
       const accessToken = await getSupabaseAccessToken();
       if (!accessToken){
         setStatus("Search couldn't be confirmed. Try again.", true, true);
-        return false;
+        return { ok: false, reason: "usage_confirm_failed" };
       }
 
       try{
@@ -3318,14 +3332,14 @@ llm_query: (typeof data?.llm_query === "string") ? data.llm_query : "",
           } else {
             setStatus("Search couldn't be confirmed. Try again.", true, true);
           }
-          return false;
+          return { ok: false, reason: code || "usage_confirm_failed", usage: data?.usage || null };
         }
         loadAccountSummary().catch((e)=>console.error(e));
-        return true;
+        return { ok: true, consumed: !data?.usage?.unlimited, usage: data?.usage || null };
       }catch(e){
         console.warn("[TESA usage] consume failed:", e?.message || e);
         setStatus("Search couldn't be confirmed. Try again.", true, true);
-        return false;
+        return { ok: false, reason: "usage_confirm_failed" };
       }
     }
 
@@ -3451,7 +3465,7 @@ function stopStatusDots(){
 
     if (camBtn && photoInput){
       camBtn.addEventListener("click", () => {
-        if (questionInput) questionInput.value = "";
+        setQueryInputValue("", "text");
         // open camera / picker
         photoInput.click();
       });
@@ -3537,13 +3551,13 @@ function stopStatusDots(){
           if (isNonSearchVisionQuery(vision_query)){
             setStatus("This doesn't look like a motorcycle photo.\nRetake or type a part name.", true, true);
             stopStatusDots();
-            if (questionInput) questionInput.value = "";
+            setQueryInputValue("", "text");
             try{ questionInput?.focus(); }catch(e){}
             return;
           }
 
           if (vision_query){
-            if (questionInput) questionInput.value = vision_query;
+            setQueryInputValue(vision_query, "vision");
 
             const confText = (confidence == null) ? "" : ` (conf ${Math.round(confidence*100)}%)`;
             setStatus(`Vision → "${vision_query}"${confText}`, true, false);
@@ -3551,11 +3565,15 @@ function stopStatusDots(){
             if (Number(confidence || 0) >= VISION_CONF_MIN) {
               if (VISION_AUTO_SEND) {
                 const preRoute = {
+                  __analysis_source: "vision",
                   llm_query: vision_query,
                   llm_query_confidence: Number(confidence || 0),
                   part_phrases: [vision_query],
                   part_phrases_confidence: Number(confidence || 0),
                   overall_confidence: Number(confidence || 0),
+                  vision_query,
+                  vision_confidence: Number(confidence || 0),
+                  vision_warnings: warnings
                 };
                 await handleQuery(vision_query, preRoute); // go straight to scoring (skip /api/route)
               } else {
@@ -3590,6 +3608,33 @@ function stopStatusDots(){
     const sendBtn = document.getElementById("sendBtn");
     const resultBody = document.getElementById("resultBody");
     let queryInFlight = false;
+
+    function setQueryInputValue(value, origin="text"){
+      if (!questionInput) return;
+      suppressInputOriginTracking = true;
+      questionInput.value = value || "";
+      suppressInputOriginTracking = false;
+      inputOrigin = origin || "text";
+      inputEditedAfterOrigin = false;
+    }
+
+    function getRequestSource(){
+      if (inputOrigin === "voice" && inputEditedAfterOrigin) return "voice_text";
+      if (inputOrigin === "vision" && inputEditedAfterOrigin) return "vision_text";
+      return inputOrigin || "text";
+    }
+
+    if (questionInput){
+      questionInput.addEventListener("input", ()=>{
+        if (suppressInputOriginTracking) return;
+        if (inputOrigin === "voice" || inputOrigin === "vision"){
+          inputEditedAfterOrigin = true;
+        } else {
+          inputOrigin = "text";
+          inputEditedAfterOrigin = false;
+        }
+      });
+    }
 
     function syncHistoryDivider(){
       if (!resultBody) return;
@@ -3639,7 +3684,7 @@ function stopStatusDots(){
       // Clear cards
       resultBody.innerHTML = "";
       // Clear typed fallback input
-      if (questionInput) questionInput.value = "";
+      setQueryInputValue("", "text");
       // reset repeat payload & buttons
       repeatPayload = null;
       setRepeatStop(false);
@@ -4005,7 +4050,7 @@ async function loadModelIndex(){
       } else {
         renderEmpty("Torque results will appear here.");
         // Clear typed fallback input
-        if (questionInput) questionInput.value = "";
+        setQueryInputValue("", "text");
       }
 
       // Save last selection for next visit
@@ -4755,6 +4800,155 @@ function tokenizeNormalized(s){
       }
     }
 
+    function itemDisplayName(item){
+      return String(item?.component_name || item?.id || "").trim();
+    }
+
+    function itemCommonName(item){
+      const raw = item?.common_name;
+      if (Array.isArray(raw)) return raw.map(x=>String(x || "").trim()).filter(Boolean).join(", ");
+      return String(raw || "").trim();
+    }
+
+    function candidateEventPayload(candidate, rank){
+      if (!candidate || candidate.__special || !candidate.item) return null;
+      return {
+        rank,
+        id: candidate.item.id || null,
+        name: itemDisplayName(candidate.item) || null,
+        common_name: itemCommonName(candidate.item) || null,
+        score: Number.isFinite(Number(candidate.score)) ? Number(candidate.score) : null
+      };
+    }
+
+    function buildTopCandidateMetadata(candidates, max=5){
+      return (Array.isArray(candidates) ? candidates : [])
+        .filter(c => c && !c.__special && c.item)
+        .slice(0, max)
+        .map((c, idx)=>candidateEventPayload(c, idx + 1))
+        .filter(Boolean);
+    }
+
+    function currentModelLabel(){
+      if (!CURRENT_MODEL_DISPLAY) return null;
+      return `${CURRENT_MODEL_DISPLAY.label || ""} ${CURRENT_MODEL_DISPLAY.years_label || ""}`.replace(/\s+/g, " ").trim() || null;
+    }
+
+    function getUsageValue(usage, key){
+      return usage && Object.prototype.hasOwnProperty.call(usage, key) ? usage[key] : null;
+    }
+
+    function normalizeSearchResultType(type){
+      const allowed = new Set([
+        "match",
+        "spec_match",
+        "multiple_matches",
+        "no_match",
+        "low_confidence",
+        "too_generic",
+        "needs_detail",
+        "usage_limit_reached",
+        "trial_expired",
+        "subscription_inactive",
+        "guest_limit",
+        "usage_confirm_failed",
+        "usage_blocked"
+      ]);
+      return allowed.has(type) ? type : "usage_blocked";
+    }
+
+    function buildSearchEventPayload(ctx){
+      const usage = ctx?.usage || ctx?.pre?.usage || null;
+      const best = ctx?.best || null;
+      const second = ctx?.second || null;
+      const candidates = Array.isArray(ctx?.candidates) ? ctx.candidates : [];
+      const metadata = Object.assign({}, ctx?.metadata || {});
+      const topCandidates = buildTopCandidateMetadata(candidates, 5);
+      if (topCandidates.length) metadata.top_candidates = topCandidates;
+      if (ctx?.routeIntent) metadata.route_intent = ctx.routeIntent;
+      if (Array.isArray(ctx?.partTerms)) metadata.part_terms_found = ctx.partTerms;
+      if (Array.isArray(ctx?.specTerms)) metadata.spec_terms_found = ctx.specTerms;
+      if (Array.isArray(ctx?.fastenerTerms)) metadata.fastener_terms_found = ctx.fastenerTerms;
+      if (ctx?.resultReason) metadata.result_reason = ctx.resultReason;
+
+      const isVision = ctx?.analysisSource === "vision";
+      const isRoute = ctx?.analysisSource === "route";
+      const matchedItem = ctx?.matchedItem || null;
+      const matchedSpec = ctx?.matchedSpec || null;
+
+      return {
+        user_id: CURRENT_USER?.id || null,
+        email: CURRENT_USER?.email || null,
+        source: ctx?.source || "text",
+        raw_query: ctx?.rawQuery || null,
+        normalized_query: ctx?.normalizedQuery || null,
+        analysis_source: ctx?.analysisSource || "local",
+        make_id: SELECTED_MAKE_ID || null,
+        make_label: SELECTED_MAKE_LABEL || CURRENT_MODEL_DISPLAY?.make || null,
+        model_id: CURRENT_MODEL_ID || null,
+        model_label: currentModelLabel(),
+        dataset_file: CURRENT_DATASET_FILE || null,
+        route_llm_query: isRoute ? (ctx?.routeLlmQuery || null) : null,
+        route_part_phrases: isRoute ? (Array.isArray(ctx?.routePartPhrases) ? ctx.routePartPhrases : []) : null,
+        route_llm_query_confidence: isRoute ? ctx?.routeLlmQueryConfidence ?? null : null,
+        route_part_phrases_confidence: isRoute ? ctx?.routePartPhrasesConfidence ?? null : null,
+        route_overall_confidence: isRoute ? ctx?.routeOverallConfidence ?? null : null,
+        vision_query: isVision ? (ctx?.visionQuery || null) : null,
+        vision_confidence: isVision ? ctx?.visionConfidence ?? null : null,
+        vision_warnings: isVision ? (Array.isArray(ctx?.visionWarnings) ? ctx.visionWarnings : []) : null,
+        result_type: normalizeSearchResultType(ctx?.resultType || "no_match"),
+        matched_item_id: matchedItem?.id || null,
+        matched_item_name: matchedItem ? (itemDisplayName(matchedItem) || null) : null,
+        matched_item_common_name: matchedItem ? (itemCommonName(matchedItem) || null) : null,
+        matched_spec_id: matchedSpec ? (matchedSpec.topic_id || matchedSpec.id || null) : null,
+        matched_spec_title: matchedSpec ? (matchedSpec.title || null) : null,
+        candidate_count: Number.isFinite(Number(ctx?.candidateCount)) ? Number(ctx.candidateCount) : (candidates.length || null),
+        best_score: best && Number.isFinite(Number(best.score)) ? Number(best.score) : null,
+        score_gap: best && second ? Number(best.score - second.score) : (Number.isFinite(Number(ctx?.scoreGap)) ? Number(ctx.scoreGap) : null),
+        search_consumed: !!ctx?.searchConsumed,
+        search_count_after: getUsageValue(usage, "used"),
+        search_limit: getUsageValue(usage, "limit"),
+        account_plan: getUsageValue(usage, "account_plan") || getUsageValue(usage, "level"),
+        account_status: getUsageValue(usage, "account_status"),
+        page_url: window.location.href,
+        browser_info: navigator.userAgent || "",
+        metadata
+      };
+    }
+
+    async function insertSearchEvent(ctx){
+      if (!supabaseAuth || !CURRENT_USER) return null;
+      try{
+        const payload = buildSearchEventPayload(ctx);
+        const { data, error } = await supabaseAuth
+          .from("search_events")
+          .insert(payload)
+          .select("id,metadata")
+          .single();
+        if (error) throw error;
+        return data || null;
+      }catch(e){
+        console.warn("[SAM search_events] insert failed:", e?.message || e);
+        return null;
+      }
+    }
+
+    async function updateSearchEventSelectedCandidate(eventId, selectedCandidate, baseMetadata){
+      if (!supabaseAuth || !CURRENT_USER || !eventId || !selectedCandidate) return;
+      try{
+        const metadata = Object.assign({}, baseMetadata || {});
+        metadata.selected_candidate = Object.assign({}, selectedCandidate, { selected_at: new Date().toISOString() });
+        const { error } = await supabaseAuth
+          .from("search_events")
+          .update({ metadata })
+          .eq("id", eventId)
+          .eq("user_id", CURRENT_USER.id);
+        if (error) throw error;
+      }catch(e){
+        console.warn("[SAM search_events] selected candidate update failed:", e?.message || e);
+      }
+    }
+
     function stopSpeak(){
       if ("speechSynthesis" in window){
         window.speechSynthesis.cancel();
@@ -5095,7 +5289,7 @@ if (hasInfoBlock){
 
 }
 
-    function renderAmbiguous(cands, info){
+    function renderAmbiguous(cands, info, opts={}){
       resultBody.className = "";
       const top = cands.slice(0, MAX_CANDIDATES_UI);
       let html = `
@@ -5145,7 +5339,11 @@ const thumb = refImgs.length ? getRefImageUrl(refImgs[0]) : "";
         b.addEventListener("click", (ev)=>{
           try{ ev.currentTarget.blur(); }catch(e){}
           const chosen = top[idx];
-          if (chosen && chosen.item) renderResult(chosen.item, {bestScore: chosen.score}, {scrollToResult:true});
+          if (chosen && chosen.item){
+            const selected = candidateEventPayload(chosen, idx + 1);
+            updateSearchEventSelectedCandidate(opts.searchEventId, selected, opts.eventMetadata);
+            renderResult(chosen.item, {bestScore: chosen.score}, {scrollToResult:true});
+          }
         });
       });
     }
@@ -5181,8 +5379,8 @@ function escapeHtml(s){
     // =========================
     // Z2: Requery hint (local-only)
     // =========================
-    function showRequeryHint(msg){
-      const text = "Enter more detail.";
+    function showRequeryHint(){
+      const text = "Add a specific part name.";
       const el = document.getElementById("fallbackNoticeText")
         || document.getElementById("fallbackNotice")
         || document.getElementById("fallbackHint")
@@ -5242,6 +5440,7 @@ async function handleQuery(raw, __preRoute){
       await loadLexiconOnce();
 
       const localNq = normalizeQuery(q);
+      const requestSource = getRequestSource();
 
       // Empty query guard (avoid unnecessary /api/route calls; check normalized query)
       if (!localNq){
@@ -5263,6 +5462,7 @@ async function handleQuery(raw, __preRoute){
       if (pre?.__accessBlocked){
         return;
       }
+      const analysisSource = pre?.__analysis_source || (__preRoute ? "vision" : (pre ? "route" : "local"));
 
       // Decide which query string to use for trigger scanning (spec/fast/part)
       let llmQuery = "";
@@ -5351,6 +5551,26 @@ async function handleQuery(raw, __preRoute){
       // Scoring query: use the SAME gate as triggerQuery.
       const nq = (llmAccepted && llmNq && llmNq.trim()) ? llmNq : localNq;
 
+      const baseSearchEvent = (overrides={}) => Object.assign({
+        source: requestSource,
+        rawQuery: q,
+        normalizedQuery: nq || localNq,
+        analysisSource,
+        pre,
+        routeLlmQuery: pre?.llm_query || "",
+        routePartPhrases: partPhrasesRaw,
+        routeLlmQueryConfidence: qConf,
+        routePartPhrasesConfidence: pConf,
+        routeOverallConfidence: oConf,
+        visionQuery: pre?.vision_query || "",
+        visionConfidence: pre?.vision_confidence ?? null,
+        visionWarnings: Array.isArray(pre?.vision_warnings) ? pre.vision_warnings : [],
+        routeIntent,
+        partTerms: part_terms_found,
+        specTerms: spec_terms_found,
+        fastenerTerms: fastener_terms_found
+      }, overrides);
+
 // =========================
       // Debug: decision summary (DEV ONLY)
       // =========================
@@ -5386,7 +5606,13 @@ async function handleQuery(raw, __preRoute){
       // Z2: intent unknown OR no item candidates -> ask user to requery with more info.
       // =========================
       if (!hasItems || routeIntent === "unknown"){
-        showRequeryHint("Ask again w/ more information.");
+        insertSearchEvent(baseSearchEvent({
+          resultType: "needs_detail",
+          searchConsumed: false,
+          candidateCount: 0,
+          resultReason: "missing_item_candidate_or_unknown_intent"
+        }));
+        showRequeryHint();
         return;
       }
 // // Dataset presence checks (intent-based)
@@ -5395,7 +5621,6 @@ async function handleQuery(raw, __preRoute){
 
       if (isTorqueIntent && !torqueData.length){
         setStatus("Torque dataset not loaded yet.", true, true);
-        renderEmpty("Torque dataset not loaded yet.");
         return;
       }
 
@@ -5404,7 +5629,6 @@ async function handleQuery(raw, __preRoute){
         const hasSpecs = !!(sp && Array.isArray(sp.specs) && sp.specs.length);
         if (!hasSpecs){
           setStatus("Service dataset not loaded yet.", true, true);
-          renderEmpty("Service specs dataset not loaded yet.");
           return;
         }
       }
@@ -5426,7 +5650,25 @@ async function handleQuery(raw, __preRoute){
             const specCandidates = findSpecCandidates(specQuery);
             if (specCandidates.length){
               const bestSpec = specCandidates[0].spec;
-              if (!(await consumeSuccessfulSearchUsage())) return;
+              const usageResult = await consumeSuccessfulSearchUsage();
+              if (!usageResult.ok){
+                insertSearchEvent(baseSearchEvent({
+                  resultType: usageResult.reason || "usage_blocked",
+                  matchedSpec: bestSpec,
+                  searchConsumed: false,
+                  usage: usageResult.usage || pre?.usage || null,
+                  resultReason: "usage_not_confirmed"
+                }));
+                return;
+              }
+              insertSearchEvent(baseSearchEvent({
+                resultType: "spec_match",
+                matchedSpec: bestSpec,
+                searchConsumed: !!usageResult.consumed,
+                usage: usageResult.usage || pre?.usage || null,
+                candidateCount: specCandidates.length,
+                best: { score: specCandidates[0].score }
+              }));
               setStatus("Match found.", true, false);
               renderSpecsResult(bestSpec);
               logQuery({ type: "spec", query: q, normalized: specQuery, match: (bestSpec.topic_id || bestSpec.id || bestSpec.title || "") });
@@ -5436,13 +5678,26 @@ async function handleQuery(raw, __preRoute){
           if (DEBUG_ROUTE){
             console.warn("[TESA spec] spec_lookup gated but no spec match; asking user to rephrase.");
           }
-          showRequeryHint("I couldn't find that spec. Try asking with more detail.");
+          insertSearchEvent(baseSearchEvent({
+            resultType: "no_match",
+            searchConsumed: false,
+            candidateCount: 0,
+            resultReason: "spec_lookup_no_match"
+          }));
+          showRequeryHint();
           return;
         }catch(e){
           if (DEBUG_ROUTE){
             console.warn("[TESA spec] spec lookup failed; asking user to rephrase.", e);
           }
-          showRequeryHint("I couldn't find that spec. Try asking with more detail.");
+          insertSearchEvent(baseSearchEvent({
+            resultType: "no_match",
+            searchConsumed: false,
+            candidateCount: 0,
+            metadata: { error: e?.message || String(e || "") },
+            resultReason: "spec_lookup_failed"
+          }));
+          showRequeryHint();
           return;
         }
       }
@@ -5452,8 +5707,13 @@ async function handleQuery(raw, __preRoute){
         if (DEBUG_ROUTE){
           console.log(`[TESA torque] not gated (intent=${routeIntent}).`);
         }
-        showRequeryHint("Ask again w/ more information.");
-        renderEmpty("Try asking about torque or spec with more detail.");
+        insertSearchEvent(baseSearchEvent({
+          resultType: "needs_detail",
+          searchConsumed: false,
+          candidateCount: 0,
+          resultReason: "not_torque_intent"
+        }));
+        showRequeryHint();
         return;
       }
 
@@ -5480,16 +5740,25 @@ async function handleQuery(raw, __preRoute){
 
       // Rail #1: too generic
       if (candidates.length && candidates[0].__special === "NO_SIG_WORDS"){
-        setStatus("Too generic. Add a part name.", true, true);
-        renderEmpty("Too generic. Include a part name (example: “rear brake caliper”).");
+        insertSearchEvent(baseSearchEvent({
+          resultType: "too_generic",
+          searchConsumed: false,
+          candidateCount: 0,
+          resultReason: "no_significant_words"
+        }));
+        setStatus("Add a specific part name.", true, true);
         speak("Too generic. Please add more detail.");
         return;
       }
 
 // No torque candidates
 if (!candidates.length){
+    insertSearchEvent(baseSearchEvent({
+      resultType: "no_match",
+      searchConsumed: false,
+      candidateCount: 0
+    }));
     setStatus("No match in dataset.", true, true);
-    renderEmpty("No match. This part may not be in the current dataset.");
     speak("No matching data found.");
     logQuery({ type: "none", query: q, normalized: nq, match: "" });
     return;
@@ -5502,8 +5771,16 @@ if (!candidates.length){
 
       // Rail #2: low score → refuse
       if (bestScore < MIN_SCORE_TO_ANSWER){
-        setStatus("Low confidence. Be more specific.", true, true);
-        renderEmpty("No confident match. Try a more specific part name (add location/system).");
+        insertSearchEvent(baseSearchEvent({
+          resultType: "low_confidence",
+          searchConsumed: false,
+          candidates,
+          candidateCount: candidates.filter(c=>!c.__special).length,
+          best,
+          second,
+          scoreGap: gap
+        }));
+        setStatus("Try a more specific part name.", true, true);
         speak("No confident match. Please add more detail.");
         logQuery({ type: "none", query: q, normalized: nq, match: "" });
         return;
@@ -5517,20 +5794,99 @@ if (!candidates.length){
 
         // If filtering leaves only one meaningful candidate, treat it as a single match.
         if (meaningful.length <= 1){
-          if (!(await consumeSuccessfulSearchUsage())) return;
+          const usageResult = await consumeSuccessfulSearchUsage();
+          if (!usageResult.ok){
+            insertSearchEvent(baseSearchEvent({
+              resultType: usageResult.reason || "usage_blocked",
+              matchedItem: candidates[0].item,
+              candidates,
+              candidateCount: candidates.filter(c=>!c.__special).length,
+              best,
+              second,
+              scoreGap: gap,
+              searchConsumed: false,
+              usage: usageResult.usage || pre?.usage || null,
+              resultReason: "usage_not_confirmed"
+            }));
+            return;
+          }
+          insertSearchEvent(baseSearchEvent({
+            resultType: "match",
+            matchedItem: candidates[0].item,
+            candidates,
+            candidateCount: candidates.filter(c=>!c.__special).length,
+            best,
+            second,
+            scoreGap: gap,
+            searchConsumed: !!usageResult.consumed,
+            usage: usageResult.usage || pre?.usage || null
+          }));
           setStatus("Matched.", true, true);
           renderResult(candidates[0].item);
           logQuery({ type: "torque", query: q, normalized: nq, match: candidates[0].item.id || candidates[0].item.component_name || "" });
           return;
         }
 
-        if (!(await consumeSuccessfulSearchUsage())) return;
+        const usageResult = await consumeSuccessfulSearchUsage();
+        if (!usageResult.ok){
+          insertSearchEvent(baseSearchEvent({
+            resultType: usageResult.reason || "usage_blocked",
+            candidates: meaningful,
+            candidateCount: meaningful.length,
+            best,
+            second,
+            scoreGap: gap,
+            searchConsumed: false,
+            usage: usageResult.usage || pre?.usage || null,
+            resultReason: "usage_not_confirmed"
+          }));
+          return;
+        }
+        const eventData = await insertSearchEvent(baseSearchEvent({
+          resultType: "multiple_matches",
+          candidates: meaningful,
+          candidateCount: meaningful.length,
+          best,
+          second,
+          scoreGap: gap,
+          searchConsumed: !!usageResult.consumed,
+          usage: usageResult.usage || pre?.usage || null
+        }));
         setStatus("Multiple matches found.", true, true);
-        renderAmbiguous(meaningful, {bestScore, gap, multiMinScore: MULTI_MIN_SCORE});
+        renderAmbiguous(meaningful, {bestScore, gap, multiMinScore: MULTI_MIN_SCORE}, {
+          searchEventId: eventData?.id || null,
+          eventMetadata: eventData?.metadata || null
+        });
         return;
       }
 // Confident
-      if (!(await consumeSuccessfulSearchUsage())) return;
+      const usageResult = await consumeSuccessfulSearchUsage();
+      if (!usageResult.ok){
+        insertSearchEvent(baseSearchEvent({
+          resultType: usageResult.reason || "usage_blocked",
+          matchedItem: best.item,
+          candidates,
+          candidateCount: candidates.filter(c=>!c.__special).length,
+          best,
+          second,
+          scoreGap: gap,
+          searchConsumed: false,
+          usage: usageResult.usage || pre?.usage || null,
+          resultReason: "usage_not_confirmed"
+        }));
+        return;
+      }
+      insertSearchEvent(baseSearchEvent({
+        resultType: "match",
+        matchedItem: best.item,
+        candidates,
+        candidateCount: candidates.filter(c=>!c.__special).length,
+        best,
+        second,
+        scoreGap: gap,
+        searchConsumed: !!usageResult.consumed,
+        usage: usageResult.usage || pre?.usage || null
+      }));
       setStatus("Match found.", true, false);
       renderResult(best.item, {bestScore, gap});
       logQuery({ type: "torque", query: q, normalized: nq, match: (best.item && (best.item.component_name || best.item.id || "")) });
@@ -5628,7 +5984,7 @@ function initSpeech(){
         const t = String(voiceTranscript || "").trim();
         if (t && !voiceRequestSubmitted){
           voiceRequestSubmitted = true;
-          questionInput.value = t;
+          setQueryInputValue(t, "voice");
           handleQuery(t);
           return;
         }
@@ -5643,13 +5999,13 @@ function initSpeech(){
         const t = parts.join(" ").replace(/\s+/g, " ").trim();
         if (t){
           voiceTranscript = t;
-          questionInput.value = t;
+          setQueryInputValue(t, "voice");
         }
       };
     }
 
     micBig.addEventListener("click", ()=>{
-      if (questionInput) questionInput.value = "";
+      setQueryInputValue("", "text");
 
       if (!recognition) initSpeech();
       if (!recognition) return;
