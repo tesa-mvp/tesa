@@ -56,6 +56,10 @@ create table if not exists public.search_events (
   account_plan text,
   account_status text,
 
+  image_bucket text,
+  image_path text,
+  image_size_bytes integer,
+
   page_url text,
   browser_info text,
   metadata jsonb not null default '{}'::jsonb
