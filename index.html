@@ -2073,8 +2073,14 @@ body.authLocked .wrap{
     function showAccountView(){
       setAuthTitle("Settings");
       if (authAccountEmail) authAccountEmail.style.display = CURRENT_USER ? "" : "none";
-      if (authAccountSummary) authAccountSummary.classList.toggle("show", !!CURRENT_USER);
-      if (authAccountNotice) authAccountNotice.classList.toggle("show", !!ACCOUNT_ALERT?.message);
+      if (authAccountSummary) {
+        authAccountSummary.style.display = "";
+        authAccountSummary.classList.toggle("show", !!CURRENT_USER);
+      }
+      if (authAccountNotice) {
+        authAccountNotice.style.display = "";
+        authAccountNotice.classList.toggle("show", !!ACCOUNT_ALERT?.message);
+      }
       if (authAccountActions) authAccountActions.classList.toggle("show", !!CURRENT_USER);
       if (authContactView) authContactView.classList.remove("show");
       if (authHomeScreenView) authHomeScreenView.classList.remove("show");
@@ -4455,8 +4461,14 @@ async function initApp(){
       if (!CURRENT_USER) return;
       setAuthTitle("Add SAM. to Home Screen");
       if (authAccountEmail) authAccountEmail.style.display = "none";
-      if (authAccountSummary) authAccountSummary.classList.remove("show");
-      if (authAccountNotice) authAccountNotice.classList.remove("show");
+      if (authAccountSummary) {
+        authAccountSummary.classList.remove("show");
+        authAccountSummary.style.display = "none";
+      }
+      if (authAccountNotice) {
+        authAccountNotice.classList.remove("show");
+        authAccountNotice.style.display = "none";
+      }
       if (authAccountActions) authAccountActions.classList.remove("show");
       if (authInstallRow) authInstallRow.classList.remove("show");
       if (authContactView) authContactView.classList.remove("show");
@@ -4476,10 +4488,10 @@ async function initApp(){
         ], "Safari may show these actions in a different order depending on your toolbar settings.");
       } else {
         renderInstallSteps([
-          { icon:"menu-vertical", text:"Tap the browser menu." },
-          { icon:"home", text:"Tap Add to Home screen or Install app." },
-          { icon:"add", text:"Tap Add or Install." }
-        ], "If you do not see the option, open SAM. in Chrome and try again.");
+          { icon:"menu-vertical", text:"Open Chrome's menu." },
+          { icon:"home", text:"If available, tap Install app or Add to Home screen." },
+          { icon:"add", text:"If you do not see it, refresh this page and try again." }
+        ], "Chrome only shows the install option after the app is ready to install.");
       }
     }
 
