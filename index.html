@@ -4,6 +4,13 @@
   <meta charset="UTF-8" />
   <title>SAM. – Torque Spec Assistant</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#05060a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="SAM." />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
 
   <style>
     :root{
@@ -1322,7 +1329,7 @@ body.authLocked .wrap{
 .resultCard{
   border-radius:18px;
   background:rgba(255,255,255,0.075);
-  border:1px solid var(--border-muted);
+  border:1px solid rgba(255,255,255,.18);
   box-shadow: 0 10px 30px rgba(0,0,0,0.35);
   padding:14px 14px 16px 14px;
   scroll-margin-top:120px;
@@ -1348,7 +1355,7 @@ body.authLocked .wrap{
 .historyDivider::after{
   content:"";
   flex:1;
-  border-top:1px dashed rgba(255,255,255,.24);
+  border-top:1px dashed rgba(255,255,255,.42);
 }
 .historyDivider .historyHint{
   color:var(--muted);
@@ -6229,6 +6236,14 @@ function initSpeech(){
       }
       recognition.start();
     });
+
+    if ("serviceWorker" in navigator && location.protocol === "https:"){
+      window.addEventListener("load", ()=>{
+        navigator.serviceWorker.register("/sw.js").catch((e)=>{
+          console.warn("[SAM] service worker registration failed:", e?.message || e);
+        });
+      });
+    }
 
     // Init
     bootstrapApp().catch((e)=>{ console.error(e); });
