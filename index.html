@@ -2286,7 +2286,6 @@ body.authLocked .wrap{
         showGuestLimitAuth();
         return false;
       }
-      const next = setGuestQueryCount(used + 1);
       return true;
     }
 
@@ -3281,6 +3280,54 @@ llm_query: (typeof data?.llm_query === "string") ? data.llm_query : "",
       if (canUseRouteCache) __routeInFlight.set(cacheKey, routePromise);
       return await routePromise;
 }
+
+    async function consumeSuccessfulSearchUsage(){
+      if (GUEST_MODE && !CURRENT_USER){
+        const used = getGuestQueryCount();
+        if (used >= GUEST_QUERY_LIMIT){
+          showGuestLimitAuth();
+          return false;
+        }
+        setGuestQueryCount(used + 1);
+        return true;
+      }
+
+      if (!CURRENT_USER) return true;
+
+      const accessToken = await getSupabaseAccessToken();
+      if (!accessToken){
+        setStatus("Search couldn't be confirmed. Try again.", true, true);
+        return false;
+      }
+
+      try{
+        const r = await withTimeout(fetch(`${getRouteApiBase()}/api/usage-consume`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`
+          },
+          body: JSON.stringify({ reason: "successful_result" })
+        }), ROUTE_TIMEOUT_MS);
+
+        const data = await r.json().catch(()=>null);
+        if (!r.ok){
+          const code = data && data.error;
+          if (["usage_limit_reached", "trial_expired", "subscription_inactive"].includes(code)){
+            handleAccountAccessBlock(code, data?.message || "", data?.usage || null);
+          } else {
+            setStatus("Search couldn't be confirmed. Try again.", true, true);
+          }
+          return false;
+        }
+        loadAccountSummary().catch((e)=>console.error(e));
+        return true;
+      }catch(e){
+        console.warn("[TESA usage] consume failed:", e?.message || e);
+        setStatus("Search couldn't be confirmed. Try again.", true, true);
+        return false;
+      }
+    }
 
     const MIN_SCORE_TO_ANSWER = 40;   // score too low -> refuse (raw score; no 100 cap)
     const MIN_GAP_TO_ANSWER   = 15;  // best-second gap too small -> ambiguous (raw score)
@@ -5379,6 +5426,7 @@ async function handleQuery(raw, __preRoute){
             const specCandidates = findSpecCandidates(specQuery);
             if (specCandidates.length){
               const bestSpec = specCandidates[0].spec;
+              if (!(await consumeSuccessfulSearchUsage())) return;
               setStatus("Match found.", true, false);
               renderSpecsResult(bestSpec);
               logQuery({ type: "spec", query: q, normalized: specQuery, match: (bestSpec.topic_id || bestSpec.id || bestSpec.title || "") });
@@ -5469,17 +5517,20 @@ if (!candidates.length){
 
         // If filtering leaves only one meaningful candidate, treat it as a single match.
         if (meaningful.length <= 1){
+          if (!(await consumeSuccessfulSearchUsage())) return;
           setStatus("Matched.", true, true);
           renderResult(candidates[0].item);
           logQuery({ type: "torque", query: q, normalized: nq, match: candidates[0].item.id || candidates[0].item.component_name || "" });
           return;
         }
 
+        if (!(await consumeSuccessfulSearchUsage())) return;
         setStatus("Multiple matches found.", true, true);
         renderAmbiguous(meaningful, {bestScore, gap, multiMinScore: MULTI_MIN_SCORE});
         return;
       }
 // Confident
+      if (!(await consumeSuccessfulSearchUsage())) return;
       setStatus("Match found.", true, false);
       renderResult(best.item, {bestScore, gap});
       logQuery({ type: "torque", query: q, normalized: nq, match: (best.item && (best.item.component_name || best.item.id || "")) });
