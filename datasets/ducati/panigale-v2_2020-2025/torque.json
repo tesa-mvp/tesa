@@ -3442,7 +3442,8 @@
       "item_number": "Item #10",
       "common_name": [
         "clutch hub",
-        "clutch nut"
+        "clutch nut",
+	"clutch basket"
       ],
       "ref_images": [
         "nut_clutch_hub_1.png",
