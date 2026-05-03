@@ -10,7 +10,9 @@
       --bg:#05060a;
       --panel:#0b0d14;
       --panel2:#070813;
-      --border:#232530;
+      --border:#343846;
+      --border-soft:rgba(255,255,255,.12);
+      --border-muted:rgba(255,255,255,.09);
       --text:#f5f5f7;
       --sub:#a5a7b3;
       --muted:#6f7380;
@@ -86,7 +88,7 @@
     .inputCard{
       padding:22px 20px 18px;
       min-height:178px;
-      border-color:#34394a;
+      border-color:#454b5e;
       box-shadow:0 18px 45px rgba(0,0,0,.6), 0 0 0 1px rgba(79,140,255,.08) inset;
     }
 
@@ -210,8 +212,8 @@
     .q{
       flex:1;
       border-radius:999px;
-      border:1px solid #34394a;
-      background:rgba(5,6,12,.9);
+      border:1px solid #5a6278;
+      background:rgba(34,38,53,.96);
       padding:0 15px;
       color:var(--text);
       font-size:16px;
@@ -220,7 +222,7 @@
       height:50px;
     }
     .q:focus{border-color:rgba(79,140,255,.7);box-shadow:0 0 0 3px rgba(79,140,255,.12)}
-    .q::placeholder{color:#8b91a3}
+    .q::placeholder{color:#c2c8d6}
     .send{
       width:50px;
       min-width:50px;
@@ -263,7 +265,7 @@
       gap:8px;
       align-items:center;
       padding-right:10px;
-      border-right:1px solid rgba(255,255,255,.10);
+      border-right:1px solid var(--border-soft);
     }
     .pillBtn{
       padding:7px 10px;
@@ -315,7 +317,7 @@
       color:var(--sub);
     }
     .voiceReadToggle:hover{
-      border-color:#3a3d49;
+      border-color:#4b5061;
     }
     .voiceReadToggle .audioIconOn{
       display:none;
@@ -387,7 +389,7 @@
     .notes{
       margin-top:10px;
       padding-top:10px;
-      border-top:1px solid rgba(255,255,255,.06);
+      border-top:1px solid var(--border-muted);
       display:flex;
       flex-direction:column;
       gap:6px;
@@ -420,7 +422,7 @@
       margin-top: 10px;
       padding: 8px 10px;
       border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.08);
+      border: 1px solid var(--border-muted);
       background: rgba(255,255,255,.035);
       text-align: left;
       display: flex;
@@ -442,7 +444,7 @@
     .stepList{
       margin-top: 12px;
       padding-top: 12px;
-      border-top: 1px solid rgba(255,255,255,.06);
+      border-top: 1px solid var(--border-muted);
       display: flex;
       flex-direction: column;
       gap: 8px;
@@ -453,7 +455,7 @@
       align-items: baseline;
       padding: 8px 10px;
       border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.06);
+      border: 1px solid var(--border-muted);
       background: rgba(7,9,16,.55);
     }
     .stepTag{
@@ -478,7 +480,7 @@
     /* Multi-step: one container with row dividers */
     .stepList.multi{
       padding:4px 0;
-      border:1px solid rgba(255,255,255,.08);
+      border:1px solid var(--border-muted);
       border-radius:14px;
       background:rgba(255,255,255,.035);
       gap:0;
@@ -515,7 +517,7 @@
       margin-top:10px;
       padding:10px 12px;
       border-radius:14px;
-      border:1px solid rgba(255,255,255,.10);
+      border:1px solid var(--border-soft);
       background:rgba(7,9,16,.55);
       display:flex;
       align-items:center;
@@ -539,7 +541,7 @@
       margin-top: 10px;
       padding: 10px 12px;
       border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.10);
+      border: 1px solid var(--border-soft);
       background: rgba(7,9,16,.55);
       text-align: left;
       display: flex;
@@ -608,7 +610,7 @@
       margin-top:10px;
       padding:10px 12px;
       border-radius:12px;
-      border:1px solid rgba(255,255,255,.08);
+      border:1px solid var(--border-muted);
       background: rgba(7,9,16,.45);
       font-size:12px;
       line-height:1.35;
@@ -628,7 +630,7 @@
       width:100%;
       max-width:100%;
       border-radius:14px;
-      border:1px solid rgba(255,255,255,.10);
+      border:1px solid var(--border-soft);
       background: rgba(7,9,16,.35);
     }
 
@@ -660,7 +662,7 @@
       justify-content:space-between;
       gap:10px;
       padding:12px 14px;
-      border-bottom:1px solid rgba(255,255,255,.06);
+      border-bottom:1px solid var(--border-muted);
     }
     
     .sheetLeft{
@@ -719,7 +721,7 @@
       width:100%;
       text-align:left;
       border-radius:14px;
-      border:1px solid rgba(255,255,255,.08);
+      border:1px solid var(--border-muted);
       background:rgba(7,9,16,.55);
       color:var(--text);
       padding:10px 12px;
@@ -858,7 +860,7 @@
   justify-content:space-between;
   gap:10px;
   padding:8px 10px;
-  border:1px solid rgba(255,255,255,.06);
+  border:1px solid var(--border-muted);
   border-radius:12px;
   background:rgba(255,255,255,.03);
 }
@@ -1047,7 +1049,7 @@ body.authLocked .wrap{
 .authAccountSummary{
   display:none;
   margin:0 0 16px;
-  border:1px solid rgba(255,255,255,.08);
+  border:1px solid var(--border-muted);
   border-radius:12px;
   background:rgba(255,255,255,.035);
   overflow:hidden;
@@ -1064,7 +1066,7 @@ body.authLocked .wrap{
   line-height:1.35;
 }
 .authInfoRow + .authInfoRow{
-  border-top:1px solid rgba(255,255,255,.07);
+  border-top:1px solid var(--border-muted);
 }
 .authInfoLabel{
   color:var(--sub);
@@ -1110,7 +1112,7 @@ body.authLocked .wrap{
 .authContactMessage{
   width:100%;
   border-radius:12px;
-  border:1px solid #34394a;
+  border:1px solid #454b5e;
   background:rgba(5,6,12,.9);
   color:var(--text);
   font-size:16px;
@@ -1165,7 +1167,7 @@ body.authLocked .wrap{
   width:100%;
   height:46px;
   border-radius:12px;
-  border:1px solid #34394a;
+  border:1px solid #454b5e;
   background:rgba(5,6,12,.9);
   color:var(--text);
   padding:0 12px;
@@ -1319,7 +1321,8 @@ body.authLocked .wrap{
 }
 .resultCard{
   border-radius:18px;
-  background:rgba(255,255,255,0.04);
+  background:rgba(255,255,255,0.075);
+  border:1px solid var(--border-muted);
   box-shadow: 0 10px 30px rgba(0,0,0,0.35);
   padding:14px 14px 16px 14px;
   scroll-margin-top:120px;
@@ -1362,7 +1365,7 @@ body.authLocked .wrap{
 }
 .resultCard.previous .candBtn{
   background:rgba(7,9,16,.45);
-  border-color:rgba(255,255,255,.06);
+  border-color:var(--border-muted);
 }
 .resultCard.previous .candThumb{
   filter:grayscale(.15) brightness(.75);
@@ -1399,7 +1402,7 @@ body.authLocked .wrap{
   width:38px;
   height:20px;
   border-radius:999px;
-  border:1px solid rgba(255,255,255,.10);
+  border:1px solid var(--border-soft);
   background:rgba(255,255,255,.08);
   position:relative;
   cursor:pointer;
@@ -3431,21 +3434,35 @@ llm_query: (typeof data?.llm_query === "string") ? data.llm_query : "",
 const modelBadgeEl = document.getElementById("modelBadge");
 const statusLine = document.getElementById("statusLine");
 let __statusDotsTimer = null;
-function startStatusDots(baseText){
+let __statusMessageTimer = null;
+function startStatusDots(baseText, opts={}){
   stopStatusDots();
   if (!statusLine) return;
   const frames = ["", ".", "..", "..."];
   let i = 0;
+  let currentBase = baseText;
   setStatus(baseText + frames[i], true, false);
+  if (opts.nextText){
+    const delay = Number.isFinite(Number(opts.delayMs)) ? Number(opts.delayMs) : 3500;
+    __statusMessageTimer = setTimeout(()=>{
+      currentBase = opts.nextText;
+      i = 0;
+      setStatus(currentBase + frames[i], true, false);
+    }, delay);
+  }
   __statusDotsTimer = setInterval(() => {
     i = (i + 1) % frames.length;
-    setStatus(baseText + frames[i], true, false);
+    setStatus(currentBase + frames[i], true, false);
   }, 380);
 }
 function stopStatusDots(){
   if (__statusDotsTimer){
     clearInterval(__statusDotsTimer);
     __statusDotsTimer = null;
+  }
+  if (__statusMessageTimer){
+    clearTimeout(__statusMessageTimer);
+    __statusMessageTimer = null;
   }
 }
 
@@ -3523,7 +3540,10 @@ function stopStatusDots(){
         let visionImageInfo = null;
         try{
           usePhotoBtn.disabled = true;
-          startStatusDots("AI is analyzing the photo");
+          startStatusDots("AI is analyzing the photo", {
+            nextText: "Finishing analysis",
+            delayMs: 3500
+          });
 
           // Downscale/compress to reduce payload size and avoid frequent timeouts.
           let image_data_url = await fileToVisionDataUrl(lastPhotoFile, 1280, 0.82);
@@ -4225,9 +4245,14 @@ async function initApp(){
     let __tesaWorkingTimer = null;
     function startWorkingIndicator(){
       if (__tesaWorkingTimer) return;
-      const base = "AI is analyzing your request";
+      let base = "AI is analyzing your request";
       let dots = 0;
       setStatus(base + "...", true, false);
+      __statusMessageTimer = setTimeout(()=>{
+        base = "Finishing analysis";
+        dots = 0;
+        setStatus(base + "...", true, false);
+      }, 3500);
       __tesaWorkingTimer = setInterval(()=>{
         dots = (dots + 1) % 4; // 0..3
         setStatus(base + (dots ? ".".repeat(dots) : ""), true, false);
@@ -4237,6 +4262,10 @@ async function initApp(){
       if (!__tesaWorkingTimer) return;
       clearInterval(__tesaWorkingTimer);
       __tesaWorkingTimer = null;
+      if (__statusMessageTimer){
+        clearTimeout(__statusMessageTimer);
+        __statusMessageTimer = null;
+      }
     }
 
 
@@ -4425,7 +4454,7 @@ try{
   try{ await loadSpecsDataIfNeeded(); } catch(e){}const make = meta.make || "Unknown";
   const model = meta.model || "Model";
   const yFrom = meta.year_from ?? "";
-  const yTo   = meta.year_to ?? "";  setStatus(`Ready. (${torqueData.length} items)`, true, false);
+  const yTo   = meta.year_to ?? "";  setStatus(`Ready. (${torqueData.length} parts)`, true, false);
 } catch (e){
   console.error(e);
   setStatus("Failed to load dataset.", true, true);
@@ -5476,8 +5505,7 @@ if (hasInfoBlock){
       resultBody.className = "";
       const top = cands.slice(0, MAX_CANDIDATES_UI);
       let html = `
-        <div class="partName">Multiple matches</div>
-        <div class="subLine">Select the correct part.</div>
+        <div class="partName">Possible part matches</div>
       `;
 
       html += `<div class="candidates">` + top.map(({item, score})=>{
@@ -6004,7 +6032,7 @@ if (!candidates.length){
             searchConsumed: !!usageResult.consumed,
             usage: usageResult.usage || pre?.usage || null
           }));
-          setStatus("Matched.", true, true);
+          setStatus("Matched.", true, false);
           renderResult(candidates[0].item);
           logQuery({ type: "torque", query: q, normalized: nq, match: candidates[0].item.id || candidates[0].item.component_name || "" });
           return;
@@ -6035,7 +6063,7 @@ if (!candidates.length){
           searchConsumed: !!usageResult.consumed,
           usage: usageResult.usage || pre?.usage || null
         }));
-        setStatus("Multiple matches found.", true, true);
+        setStatus("Multiple matches found.\nSelect the correct part below.", true, false);
         renderAmbiguous(meaningful, {bestScore, gap, multiMinScore: MULTI_MIN_SCORE}, {
           searchEventId: eventData?.id || null,
           eventMetadata: eventData?.metadata || null
