@@ -6218,7 +6218,7 @@ async function handleQuery(raw, __preRoute){
           resultReason: "no_significant_words"
         }));
         setStatus("Add a specific part name.", true, true);
-        speak("Too generic. Please add more detail.");
+        speak("Please enter a more specific part name.");
         return;
       }
 
@@ -6252,7 +6252,7 @@ if (!candidates.length){
           scoreGap: gap
         }));
         setStatus("Try a more specific part name.", true, true);
-        speak("No confident match. Please add more detail.");
+        speak("Please enter a more specific part name.");
         logQuery({ type: "none", query: q, normalized: nq, match: "" });
         return;
       }
