@@ -1932,6 +1932,12 @@ body.authLocked .wrap{
       if (kind === "rounded-plus"){
         return `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm5 4v3H8v2h3v3h2v-3h3v-2h-3V8h-2z"/></svg>`;
       }
+      if (kind === "phone-install"){
+        return `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm0 3v14h8V5H8zm3 6h2V7h2v4h2l-3 4-3-4z"/></svg>`;
+      }
+      if (kind === "phone-home"){
+        return `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 2h8a2 2 0 0 1 2 2v6h-2V5H8v14h8v-3h2v4a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm7 7h5v5h-2v-1.6l-5.3 5.3-1.4-1.4 5.3-5.3H15V9z"/></svg>`;
+      }
       if (kind === "add"){
         return `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6V5z"/></svg>`;
       }
@@ -2415,6 +2421,7 @@ body.authLocked .wrap{
     }
 
     function setAuthUi(session){
+      const wasSignedIn = !!CURRENT_USER;
       CURRENT_USER = session?.user || null;
       const signedIn = !!CURRENT_USER;
       if (signedIn) GUEST_MODE = false;
@@ -2450,7 +2457,13 @@ body.authLocked .wrap{
       }
       if (signedIn && authMode !== "update_password"){
         setAuthMessage("");
-        closeAuthOverlay();
+        const auxiliaryViewOpen = !!(
+          authContactView?.classList.contains("show") ||
+          authHomeScreenView?.classList.contains("show")
+        );
+        if (!wasSignedIn && !auxiliaryViewOpen){
+          closeAuthOverlay();
+        }
         loadAccountSummary().catch((e)=>console.error(e));
       } else {
         setAuthMode(authMode);
@@ -4489,9 +4502,9 @@ async function initApp(){
       } else {
         renderInstallSteps([
           { icon:"menu-vertical", text:"Open Chrome's menu." },
-          { icon:"home", text:"If available, tap Install app or Add to Home screen." },
-          { icon:"add", text:"If you do not see it, refresh this page and try again." }
-        ], "Chrome only shows the install option after the app is ready to install.");
+          { icon:"phone-install", text:"If available, tap Install app." },
+          { icon:"phone-home", text:"Or tap Add to Home Screen." }
+        ], "Chrome may show either option depending on your device.");
       }
     }
 
