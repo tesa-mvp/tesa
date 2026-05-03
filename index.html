@@ -3503,6 +3503,8 @@ function stopStatusDots(){
           return;
         }
 
+        let visionSearchEvent = null;
+        let visionImageInfo = null;
         try{
           usePhotoBtn.disabled = true;
           startStatusDots("AI is analyzing the photo");
@@ -3510,6 +3512,19 @@ function stopStatusDots(){
           // Downscale/compress to reduce payload size and avoid frequent timeouts.
           let image_data_url = await fileToVisionDataUrl(lastPhotoFile, 1280, 0.82);
           if (!image_data_url) image_data_url = await fileToDataUrl(lastPhotoFile);
+
+          visionSearchEvent = await insertSearchEvent({
+            source: "vision",
+            rawQuery: null,
+            normalizedQuery: null,
+            analysisSource: "vision",
+            resultType: "needs_detail",
+            searchConsumed: false,
+            metadata: { event_stage: "photo_analyze_clicked" }
+          });
+          if (visionSearchEvent?.id){
+            visionImageInfo = await uploadSearchEventImage(visionSearchEvent.id, image_data_url);
+          }
 
           let vision = null;
           try{
@@ -3549,6 +3564,22 @@ function stopStatusDots(){
           }
 
           if (isNonSearchVisionQuery(vision_query)){
+            insertSearchEvent({
+              searchEventId: visionSearchEvent?.id || null,
+              source: "vision",
+              rawQuery: vision_query || null,
+              normalizedQuery: vision_query ? normalizeQuery(vision_query) : null,
+              analysisSource: "vision",
+              visionQuery: vision_query || null,
+              visionConfidence: confidence,
+              visionWarnings: warnings,
+              resultType: "no_match",
+              searchConsumed: false,
+              imageBucket: visionImageInfo?.image_bucket || null,
+              imagePath: visionImageInfo?.image_path || null,
+              imageSizeBytes: visionImageInfo?.image_size_bytes || null,
+              metadata: { event_stage: "non_motorcycle_photo", vision_response: vision || null }
+            });
             setStatus("This doesn't look like a motorcycle photo.\nRetake or type a part name.", true, true);
             stopStatusDots();
             setQueryInputValue("", "text");
@@ -3573,7 +3604,11 @@ function stopStatusDots(){
                   overall_confidence: Number(confidence || 0),
                   vision_query,
                   vision_confidence: Number(confidence || 0),
-                  vision_warnings: warnings
+                  vision_warnings: warnings,
+                  __search_event_id: visionSearchEvent?.id || null,
+                  image_bucket: visionImageInfo?.image_bucket || null,
+                  image_path: visionImageInfo?.image_path || null,
+                  image_size_bytes: visionImageInfo?.image_size_bytes || null
                 };
                 await handleQuery(vision_query, preRoute); // go straight to scoring (skip /api/route)
               } else {
@@ -3581,12 +3616,44 @@ function stopStatusDots(){
               }
             } else {
               const confText = (confidence == null) ? "" : ` (conf ${Math.round(confidence*100)}%)`;
+              insertSearchEvent({
+                searchEventId: visionSearchEvent?.id || null,
+                source: "vision",
+                rawQuery: vision_query || null,
+                normalizedQuery: vision_query ? normalizeQuery(vision_query) : null,
+                analysisSource: "vision",
+                visionQuery: vision_query || null,
+                visionConfidence: confidence,
+                visionWarnings: warnings,
+                resultType: "low_confidence",
+                searchConsumed: false,
+                imageBucket: visionImageInfo?.image_bucket || null,
+                imagePath: visionImageInfo?.image_path || null,
+                imageSizeBytes: visionImageInfo?.image_size_bytes || null,
+                metadata: { event_stage: "vision_low_confidence", vision_response: vision || null }
+              });
               setStatus(`Photo unclear${confText}. Retake closer / better light, or type a short hint.`, true, true);
               stopStatusDots();
               // keep photo pane open so user can retry quickly
               try{ questionInput?.focus(); }catch(e){}
               return;
             }} else {
+            insertSearchEvent({
+              searchEventId: visionSearchEvent?.id || null,
+              source: "vision",
+              rawQuery: null,
+              normalizedQuery: null,
+              analysisSource: "vision",
+              visionQuery: null,
+              visionConfidence: confidence,
+              visionWarnings: warnings,
+              resultType: "no_match",
+              searchConsumed: false,
+              imageBucket: visionImageInfo?.image_bucket || null,
+              imagePath: visionImageInfo?.image_path || null,
+              imageSizeBytes: visionImageInfo?.image_size_bytes || null,
+              metadata: { event_stage: "vision_no_query", vision_response: vision || null }
+            });
             setStatus("Vision couldn't extract a reliable query. Try another photo or type manually.", true, true);
             try{ questionInput?.focus(); }catch(e){}
           }
@@ -3596,6 +3663,19 @@ function stopStatusDots(){
         } catch(e){
           stopStatusDots();
           console.error("Vision call failed:", e);
+          insertSearchEvent({
+            searchEventId: visionSearchEvent?.id || null,
+            source: "vision",
+            rawQuery: null,
+            normalizedQuery: null,
+            analysisSource: "vision",
+            resultType: "no_match",
+            searchConsumed: false,
+            imageBucket: visionImageInfo?.image_bucket || null,
+            imagePath: visionImageInfo?.image_path || null,
+            imageSizeBytes: visionImageInfo?.image_size_bytes || null,
+            metadata: { event_stage: "vision_failed", error: e?.message || String(e || "") }
+          });
           setStatus("Vision failed. Please try again, or type manually.", true, true);
           usePhotoBtn.disabled = false;
         }
@@ -4910,6 +4990,9 @@ function tokenizeNormalized(s){
         search_limit: getUsageValue(usage, "limit"),
         account_plan: getUsageValue(usage, "account_plan") || getUsageValue(usage, "level"),
         account_status: getUsageValue(usage, "account_status"),
+        image_bucket: ctx?.imageBucket || ctx?.pre?.image_bucket || null,
+        image_path: ctx?.imagePath || ctx?.pre?.image_path || null,
+        image_size_bytes: Number.isFinite(Number(ctx?.imageSizeBytes || ctx?.pre?.image_size_bytes)) ? Number(ctx?.imageSizeBytes || ctx?.pre?.image_size_bytes) : null,
         page_url: window.location.href,
         browser_info: navigator.userAgent || "",
         metadata
@@ -4920,15 +5003,99 @@ function tokenizeNormalized(s){
       if (!supabaseAuth || !CURRENT_USER) return null;
       try{
         const payload = buildSearchEventPayload(ctx);
-        const { data, error } = await supabaseAuth
-          .from("search_events")
-          .insert(payload)
-          .select("id,metadata")
-          .single();
+        const existingId = ctx?.searchEventId || ctx?.pre?.__search_event_id || null;
+        let query = supabaseAuth.from("search_events");
+        let result;
+        if (existingId){
+          result = await query
+            .update(payload)
+            .eq("id", existingId)
+            .eq("user_id", CURRENT_USER.id)
+            .select("id,metadata")
+            .single();
+        } else {
+          result = await query
+            .insert(payload)
+            .select("id,metadata")
+            .single();
+        }
+        const { data, error } = result;
         if (error) throw error;
         return data || null;
       }catch(e){
         console.warn("[SAM search_events] insert failed:", e?.message || e);
+        return null;
+      }
+    }
+
+    function dataUrlToBlob(dataUrl){
+      const text = String(dataUrl || "");
+      const match = text.match(/^data:([^;,]+)(;base64)?,(.*)$/);
+      if (!match) throw new Error("invalid_data_url");
+      const mime = match[1] || "image/jpeg";
+      const isBase64 = !!match[2];
+      const body = match[3] || "";
+      let bytes;
+      if (isBase64){
+        const binary = atob(body);
+        bytes = new Uint8Array(binary.length);
+        for (let i=0; i<binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      } else {
+        const decoded = decodeURIComponent(body);
+        bytes = new TextEncoder().encode(decoded);
+      }
+      return new Blob([bytes], { type: mime });
+    }
+
+    function monthPathSegment(date=new Date()){
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, "0");
+      return `${y}-${m}`;
+    }
+
+    function imageExtensionForMime(mime){
+      const m = String(mime || "").toLowerCase();
+      if (m.includes("png")) return "png";
+      return "jpg";
+    }
+
+    async function uploadSearchEventImage(eventId, imageDataUrl){
+      if (!supabaseAuth || !CURRENT_USER || !eventId || !imageDataUrl) return null;
+      const bucket = "search-images";
+      try{
+        const blob = dataUrlToBlob(imageDataUrl);
+        const contentType = blob.type || "image/jpeg";
+        const ext = imageExtensionForMime(contentType);
+        const path = `${CURRENT_USER.id}/${monthPathSegment()}/${eventId}.${ext}`;
+        const { error } = await supabaseAuth.storage
+          .from(bucket)
+          .upload(path, blob, {
+            contentType,
+            cacheControl: "3600",
+            upsert: false
+          });
+        if (error) throw error;
+        const imageInfo = {
+          imageBucket: bucket,
+          imagePath: path,
+          imageSizeBytes: blob.size
+        };
+        await insertSearchEvent({
+          searchEventId: eventId,
+          source: "vision",
+          analysisSource: "vision",
+          resultType: "needs_detail",
+          searchConsumed: false,
+          metadata: { event_stage: "image_uploaded" },
+          ...imageInfo
+        });
+        return {
+          image_bucket: bucket,
+          image_path: path,
+          image_size_bytes: blob.size
+        };
+      }catch(e){
+        console.warn("[SAM search_events] image upload failed:", e?.message || e);
         return null;
       }
     }
