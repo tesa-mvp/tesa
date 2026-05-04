@@ -2216,7 +2216,8 @@ body.authLocked .wrap{
         const accessDate = entitlement?.access_until;
         const paidAccessValid = isPaid && isFutureDate(accessDate);
         const paidAccessEnded = isPaid && !paidAccessValid;
-        const cancelAtPeriodEnd = !!entitlement?.cancel_at_period_end;
+        const cancelAt = entitlement?.cancel_at;
+        const cancelScheduled = !!entitlement?.cancel_at_period_end || !!cancelAt;
 
         let nextAlert = null;
         if (!isAdmin){
@@ -2232,9 +2233,9 @@ body.authLocked .wrap{
               level: isPaid ? "paid" : "trial",
               account_plan: isPaid ? "paid" : "trial"
             });
-          } else if (isPaid && cancelAtPeriodEnd && paidAccessValid){
+          } else if (isPaid && cancelScheduled && paidAccessValid){
             nextAlert = {
-              code: "cancel_at_period_end",
+              code: "cancel_scheduled",
               row: "",
               message: "Your plan is canceled and remains active until the end of the current period."
             };
@@ -2253,14 +2254,14 @@ body.authLocked .wrap{
           rows.push(["Access", "Unlimited"]);
           rows.push(["Searches left", "Unlimited"]);
         } else if (isPaid){
-          const statusLabel = paidAccessEnded ? "Inactive" : (cancelAtPeriodEnd ? "Canceled" : titleCaseStatus(statusRaw));
+          const statusLabel = paidAccessEnded ? "Inactive" : (cancelScheduled ? "Canceled" : titleCaseStatus(statusRaw));
           const usageText = paidAccessEnded ? "Unavailable" : (limit > 0 ? `${remaining}/${limit}` : `${used}`);
           rows.push(["Status", statusLabel, ACCOUNT_ALERT?.row === "Status"]);
           rows.push(["Searches left", usageText, ACCOUNT_ALERT?.row === "Searches"]);
           if (paidAccessEnded){
             rows.push(["Access ended", formatAccountDate(accessDate), ACCOUNT_ALERT?.row === "Access ended"]);
-          } else if (cancelAtPeriodEnd){
-            rows.push(["Access ends", formatAccountDate(accessDate)]);
+          } else if (cancelScheduled){
+            rows.push(["Access ends", formatAccountDate(accessDate || cancelAt)]);
           } else {
             rows.push(["Next billing", formatAccountDate(entitlement?.current_period_end)]);
           }
