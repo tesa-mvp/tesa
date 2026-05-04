@@ -3656,7 +3656,7 @@ llm_query: (typeof data?.llm_query === "string") ? data.llm_query : "",
     const MIN_SCORE_TO_ANSWER = 40;   // score too low -> refuse (raw score; no 100 cap)
     const MIN_GAP_TO_ANSWER   = 15;  // best-second gap too small -> ambiguous (raw score)
     const MULTI_MIN_SCORE    = 44;  // Multi-match list hides candidates below this score (raw score)
-    const MAX_CANDIDATES_UI   = 3;
+    const MAX_CANDIDATES_UI   = 5;
 
     let torqueData = [];
     let bikeMeta = null;
