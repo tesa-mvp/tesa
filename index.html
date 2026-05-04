@@ -5101,6 +5101,23 @@ function tokenizeNormalized(s){
       return Math.min(b, 24);
     }
 
+    function componentPhraseBonus(queryTokens, item){
+      // Tie-breaker for cases where a phrase appears in component_name itself,
+      // not only in common_name aliases.
+      const componentText = normTextForTokens(item?.component_name || "");
+      if (!componentText) return 0;
+      let b = 0;
+      const q3 = ngrams(queryTokens, 3);
+      const q2 = ngrams(queryTokens, 2);
+      for (const p of q3){
+        if (componentText.includes(p)) b += 12;
+      }
+      for (const p of q2){
+        if (componentText.includes(p)) b += 10;
+      }
+      return Math.min(b, 16);
+    }
+
     function rareTokenBonus(matchedTokens){
       // Tie-breaker: reward discriminative terms, never penalize missing role words
       let b = 0;
@@ -5177,11 +5194,12 @@ function tokenizeNormalized(s){
       const coverage = overlapCount / qTokens.length;
       const coverageScore = Math.round(coverage * 30); // 0..30
       const pBonus = phraseBonus(qTokens, itemText);   // 0..24
+      const cPhraseBonus = componentPhraseBonus(qTokens, item); // 0..16
       const rBonus = rareTokenBonus(uniq(matched));    // 0..20
       const eBonus = exactMatchBonus(queryNorm, item); // 0..18
       const llm = llmTokenBonus(bonusTokens, itemSet); // 0..10
 
-      let total = overlapScore + coverageScore + pBonus + rBonus + eBonus + (llm.score||0);
+      let total = overlapScore + coverageScore + pBonus + cPhraseBonus + rBonus + eBonus + (llm.score||0);
 
       // Floor only (no 100 cap)
       if (total < 0) total = 0;
@@ -5190,6 +5208,7 @@ function tokenizeNormalized(s){
         overlap: overlapScore,
         coverage: coverageScore,
         phrase: pBonus,
+        component_phrase: cPhraseBonus,
         rare: rBonus,
         exact: eBonus,
         llm_bonus: llm.score || 0,
