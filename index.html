@@ -3967,7 +3967,7 @@ function stopStatusDots(){
                 imageSizeBytes: visionImageInfo?.image_size_bytes || null,
                 metadata: { event_stage: "vision_low_confidence", vision_response: vision || null }
               });
-              setStatus("Photo unclear.\nRetake or type a part name.", true, true);
+              setStatus("AI found a possible part.\nReview the part name, then send or retake.", true, true);
               stopStatusDots();
               // keep photo pane open so user can retry quickly
               try{ questionInput?.focus(); }catch(e){}
