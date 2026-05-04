@@ -2245,6 +2245,10 @@ body.authLocked .wrap{
       authBillingBtn.disabled = true;
       authBillingBtn.textContent = "Opening...";
       setAuthMessage("");
+      if (authAccountNotice) {
+        authAccountNotice.textContent = "";
+        authAccountNotice.classList.remove("show");
+      }
       try{
         const accessToken = await getSupabaseAccessToken();
         if (!accessToken) throw new Error("Missing auth token.");
@@ -2263,7 +2267,11 @@ body.authLocked .wrap{
         window.location.href = data.url;
       }catch(e){
         console.error("Billing session failed:", e);
-        setAuthMessage("Billing is unavailable. Try again later.", "error");
+        setAuthMessage("");
+        if (authAccountNotice) {
+          authAccountNotice.textContent = "Billing is unavailable.\nTry again later.";
+          authAccountNotice.classList.add("show");
+        }
         authBillingBtn.disabled = false;
         authBillingBtn.textContent = originalText;
       }
