@@ -1721,7 +1721,7 @@ body.authLocked .wrap{
       <div id="authAccountSummary" class="authAccountSummary"></div>
       <div id="authAccountNotice" class="authAccountNotice"></div>
       <div id="authAccountActions" class="authAccountActions">
-        <button id="authBillingBtn" class="authSwitch authBillingBtn" type="button" disabled>Manage plan</button>
+        <button id="authBillingBtn" class="authSwitch authBillingBtn" type="button">Manage plan</button>
         <button id="authContactBtn" class="authSwitch authContactBtn" type="button">Contact</button>
         <button id="authLogoutBtn" class="authSwitch authDanger" type="button">Sign out</button>
       </div>
@@ -1843,6 +1843,7 @@ body.authLocked .wrap{
     const authHomeScreenSteps = document.getElementById("authHomeScreenSteps");
     const authHomeScreenNote = document.getElementById("authHomeScreenNote");
     const authHomeScreenCloseBtn = document.getElementById("authHomeScreenCloseBtn");
+    const authBillingBtn = document.getElementById("authBillingBtn");
     const authContactBtn = document.getElementById("authContactBtn");
     const authContactView = document.getElementById("authContactView");
     const authContactTitle = document.getElementById("authContactTitle");
@@ -2234,6 +2235,40 @@ body.authLocked .wrap{
       }
     }
 
+    async function openBillingSession(){
+      if (!CURRENT_USER){
+        openAuthOverlay();
+        return;
+      }
+      if (!authBillingBtn) return;
+      const originalText = authBillingBtn.textContent;
+      authBillingBtn.disabled = true;
+      authBillingBtn.textContent = "Opening...";
+      setAuthMessage("");
+      try{
+        const accessToken = await getSupabaseAccessToken();
+        if (!accessToken) throw new Error("Missing auth token.");
+        const r = await fetch(`${getRouteApiBase()}/api/billing-session`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`
+          },
+          body: JSON.stringify({})
+        });
+        const data = await r.json().catch(()=>null);
+        if (!r.ok || !data?.url){
+          throw new Error(data?.message || data?.error || "Billing session failed.");
+        }
+        window.location.href = data.url;
+      }catch(e){
+        console.error("Billing session failed:", e);
+        setAuthMessage("Billing is unavailable. Try again later.", "error");
+        authBillingBtn.disabled = false;
+        authBillingBtn.textContent = originalText;
+      }
+    }
+
     function getGuestQueryCount(){
       try{
         const n = Number(localStorage.getItem(GUEST_QUERY_COUNT_KEY) || "0");
@@ -2616,6 +2651,11 @@ body.authLocked .wrap{
       if (authContactBtn){
         authContactBtn.addEventListener("click", ()=>{
           showContactView();
+        });
+      }
+      if (authBillingBtn){
+        authBillingBtn.addEventListener("click", ()=>{
+          openBillingSession();
         });
       }
       if (authInstallBtn){
