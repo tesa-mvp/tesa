@@ -6032,11 +6032,17 @@ function escapeHtml(s){
       const base = normTextForTokens(s);
       if (!base) return "";
 
-      // 2) Tokenize + remove STOPWORDS (normalize-only process)
-      const tokens = tokenizeForNormalize(base);
+      // 2) Normalize user-side fastener synonyms.
+      // SAM. keeps dataset labels bolt-focused, while users often say screw.
+      const synonymBase = base
+        .replace(/\bmachine\s+screws?\b/g, "bolt")
+        .replace(/\bscrews?\b/g, "bolt");
+
+      // 3) Tokenize + remove STOPWORDS (normalize-only process)
+      const tokens = tokenizeForNormalize(synonymBase);
       const kept = tokens.filter(w => w.length >= 2 && !STOPWORDS.has(w));
 
-      // 3) Join with single spaces. No further whitespace cleanup needed.
+      // 4) Join with single spaces. No further whitespace cleanup needed.
       return kept.join(" ");
     }
 
