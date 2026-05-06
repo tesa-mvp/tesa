@@ -6033,10 +6033,10 @@ function escapeHtml(s){
       if (!base) return "";
 
       // 2) Normalize user-side fastener synonyms.
-      // SAM. keeps dataset labels bolt-focused, while users often say screw.
+      // SAM. keeps dataset labels screw-focused, while users often say bolt.
       const synonymBase = base
-        .replace(/\bmachine\s+screws?\b/g, "bolt")
-        .replace(/\bscrews?\b/g, "bolt");
+        .replace(/\bmachine\s+bolts?\b/g, "screw")
+        .replace(/\bbolts?\b/g, "screw");
 
       // 3) Tokenize + remove STOPWORDS (normalize-only process)
       const tokens = tokenizeForNormalize(synonymBase);
