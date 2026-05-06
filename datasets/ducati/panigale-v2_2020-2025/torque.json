@@ -7,7 +7,7 @@
       "to": 2025
     },
     "source_file": "torque.xlsx",
-    "count": 112
+    "count": 113
   },
   "items": [
     {
@@ -36,20 +36,6 @@
       "ref_images": [
         "oil_drain_plug_1.png",
         "oil_drain_plug_2.png"
-      ],
-      "sample_questions": "",
-      "partName": "Engine oil drain plug",
-      "torqueDisplay": "14 Nm",
-      "chemLine": "Apply THREE BOND 1215",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        },
-        "engine_oil"
       ]
     },
     {
@@ -76,20 +62,6 @@
       ],
       "ref_images": [
         "oil_filter_cover.png"
-      ],
-      "sample_questions": "",
-      "partName": "Oil filter cover screw",
-      "torqueDisplay": "13 Nm",
-      "chemLine": "",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        },
-        "engine_oil"
       ]
     },
     {
@@ -118,20 +90,6 @@
       ],
       "ref_images": [
         "head_cover.png"
-      ],
-      "sample_questions": "",
-      "partName": "Head cover screw",
-      "torqueDisplay": "13 Nm",
-      "chemLine": "",
-      "infoBlock": "Sequence: Center-out/Criss-cross pattern",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        },
-        "desmo"
       ]
     },
     {
@@ -159,19 +117,6 @@
       ],
       "ref_images": [
         "bbs_support.png"
-      ],
-      "sample_questions": "",
-      "partName": "BBS support screw",
-      "torqueDisplay": "10 Nm",
-      "chemLine": "",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -211,20 +156,6 @@
       ],
       "ref_images": [
         "fuel_tank_union.png"
-      ],
-      "sample_questions": "",
-      "partName": "Fuel tank union",
-      "torqueDisplay": "10 Nm",
-      "chemLine": "Apply Loctite 577",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        },
-        "fuel_tank"
       ]
     },
     {
@@ -280,20 +211,6 @@
       ],
       "ref_images": [
         "tank_quick_coupling.png"
-      ],
-      "sample_questions": "",
-      "partName": "Fuel tank quick coupling",
-      "torqueDisplay": "5.5 Nm",
-      "chemLine": "Apply Loctite 577",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        },
-        "fuel_tank"
       ]
     },
     {
@@ -329,19 +246,6 @@
       ],
       "ref_images": [
         "seat_support.png"
-      ],
-      "sample_questions": "",
-      "partName": "Seat support nut",
-      "torqueDisplay": "4 Nm",
-      "chemLine": "",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -367,21 +271,7 @@
         "sparkplug",
         "ignition plug"
       ],
-      "ref_images": [],
-      "sample_questions": "",
-      "partName": "Spark plug",
-      "torqueDisplay": "12 Nm",
-      "chemLine": "",
-      "infoBlock": "Special tool: Spark plug wrench - 88713.3633",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        },
-        "desmo"
-      ]
+      "ref_images": []
     },
     {
       "id": "intake_funnel",
@@ -411,19 +301,6 @@
       ],
       "ref_images": [
         "intake_funnel.png"
-      ],
-      "sample_questions": "",
-      "partName": "Intake funnel nut",
-      "torqueDisplay": "6 Nm",
-      "chemLine": "",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -452,19 +329,6 @@
       "ref_images": [
         "throttle_body_1.png",
         "throttle_body_2.png"
-      ],
-      "sample_questions": "",
-      "partName": "Throttle body screw",
-      "torqueDisplay": "10 Nm",
-      "chemLine": "Apply Loctite 222",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -494,20 +358,6 @@
       ],
       "ref_images": [
         "front_caliper.png"
-      ],
-      "sample_questions": "",
-      "partName": "Front brake caliper screw",
-      "torqueDisplay": "Step1: 2Nm;\nStep2: 45Nm",
-      "chemLine": "Apply SHELL Retinax HDX2",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        },
-        "tire"
       ]
     },
     {
@@ -537,19 +387,6 @@
       ],
       "ref_images": [
         "rear_caliper.png"
-      ],
-      "sample_questions": "",
-      "partName": "Rear brake caliper screw",
-      "torqueDisplay": "25 Nm",
-      "chemLine": "Apply ROCOL-DRY MOLY PASTE",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -581,20 +418,6 @@
       ],
       "ref_images": [
         "eccentric_hub.png"
-      ],
-      "sample_questions": "",
-      "partName": "Eccentric hub pinch screw",
-      "torqueDisplay": "20 Nm",
-      "chemLine": "Apply ROCOL-DRY MOLY PASTE",
-      "infoBlock": "Sequence: 1 - 2 - 1",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        },
-        "chain_sprocket"
       ]
     },
     {
@@ -625,19 +448,6 @@
       ],
       "ref_images": [
         "steering_head_nut.png"
-      ],
-      "sample_questions": "",
-      "partName": "Steering head ring nut",
-      "torqueDisplay": "35 Nm",
-      "chemLine": "Apply SHELL Retinax HD2",
-      "infoBlock": "Special tool: 88713.1058",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -673,20 +483,6 @@
       "ref_images": [
         "top_triple_clamp_pinch_1.png",
         "top_triple_clamp_pinch_2.png"
-      ],
-      "sample_questions": "",
-      "partName": "Top triple clamp pinch screw",
-      "torqueDisplay": "22 Nm",
-      "chemLine": "Apply SHELL Retinax HD2",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        },
-        "fork"
       ]
     },
     {
@@ -717,19 +513,6 @@
       ],
       "ref_images": [
         "rear_brake_disc.png"
-      ],
-      "sample_questions": "",
-      "partName": "Rear brake disc screw",
-      "torqueDisplay": "25 Nm",
-      "chemLine": "Apply Loctite 270",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -762,20 +545,6 @@
       ],
       "ref_images": [
         "rear_phonic_wheel.png"
-      ],
-      "sample_questions": "",
-      "partName": "Rear phonic wheel screw",
-      "torqueDisplay": "5 Nm",
-      "chemLine": "Apply Loctite 270",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        },
-        "tire"
       ]
     },
     {
@@ -810,21 +579,6 @@
       "ref_images": [
         "rear_wheel_nut_1.png",
         "rear_wheel_nut_2.png"
-      ],
-      "sample_questions": "",
-      "partName": "Rear wheel shaft nut",
-      "torqueDisplay": "230 Nm",
-      "chemLine": "Apply ROCOL-DRY MOLY PASTE",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        },
-        "tire",
-        "chain_sprocket"
       ]
     },
     {
@@ -849,19 +603,6 @@
       "common_name": [],
       "ref_images": [
         "rear_view_mirror.png"
-      ],
-      "sample_questions": "",
-      "partName": "Rear view mirror screw",
-      "torqueDisplay": "6 Nm",
-      "chemLine": "",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -891,19 +632,6 @@
       ],
       "ref_images": [
         "windscreen.png"
-      ],
-      "sample_questions": "",
-      "partName": "Windscreen screw",
-      "torqueDisplay": "0.2 Nm",
-      "chemLine": "",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -933,20 +661,6 @@
       ],
       "ref_images": [
         "ignition_cover.png"
-      ],
-      "sample_questions": "",
-      "partName": "Ignition switch cover nut",
-      "torqueDisplay": "8 Nm",
-      "chemLine": "",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        },
-        "fuel_tank"
       ]
     },
     {
@@ -971,19 +685,6 @@
       "common_name": [],
       "ref_images": [
         "rider_seat.png"
-      ],
-      "sample_questions": "",
-      "partName": "Rider seat screw",
-      "torqueDisplay": "5 Nm",
-      "chemLine": "",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -1011,19 +712,6 @@
       ],
       "ref_images": [
         "front_fender.png"
-      ],
-      "sample_questions": "",
-      "partName": "Front mud guard screw",
-      "torqueDisplay": "10 Nm",
-      "chemLine": "",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -1053,19 +741,6 @@
       "ref_images": [
         "rear_fender_1.png",
         "rear_fender_2.png"
-      ],
-      "sample_questions": "",
-      "partName": "Rear mud guard screw",
-      "torqueDisplay": "5 Nm",
-      "chemLine": "",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -1094,19 +769,6 @@
       ],
       "ref_images": [
         "generator.png"
-      ],
-      "sample_questions": "",
-      "partName": "Generator screw to case cover",
-      "torqueDisplay": "10 Nm",
-      "chemLine": "Apply Loctite 243",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -1139,19 +801,6 @@
       ],
       "ref_images": [
         "pickup_sensor.png"
-      ],
-      "sample_questions": "",
-      "partName": "Pick-up sensor screw",
-      "torqueDisplay": "10 Nm",
-      "chemLine": "",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -1182,19 +831,6 @@
       ],
       "ref_images": [
         "generator_cover.png"
-      ],
-      "sample_questions": "",
-      "partName": "Generator cover screw",
-      "torqueDisplay": "13 Nm",
-      "chemLine": "",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -1223,19 +859,6 @@
       ],
       "ref_images": [
         "gear_position_sensor.png"
-      ],
-      "sample_questions": "",
-      "partName": "Gear position sensor screw",
-      "torqueDisplay": "2.5 Nm",
-      "chemLine": "Apply Loctite 243",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -1258,20 +881,7 @@
       "extra_notes": null,
       "item_number": null,
       "common_name": [],
-      "ref_images": [],
-      "sample_questions": "",
-      "partName": "Oil pressure sensor",
-      "torqueDisplay": "14 Nm",
-      "chemLine": "",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
-      ]
+      "ref_images": []
     },
     {
       "id": "front_wheel",
@@ -1302,20 +912,6 @@
       ],
       "ref_images": [
         "front_wheel_nut.png"
-      ],
-      "sample_questions": "",
-      "partName": "Front axle nut",
-      "torqueDisplay": "63 Nm",
-      "chemLine": "Apply SHELL Retinax HDX2",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        },
-        "tire"
       ]
     },
     {
@@ -1349,20 +945,6 @@
       "ref_images": [
         "front_axle_pinch_1.png",
         "front_axle_pinch_2.png"
-      ],
-      "sample_questions": "",
-      "partName": "Front axle pinch screw",
-      "torqueDisplay": "19 Nm",
-      "chemLine": "",
-      "infoBlock": "Sequence: 1 - 2 - 1",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        },
-        "tire"
       ]
     },
     {
@@ -1390,19 +972,6 @@
       ],
       "ref_images": [
         "front_brake_master.png"
-      ],
-      "sample_questions": "",
-      "partName": "Front brake master cylinder screw",
-      "torqueDisplay": "10 Nm",
-      "chemLine": "",
-      "infoBlock": "Sequence: 1(UP) - 2- 1",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -1432,19 +1001,6 @@
       ],
       "ref_images": [
         "front_brake_disc.png"
-      ],
-      "sample_questions": "",
-      "partName": "Front brake disc screw",
-      "torqueDisplay": "30 Nm",
-      "chemLine": "",
-      "infoBlock": "Sequence: Criss-cross pattern",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -1476,19 +1032,6 @@
       ],
       "ref_images": [
         "rear_brake_rod.png"
-      ],
-      "sample_questions": "",
-      "partName": "Rear brake master cylinder rod screw",
-      "torqueDisplay": "8 Nm",
-      "chemLine": "Apply Loctite 243",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -1517,19 +1060,6 @@
       ],
       "ref_images": [
         "rear_brake_lever.png"
-      ],
-      "sample_questions": "",
-      "partName": "Rear brake lever screw",
-      "torqueDisplay": "25 Nm",
-      "chemLine": "Apply Loctite 243 | Apply SHELL Retinax HDX2",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -1559,19 +1089,6 @@
       ],
       "ref_images": [
         "rear_brake_switch.png"
-      ],
-      "sample_questions": "",
-      "partName": "Rear brake switch",
-      "torqueDisplay": "5 Nm",
-      "chemLine": "",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -1603,19 +1120,6 @@
       "ref_images": [
         "rear_brake_cylinder_bracket_1.png",
         "rear_brake_cylinder_bracket_2.png"
-      ],
-      "sample_questions": "",
-      "partName": "Rear brake master cylinder bracket screw",
-      "torqueDisplay": "M8: 10Nm;M6: 6Nm",
-      "chemLine": "Apply Loctite 222 to M8 only",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -1643,19 +1147,6 @@
       ],
       "ref_images": [
         "rear_brake_master.png"
-      ],
-      "sample_questions": "",
-      "partName": "Rear brake master cylinder screw",
-      "torqueDisplay": "8 Nm",
-      "chemLine": "Apply Loctite 243",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -1683,19 +1174,6 @@
       ],
       "ref_images": [
         "heel_guard.png"
-      ],
-      "sample_questions": "",
-      "partName": "Heel guard screw",
-      "torqueDisplay": "6 Nm",
-      "chemLine": "Apply Loctite 243",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -1723,19 +1201,6 @@
       ],
       "ref_images": [
         "rear_brake_reservoir.png"
-      ],
-      "sample_questions": "",
-      "partName": "Rear brake fluid reservoir screw",
-      "torqueDisplay": "2 Nm",
-      "chemLine": "",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -1771,19 +1236,6 @@
       ],
       "ref_images": [
         "abs_support.png"
-      ],
-      "sample_questions": "",
-      "partName": "ABS control unit support screw",
-      "torqueDisplay": "10 Nm",
-      "chemLine": "Apply Loctite 243",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -1814,19 +1266,6 @@
       ],
       "ref_images": [
         "handlebar_clamp.png"
-      ],
-      "sample_questions": "",
-      "partName": "Handlebar clamp screw",
-      "torqueDisplay": "22 Nm",
-      "chemLine": "Apply SHELL Retinax HDX2",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -1861,19 +1300,6 @@
       ],
       "ref_images": [
         "lh_handlebar_switch.png"
-      ],
-      "sample_questions": "",
-      "partName": "LH handlbar switch screw",
-      "torqueDisplay": "8 Nm",
-      "chemLine": "",
-      "infoBlock": "Sequence: 1 - 2 - 1",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -1902,19 +1328,6 @@
       ],
       "ref_images": [
         "clutch_master_cylinder.png"
-      ],
-      "sample_questions": "",
-      "partName": "Clutch master cylinder screw",
-      "torqueDisplay": "10 Nm",
-      "chemLine": "",
-      "infoBlock": "Sequence: 1(UP) - 2- 1",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -1943,19 +1356,6 @@
       ],
       "ref_images": [
         "clutch_slave_cylinder.png"
-      ],
-      "sample_questions": "",
-      "partName": "Clutch slave cylinder screw",
-      "torqueDisplay": "10 Nm",
-      "chemLine": "",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -1984,19 +1384,6 @@
       "ref_images": [
         "steering_damper_1.png",
         "steering_damper_2.png"
-      ],
-      "sample_questions": "",
-      "partName": "Steering damper screw",
-      "torqueDisplay": "10 Nm",
-      "chemLine": "Apply Loctite 222",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -2027,19 +1414,6 @@
       ],
       "ref_images": [
         "gearchange_linkage.png"
-      ],
-      "sample_questions": "",
-      "partName": "Gear change linkage screw",
-      "torqueDisplay": "10 Nm",
-      "chemLine": "Apply Loctite 243",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -2069,19 +1443,6 @@
       ],
       "ref_images": [
         "gearchange_lever.png"
-      ],
-      "sample_questions": "",
-      "partName": "Gear change lever screw",
-      "torqueDisplay": "25 Nm",
-      "chemLine": "Apply Loctite 243 | Apply SHELL Retinax HD2",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -2113,19 +1474,6 @@
       ],
       "ref_images": [
         "lower_triple_clamp_pinch.png"
-      ],
-      "sample_questions": "",
-      "partName": "Lower triple clamp pinch screw",
-      "torqueDisplay": "8 Nm",
-      "chemLine": "Apply SHELL Retinax HDX2",
-      "infoBlock": "Sequence: 1(DOWN) - 2 - 3 - 2 - 1",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -2146,7 +1494,7 @@
       "special_tool_name": null,
       "tightening_seq": null,
       "extra_notes": null,
-      "item_number": "Item #2, #9",
+      "item_number": "Item #1",
       "common_name": [
         "rear shock mounting",
         "rear suspension mounting",
@@ -2156,21 +1504,7 @@
         "rear shock absorber mount"
       ],
       "ref_images": [
-        "rear_suspension_1.png",
-        "rear_suspension_2.png"
-      ],
-      "sample_questions": "",
-      "partName": "Rear shock screw",
-      "torqueDisplay": "45 Nm",
-      "chemLine": "Apply SHELL Retinax HDX2",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
+        "rear_suspension.png"
       ]
     },
     {
@@ -2200,19 +1534,6 @@
       ],
       "ref_images": [
         "rear_sus_rocker_arm.png"
-      ],
-      "sample_questions": "",
-      "partName": "Rear shock rocker arm screw",
-      "torqueDisplay": "60 Nm",
-      "chemLine": "Apply SHELL Retinax HDX2",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -2252,19 +1573,6 @@
       "ref_images": [
         "rear_sus_linkage_1.png",
         "rear_sus_linkage_2.png"
-      ],
-      "sample_questions": "",
-      "partName": "Rear shock linkage screw",
-      "torqueDisplay": "45 Nm",
-      "chemLine": "Apply SHELL Retinax HDX2",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -2294,19 +1602,6 @@
       ],
       "ref_images": [
         "swing_arm.png"
-      ],
-      "sample_questions": "",
-      "partName": "Swing arm shaft",
-      "torqueDisplay": "100 Nm",
-      "chemLine": "Apply SHELL Retinax HDX2",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -2336,20 +1631,6 @@
       ],
       "ref_images": [
         "front_sprocket.png"
-      ],
-      "sample_questions": "",
-      "partName": "Front sprocket screw",
-      "torqueDisplay": "55 Nm",
-      "chemLine": "Apply SHELL Retinax HDX2",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        },
-        "chanin_sprocket"
       ]
     },
     {
@@ -2377,19 +1658,6 @@
       ],
       "ref_images": [
         "speed_sensor.png"
-      ],
-      "sample_questions": "",
-      "partName": "Speed sensor screw",
-      "torqueDisplay": "8 Nm",
-      "chemLine": "",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -2427,19 +1695,6 @@
       "ref_images": [
         "swing_arm_support_1.png",
         "swing_arm_support_2.png"
-      ],
-      "sample_questions": "",
-      "partName": "Swing arm support screw",
-      "torqueDisplay": "25 Nm",
-      "chemLine": "Apply SHELL Retinax HDX2",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -2479,19 +1734,6 @@
       "ref_images": [
         "swing_arm_shaft_pinch_1.png",
         "swing_arm_shaft_pinch_2.png"
-      ],
-      "sample_questions": "",
-      "partName": "Swing arm shaft pinch screw",
-      "torqueDisplay": "15 Nm",
-      "chemLine": "Apply SHELL Retinax HDX2",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -2522,19 +1764,6 @@
       ],
       "ref_images": [
         "quick_shift_sensor.png"
-      ],
-      "sample_questions": "",
-      "partName": "Quick shift sensor screw",
-      "torqueDisplay": "15 Nm",
-      "chemLine": "Apply Loctite 222",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -2566,20 +1795,6 @@
       ],
       "ref_images": [
         "rear_sprocket_stud.png"
-      ],
-      "sample_questions": "",
-      "partName": "Rear sprocket stud",
-      "torqueDisplay": "44 Nm",
-      "chemLine": "Apply Loctite 243",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        },
-        "chain_sprocket"
       ]
     },
     {
@@ -2607,20 +1822,6 @@
       ],
       "ref_images": [
         "rear_sprocket.png"
-      ],
-      "sample_questions": "",
-      "partName": "Rear sprocket nut",
-      "torqueDisplay": "55 Nm",
-      "chemLine": "Apply Loctite 243",
-      "infoBlock": "Sequence: Criss-cross pattern",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        },
-        "chain_sprocket"
       ]
     },
     {
@@ -2656,19 +1857,6 @@
       "ref_images": [
         "rear_foot_peg_1.png",
         "rear_foot_peg_2.png"
-      ],
-      "sample_questions": "",
-      "partName": "Passenger foot peg plate screw",
-      "torqueDisplay": "M8: 25Nm;M6: 10Nm",
-      "chemLine": "",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -2698,19 +1886,6 @@
       ],
       "ref_images": [
         "side_stand.png"
-      ],
-      "sample_questions": "",
-      "partName": "Side stand screw",
-      "torqueDisplay": "25 Nm",
-      "chemLine": "Apply Loctite 243 | Apply SHELL Retinax HDX2",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -2744,19 +1919,6 @@
       ],
       "ref_images": [
         "ignition_switch_support.png"
-      ],
-      "sample_questions": "",
-      "partName": "Ignition switch support screw",
-      "torqueDisplay": "10 Nm",
-      "chemLine": "Apply SHELL Retinax HDX2",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -2806,19 +1968,6 @@
       ],
       "ref_images": [
         "dashboard_bracket.png"
-      ],
-      "sample_questions": "",
-      "partName": "Dashbaord bracket screw",
-      "torqueDisplay": "10 Nm",
-      "chemLine": "Apply SHELL Retinax HDX2",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -2848,19 +1997,6 @@
       ],
       "ref_images": [
         "tail_section.png"
-      ],
-      "sample_questions": "",
-      "partName": "Tail section support screw",
-      "torqueDisplay": "25 Nm",
-      "chemLine": "",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -2892,19 +2028,6 @@
       "ref_images": [
         "sub_frame_1.png",
         "sub_frame_2.png"
-      ],
-      "sample_questions": "",
-      "partName": "Sub frame screw",
-      "torqueDisplay": "Main frame: 28Nm; Head: 22Nm",
-      "chemLine": "Apply SHELL Retinax HDX2",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -2929,19 +2052,6 @@
       "common_name": [],
       "ref_images": [
         "number_plate.png"
-      ],
-      "sample_questions": "",
-      "partName": "Number plate holder screw",
-      "torqueDisplay": "6 Nm",
-      "chemLine": "",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -2971,20 +2081,6 @@
       "ref_images": [
         "fuel_tank_1.png",
         "fuel_tank_2.png"
-      ],
-      "sample_questions": "",
-      "partName": "Fuel tank screw",
-      "torqueDisplay": "10 Nm",
-      "chemLine": "Apply SHELL Retinax HDX2 | Apply Loctite 577 to rear bolt",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        },
-        "fuel_tank"
       ]
     },
     {
@@ -3018,20 +2114,6 @@
       ],
       "ref_images": [
         "fuel_pump.png"
-      ],
-      "sample_questions": "",
-      "partName": "Fuel pump screw",
-      "torqueDisplay": "6 Nm",
-      "chemLine": "Apply SHELL Retinax HDX2",
-      "infoBlock": "Sequence: Criss-cross pattern",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        },
-        "fuel_tank"
       ]
     },
     {
@@ -3061,19 +2143,6 @@
       ],
       "ref_images": [
         "secondary_air_sys_cover.png"
-      ],
-      "sample_questions": "",
-      "partName": "Secondary air valve cover screw",
-      "torqueDisplay": "6 Nm",
-      "chemLine": "Apply Loctite 243",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -3106,19 +2175,6 @@
       "ref_images": [
         "exhaust_manifold_1.png",
         "exhaust_manifold_2.png"
-      ],
-      "sample_questions": "",
-      "partName": "Exhaust manifold nut",
-      "torqueDisplay": "10 Nm",
-      "chemLine": "",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -3147,19 +2203,6 @@
       ],
       "ref_images": [
         "canister_support.png"
-      ],
-      "sample_questions": "",
-      "partName": "Canister support screw",
-      "torqueDisplay": "6 Nm",
-      "chemLine": "Apply Loctite 243",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -3187,19 +2230,6 @@
       "ref_images": [
         "main_frame_1.png",
         "main_frame_2.png"
-      ],
-      "sample_questions": "",
-      "partName": "Main frame nut",
-      "torqueDisplay": "45 Nm",
-      "chemLine": "Apply SHELL Retinax HDX2",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -3226,19 +2256,6 @@
       ],
       "ref_images": [
         "starter_motor_cable.png"
-      ],
-      "sample_questions": "",
-      "partName": "Starter motor cable screw",
-      "torqueDisplay": "3 Nm",
-      "chemLine": "Apply SHELL Retinax HDX2",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -3271,19 +2288,6 @@
         "battery_mount_1.png",
         "battery_mount_2.png",
         "battery_mount_3.png"
-      ],
-      "sample_questions": "",
-      "partName": "Battery mount screw",
-      "torqueDisplay": "10 Nm",
-      "chemLine": "",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -3314,19 +2318,6 @@
       ],
       "ref_images": [
         "flywheel_to_rotor.png"
-      ],
-      "sample_questions": "",
-      "partName": "Flywheel screw to rotor",
-      "torqueDisplay": "13 Nm",
-      "chemLine": "Apply Loctite 648, 128455",
-      "infoBlock": "Sequence: Criss-cross pattern",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -3355,19 +2346,6 @@
       ],
       "ref_images": [
         "flywheel.png"
-      ],
-      "sample_questions": "",
-      "partName": "Flywheel screw",
-      "torqueDisplay": "190 Nm",
-      "chemLine": "Apply SHELL Advance 4T Ultra;SHELL Retinax HD2",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -3396,20 +2374,6 @@
       "ref_images": [
         "clutch_hub_1.png",
         "clutch_hub_2.png"
-      ],
-      "sample_questions": "",
-      "partName": "Clutch hub nut",
-      "torqueDisplay": "190 Nm",
-      "chemLine": "Apply SHELL Retinax HDX2",
-      "infoBlock": "Special tool: Clutch holding tool - 88713.3879",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        },
-        "clutch"
       ]
     },
     {
@@ -3436,20 +2400,6 @@
       ],
       "ref_images": [
         "clutch_pressure_plate.png"
-      ],
-      "sample_questions": "",
-      "partName": "Clutch pressure plate screw",
-      "torqueDisplay": "10 Nm",
-      "chemLine": "Apply SHELL Advance 4T Ultra",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        },
-        "clutch"
       ]
     },
     {
@@ -3476,20 +2426,6 @@
       ],
       "ref_images": [
         "clutch_inspection_cover.png"
-      ],
-      "sample_questions": "",
-      "partName": "Clutch inspection cover screw",
-      "torqueDisplay": "10 Nm",
-      "chemLine": "",
-      "infoBlock": "Sequence: Criss-cross pattern",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        },
-        "clutch"
       ]
     },
     {
@@ -3521,20 +2457,6 @@
       ],
       "ref_images": [
         "clutch_sound_damper.png"
-      ],
-      "sample_questions": "",
-      "partName": "Clutch noise dampening sheet screw",
-      "torqueDisplay": "10 Nm",
-      "chemLine": "Apply Loctite 243",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        },
-        "clutch"
       ]
     },
     {
@@ -3565,20 +2487,6 @@
       ],
       "ref_images": [
         "clutch_cover.png"
-      ],
-      "sample_questions": "",
-      "partName": "Clutch cover screw",
-      "torqueDisplay": "13 Nm",
-      "chemLine": "Apply Loctite 243 to double-ended studs only",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        },
-        "clutch"
       ]
     },
     {
@@ -3606,19 +2514,6 @@
       ],
       "ref_images": [
         "primary_gear.png"
-      ],
-      "sample_questions": "",
-      "partName": "Primary drive gear screw",
-      "torqueDisplay": "250 Nm",
-      "chemLine": "Apply SHELL Advance 4T Ultra",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -3646,19 +2541,6 @@
       ],
       "ref_images": [
         "water_pump.png"
-      ],
-      "sample_questions": "",
-      "partName": "Water pump screw",
-      "torqueDisplay": "13 Nm",
-      "chemLine": "",
-      "infoBlock": "Sequence: Criss-cross pattern",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -3695,19 +2577,6 @@
       ],
       "ref_images": [
         "water_pump_idle_gear.png"
-      ],
-      "sample_questions": "",
-      "partName": "Water pump idle gear screw",
-      "torqueDisplay": "19 Nm",
-      "chemLine": "Apply Loctite 243",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -3735,19 +2604,6 @@
       ],
       "ref_images": [
         "oil_pump.png"
-      ],
-      "sample_questions": "",
-      "partName": "Oil pump screw",
-      "torqueDisplay": "10 Nm",
-      "chemLine": "",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -3784,19 +2640,6 @@
       ],
       "ref_images": [
         "oil_pump_idle_gear.png"
-      ],
-      "sample_questions": "",
-      "partName": "Oil pump idle gear screw",
-      "torqueDisplay": "13 Nm",
-      "chemLine": "Apply PRE-APPLIED LOCTITE",
-      "infoBlock": "Note: Left-hand thread",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -3824,19 +2667,6 @@
       ],
       "ref_images": [
         "heat_exchanger.png"
-      ],
-      "sample_questions": "",
-      "partName": "Heat exchanger screw",
-      "torqueDisplay": "13 Nm",
-      "chemLine": "Apply Loctite 243",
-      "infoBlock": "Sequence: Criss-cross pattern",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -3866,19 +2696,6 @@
       ],
       "ref_images": [
         "gear_stopper_lever.png"
-      ],
-      "sample_questions": "",
-      "partName": "Gear stopper lever screw",
-      "torqueDisplay": "10 Nm",
-      "chemLine": "Apply Loctite 243",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -3910,19 +2727,6 @@
       "ref_images": [
         "gearbox_drum_1.png",
         "gearbox_drum_2.png"
-      ],
-      "sample_questions": "",
-      "partName": "Gearbox drum flange screw",
-      "torqueDisplay": "25 Nm",
-      "chemLine": "Apply Loctite 243",
-      "infoBlock": "Special tool: Gearbox drum holding tool - 88713.3853",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -3949,19 +2753,6 @@
       ],
       "ref_images": [
         "gearbox_cover.png"
-      ],
-      "sample_questions": "",
-      "partName": "Gearbox control cover screw",
-      "torqueDisplay": "13 Nm",
-      "chemLine": "",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -3988,20 +2779,6 @@
       ],
       "ref_images": [
         "mesh_filter.png"
-      ],
-      "sample_questions": "",
-      "partName": "Mesh filter screw",
-      "torqueDisplay": "10 Nm",
-      "chemLine": "Apply Loctite 243",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        },
-        "engine_oil"
       ]
     },
     {
@@ -4029,20 +2806,6 @@
       "ref_images": [
         "oil_sump_1.png",
         "oil_sump_2.png"
-      ],
-      "sample_questions": "",
-      "partName": "Oil sump screw",
-      "torqueDisplay": "13 Nm",
-      "chemLine": "",
-      "infoBlock": "Sequence: Criss-cross pattern",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        },
-        "engine_oil"
       ]
     },
     {
@@ -4077,20 +2840,6 @@
       ],
       "ref_images": [
         "camshaft_gear.png"
-      ],
-      "sample_questions": "",
-      "partName": "Camshaft gear screw",
-      "torqueDisplay": "19 Nm",
-      "chemLine": "Apply Loctite 243",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        },
-        "desmo"
       ]
     },
     {
@@ -4115,19 +2864,6 @@
       "common_name": [],
       "ref_images": [
         "decompressor.png"
-      ],
-      "sample_questions": "",
-      "partName": "Decompressor nut",
-      "torqueDisplay": "8 Nm",
-      "chemLine": "Apply Loctite 243",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -4155,19 +2891,6 @@
       ],
       "ref_images": [
         "camshaft_impeller.png"
-      ],
-      "sample_questions": "",
-      "partName": "Camshaft impeller screw",
-      "torqueDisplay": "8 Nm",
-      "chemLine": "Apply Loctite 243",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -4204,20 +2927,6 @@
       ],
       "ref_images": [
         "camshaft_cap.png"
-      ],
-      "sample_questions": "",
-      "partName": "Camshaft cap screw",
-      "torqueDisplay": "Step1: 10Nm;Step2: 22.5Nm",
-      "chemLine": "Apply SHELL Advance 4T Ultra",
-      "infoBlock": "Sequence: Center-out pattern",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        },
-        "desmo"
       ]
     },
     {
@@ -4245,20 +2954,6 @@
       ],
       "ref_images": [
         "valve_collet_tool.png"
-      ],
-      "sample_questions": "",
-      "partName": "Valve collet fitting tool",
-      "torqueDisplay": "12 Nm",
-      "chemLine": "",
-      "infoBlock": "Special tool: Valve collet fitting tool - 88713.3467",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        },
-        "desmo"
       ]
     },
     {
@@ -4285,19 +2980,6 @@
       ],
       "ref_images": [
         "rocker_arm_shaft_plug.png"
-      ],
-      "sample_questions": "",
-      "partName": "Rocker arm shaft plug",
-      "torqueDisplay": "15 Nm",
-      "chemLine": "Apply Loctite 243",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -4330,19 +3012,6 @@
       ],
       "ref_images": [
         "rocker_arm_shaft_retainer.png"
-      ],
-      "sample_questions": "",
-      "partName": "Rocker arm shaft retainer plate screw",
-      "torqueDisplay": "10 Nm",
-      "chemLine": "Apply Loctite 243",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -4375,19 +3044,6 @@
       ],
       "ref_images": [
         "timing_chain_gear_cover.png"
-      ],
-      "sample_questions": "",
-      "partName": "Timing chain gear cover screw",
-      "torqueDisplay": "10 Nm",
-      "chemLine": "",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -4420,19 +3076,6 @@
         "timing_chain guide_1.png",
         "timing_chain guide_2.png",
         "timing_chain guide_3.png"
-      ],
-      "sample_questions": "",
-      "partName": "Timing chain guide special screw",
-      "torqueDisplay": "20 Nm",
-      "chemLine": "Apply SHELL Alvania R3",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -4463,19 +3106,6 @@
       ],
       "ref_images": [
         "timing_chain_guide_plug.png"
-      ],
-      "sample_questions": "",
-      "partName": "Timing chain guide screw plug",
-      "torqueDisplay": "17 Nm",
-      "chemLine": "",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -4502,20 +3132,6 @@
       ],
       "ref_images": [
         "timing_chain_tensioner.png"
-      ],
-      "sample_questions": "",
-      "partName": "Timing chain tensioner",
-      "torqueDisplay": "25 Nm",
-      "chemLine": "",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        },
-        "desmo"
       ]
     },
     {
@@ -4544,19 +3160,6 @@
       "ref_images": [
         "cylinder_head_stud_12p_1.png",
         "cylinder_head_stud_12p_2.png"
-      ],
-      "sample_questions": "",
-      "partName": "Cylinder head stud nut - 12-point",
-      "torqueDisplay": "Step1: 20Nm;Step2: 40Nm;Step3: 67Nm",
-      "chemLine": "Apply SHELL Retinax LX2",
-      "infoBlock": "Thread: M10",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -4586,19 +3189,6 @@
         "cylinder_head_stud_6p_1.png",
         "cylinder_head_stud_6p_2.png",
         "cylinder_head_stud_6p_3.png"
-      ],
-      "sample_questions": "",
-      "partName": "Cylinder head stud nut - 6-point",
-      "torqueDisplay": "28.5 Nm",
-      "chemLine": "Apply SHELL Retinax LX2",
-      "infoBlock": "Thread: M6 | Special tool: Torque wrench adaptor - 88713.3926",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -4623,19 +3213,6 @@
       "common_name": [],
       "ref_images": [
         "cylinder_head.png"
-      ],
-      "sample_questions": "",
-      "partName": "Cylinder head screw - timing chain side",
-      "torqueDisplay": "13 Nm",
-      "chemLine": "",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -4660,19 +3237,6 @@
       "common_name": [],
       "ref_images": [
         "cylinder_head_stud.png"
-      ],
-      "sample_questions": "",
-      "partName": "Cylinder head stud",
-      "torqueDisplay": "30 Nm",
-      "chemLine": "Apply Loctite 648, 128455",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -4699,19 +3263,6 @@
       ],
       "ref_images": [
         "starter_motor.png"
-      ],
-      "sample_questions": "",
-      "partName": "Starter motor screw",
-      "torqueDisplay": "13 Nm",
-      "chemLine": "Apply Loctite 243",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -4741,19 +3292,6 @@
       "ref_images": [
         "crankcase_m8_1.png",
         "crankcase_m8_2.png"
-      ],
-      "sample_questions": "",
-      "partName": "Crankcase screw - M8",
-      "torqueDisplay": "Step1: 15Nm;Step2: 25Nm",
-      "chemLine": "Apply SHELL Retinax HDX2",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -4783,19 +3321,6 @@
       "ref_images": [
         "crankcase_m6_1.png",
         "crankcase_m6_2.png"
-      ],
-      "sample_questions": "",
-      "partName": "Crankcase screw - M6",
-      "torqueDisplay": "13 Nm",
-      "chemLine": "",
-      "infoBlock": "",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
       ]
     },
     {
@@ -4823,19 +3348,37 @@
       ],
       "ref_images": [
         "connecting_rod.png"
+      ]
+    },
+    {
+      "id": "rear_sus_support",
+      "group": null,
+      "component_name": "Rear shock support screw",
+      "tightening_type": "single",
+      "torque_nm_single": 25,
+      "torque_steps": null,
+      "threadlock": null,
+      "threadlock_symbol": null,
+      "lubrication": "SHELL Retinax HDX2",
+      "lubrication_symbol": "GREASE B",
+      "sealant": null,
+      "sealant_symbol": null,
+      "thread_spec": null,
+      "special_tool_numbers": null,
+      "special_tool_name": null,
+      "tightening_seq": null,
+      "extra_notes": null,
+      "item_number": "Item #8",
+      "common_name": [
+        "rear shock support",
+        "rear suspension support",
+        "rear shock absorber support",
+        "rear shock bracket",
+        "rear suspension bracket",
+        "rear shock absorber bracket"
       ],
-      "sample_questions": "",
-      "partName": "Connecting rod screw",
-      "torqueDisplay": "Step1: 20Nm;\nStep2: 35Nm;\nStep3: 100°",
-      "chemLine": "Apply SHELL Retinax HDX2",
-      "infoBlock": "Special tool: Spacer - 88713.351 | Note: Final Step: Torque check 85 - 115 Nm",
-      "metaPills": [
-        "Ducati",
-        "Panigale V2",
-        {
-          "from": 2020,
-          "to": 2025
-        }
+      "ref_images": [
+        "rear_sus_support.png"
       ]
     }
   ]
