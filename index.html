@@ -5751,7 +5751,8 @@ function buildSpokenAnswerParts(item){
 
   return {
     base: baseParts.join(" "),
-    info: infoParts.join(" ")
+    info: infoParts.join(" "),
+    hasChem: chemVals.length > 0
   };
 }
 
@@ -5940,7 +5941,8 @@ if (hasInfoBlock){
         });
       }
       // Always speak base + info (info gate removed)
-      const fullSpeech = spoken.info ? `${spoken.base} ${spoken.info}` : spoken.base;
+      const speechPause = spoken.hasChem ? " ... " : " ";
+      const fullSpeech = spoken.info ? `${spoken.base}${speechPause}${spoken.info}` : spoken.base;
       speak(fullSpeech);
 
 }
