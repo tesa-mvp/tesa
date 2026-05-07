@@ -4866,9 +4866,9 @@ function parseTorqueStepsText(text){
 }
 
 function getTorqueStepsRows(item){
-  // Returns rows for UI in the form [{label, value}] for multi-step; [] otherwise.
+  // Returns rows for UI in the form [{label, value}] for multi torque types; [] otherwise.
   const tt = (item && item.tightening_type ? String(item.tightening_type).trim().toLowerCase() : "");
-  if (tt !== "multi_step") return [];
+  if (!["multi_step", "multi_size", "multi_location"].includes(tt)) return [];
 
   // If torque_steps is an array of objects (structured), keep existing behavior.
   if (Array.isArray(item.torque_steps) && item.torque_steps.length){
@@ -4912,6 +4912,12 @@ function classifyTorqueStepsRows(rows){
   if (allStep) return "multi_step";
 
   return "multi_location";
+}
+
+function getTorqueCaseType(item, rows){
+  const tt = (item && item.tightening_type ? String(item.tightening_type).trim().toLowerCase() : "");
+  if (["multi_step", "multi_size", "multi_location"].includes(tt)) return tt;
+  return classifyTorqueStepsRows(rows);
 }
 
 function normalizeStepLabel(label){
@@ -5614,9 +5620,9 @@ function buildSpokenAnswerParts(item){
   // -----------------------
   // Torque / tightening
   // -----------------------
-  if (tt === "multi_step"){
+  if (["multi_step", "multi_size", "multi_location"].includes(tt)){
     const rows = getTorqueStepsRows(item);
-    const caseType = classifyTorqueStepsRows(rows);
+    const caseType = getTorqueCaseType(item, rows);
 
     if (rows.length){
       if (caseType === "multi_size"){
@@ -5794,7 +5800,7 @@ function buildSpokenAnswerParts(item){
       if (rows.length){
         html += `<div class="stepList multi" style="margin-top:8px;padding-top:0;border-top:none;">`;
 
-        const caseType = classifyTorqueStepsRows(rows);
+        const caseType = getTorqueCaseType(item, rows);
 
         rows.forEach(r => {
           let tag = r.label;
