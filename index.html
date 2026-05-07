@@ -4358,16 +4358,43 @@ function stopStatusDots(){
 
 
 
-    // Select-all behavior for manual input fallback (tap/click focuses and selects existing text)
+    // First tap/click selects existing text; the next tap/click moves the caret to the end.
     function enableSelectAllOnFocus(el){
       if(!el) return;
+      let ignoreNextClickAfterFocus = false;
+      let selectedByFocus = false;
+
       const selectAll = () => {
         try{
           // Delay helps on mobile where selection needs a tick after focus
+          ignoreNextClickAfterFocus = true;
+          selectedByFocus = true;
           setTimeout(()=>{ el.select(); }, 0);
         }catch(e){}
       };
+      const moveCaretToEnd = (e) => {
+        if (document.activeElement !== el || !selectedByFocus) return;
+        if (ignoreNextClickAfterFocus){
+          ignoreNextClickAfterFocus = false;
+          return;
+        }
+        try{
+          const end = el.value.length;
+          el.setSelectionRange(end, end);
+          selectedByFocus = false;
+          if (e?.cancelable) e.preventDefault();
+        }catch(err){}
+      };
+
       el.addEventListener("focus", selectAll);
+      el.addEventListener("blur", ()=>{
+        ignoreNextClickAfterFocus = false;
+        selectedByFocus = false;
+      });
+      el.addEventListener("input", ()=>{
+        ignoreNextClickAfterFocus = false;
+        selectedByFocus = false;
+      });
 
       // On desktop, mouseup can clear selection; prevent that when focusing
       el.addEventListener("mouseup", (e)=>{
@@ -4377,9 +4404,8 @@ function stopStatusDots(){
         }
       });
 
-      // Explicit click/touch should also select all (useful when already focused)
-      el.addEventListener("click", selectAll);
-      el.addEventListener("touchstart", selectAll, {passive:true});
+      el.addEventListener("click", moveCaretToEnd);
+      el.addEventListener("touchstart", moveCaretToEnd, {passive:false});
     }
     enableSelectAllOnFocus(questionInput);
 
@@ -5937,16 +5963,7 @@ function buildSpokenAnswerParts(item){
   // -----------------------
   const tools = getSpecialTools(item);
   if (tools.length){
-    tools.forEach(t => {
-      const toolName = (t?.special_tool_name ?? "").toString().trim();
-      const toolNum  = (t?.special_tool_number ?? "").toString().trim();
-
-      if (toolName){
-        infoParts.push(`${toolName} is required.`);
-      } else if (toolNum){
-        infoParts.push(`Special tool ${toolNum} is required.`);
-      }
-    });
+    infoParts.push("A special tool is required. Check the part number on screen.");
   }
 
   if (item.tightening_seq){
