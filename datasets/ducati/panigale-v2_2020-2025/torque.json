@@ -2252,7 +2252,9 @@
       "extra_notes": null,
       "item_number": "Item #29",
       "common_name": [
-        "starting motor"
+        "starting motor",
+        "start motor",
+        "startmotor"
       ],
       "ref_images": [
         "starter_motor_cable.png"
