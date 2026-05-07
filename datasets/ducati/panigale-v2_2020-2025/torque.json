@@ -393,7 +393,7 @@
       "group": "chain_sprocket",
       "component_name": "Eccentric hub pinch screw",
       "tightening_type": "single",
-      "torque_nm_single": 20,
+      "torque_nm_single": 25,
       "torque_steps": null,
       "threadlock": null,
       "threadlock_symbol": null,
@@ -477,7 +477,8 @@
         "front suspension pinch",
         "stem nut pinch",
         "steering head nut pinch",
-        "steering stem pinch"
+        "steering stem pinch",
+        "steering head clamp pinch"
       ],
       "ref_images": [
         "top_triple_clamp_pinch_1.png",
@@ -2330,7 +2331,7 @@
       "threadlock": null,
       "threadlock_symbol": null,
       "lubrication": "SHELL Advance 4T Ultra;SHELL Retinax HD2",
-      "lubrication_symbol": "MOTOR OIL to thread, GREASE D to under head",
+      "lubrication_symbol": "MOTOR OIL to thread, GREASE B to under head",
       "sealant": null,
       "sealant_symbol": null,
       "thread_spec": null,
@@ -2503,8 +2504,8 @@
       "sealant": null,
       "sealant_symbol": null,
       "thread_spec": null,
-      "special_tool_numbers": null,
-      "special_tool_name": null,
+      "special_tool_numbers": "88713.3925",
+      "special_tool_name": "Primary gear tightening tool",
       "tightening_seq": null,
       "extra_notes": null,
       "item_number": "Item #4",
@@ -2513,7 +2514,8 @@
         "primary sprocket"
       ],
       "ref_images": [
-        "primary_gear.png"
+        "primary_gear_1.png",
+        "primary_gear_2.png"
       ]
     },
     {
@@ -2987,7 +2989,7 @@
       "group": null,
       "component_name": "Rocker arm shaft retainer plate screw",
       "tightening_type": "single",
-      "torque_nm_single": 10,
+      "torque_nm_single": 6,
       "torque_steps": null,
       "threadlock": "Loctite 243",
       "threadlock_symbol": "LOCK 2",
