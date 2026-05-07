@@ -4900,9 +4900,9 @@ function getTorqueStepsRows(item){
   return [];
 }
 
-// --- Multi-step vs Multi-size classification (string torque_steps) ---
+// --- Multi-step vs Multi-size/location classification (string torque_steps) ---
 function classifyTorqueStepsRows(rows){
-  // Returns "multi_step" or "multi_size" (default multi_step)
+  // Returns "multi_step", "multi_size", or "multi_location".
   if (!Array.isArray(rows) || !rows.length) return "multi_step";
   const labels = rows.map(r => String(r?.label ?? "").trim());
   const allSize = labels.length > 0 && labels.every(l => /^m\d+$/i.test(l));
@@ -4911,8 +4911,7 @@ function classifyTorqueStepsRows(rows){
   const allStep = labels.length > 0 && labels.every(l => /^step\s*\d+$/i.test(l) || /^step\d+$/i.test(l) || /^\d+$/.test(l));
   if (allStep) return "multi_step";
 
-  // Mixed/unknown → treat as multi_step (safer)
-  return "multi_step";
+  return "multi_location";
 }
 
 function normalizeStepLabel(label){
@@ -4925,6 +4924,11 @@ function normalizeStepLabel(label){
 }
 
 function normalizeSizeLabel(label){
+  const s = String(label ?? "").trim();
+  return s ? s.toUpperCase() : "";
+}
+
+function normalizeLocationLabel(label){
   const s = String(label ?? "").trim();
   return s ? s.toUpperCase() : "";
 }
@@ -5631,6 +5635,22 @@ function buildSpokenAnswerParts(item){
             baseParts.push(`${size}. ${String(r.value ?? "").trim()}.`);
           }
         });
+      } else if (caseType === "multi_location"){
+        baseParts.push("Torque by location.");
+        rows.forEach(r=>{
+          const location = String(r.label ?? "").trim() || "Location";
+          const nm = extractNmNumber(r.value);
+          const degMatch = String(r.value ?? "").match(/(\d+(?:\.\d+)?)\s*Â°/);
+          const deg = degMatch ? degMatch[1] : null;
+
+          if (nm && deg){
+            baseParts.push(`${location}. ${nm} newton meters, plus ${deg} degrees.`);
+          } else if (nm){
+            baseParts.push(`${location}. ${nm} newton meters.`);
+          } else {
+            baseParts.push(`${location}. ${String(r.value ?? "").trim()}.`);
+          }
+        });
       } else {
         // Multi-Step case
         rows.forEach(r=>{
@@ -5781,6 +5801,8 @@ function buildSpokenAnswerParts(item){
 
           if (caseType === "multi_size"){
             tag = normalizeSizeLabel(tag);
+          } else if (caseType === "multi_location"){
+            tag = normalizeLocationLabel(tag);
           } else {
             // multi_step
             tag = normalizeStepLabel(tag);
