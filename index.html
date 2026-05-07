@@ -5583,6 +5583,7 @@ function tokenizeNormalized(s){
     }
 
     function speak(text, opts={}){
+      text = prepareSpeechText(text);
       lastSpokenText = text || "";
       setRepeatStop(!!lastSpokenText);
 
@@ -5595,6 +5596,14 @@ function tokenizeNormalized(s){
       u.rate = 1.0;
       u.pitch = 1.0;
       window.speechSynthesis.speak(u);
+    }
+
+    function prepareSpeechText(text){
+      return String(text || "")
+        .replace(/(\d+(?:\.\d+)?)\s*Nm\b/g, "$1 newton meters")
+        .replace(/(\d+(?:\.\d+)?)\s*nm\b/g, "$1 newton meters")
+        .replace(/\bNm\b/g, "newton meters")
+        .replace(/\bnm\b/g, "newton meters");
     }
 
     function speakNumbersDigitByDigit(text){
@@ -5659,6 +5668,7 @@ function buildSpokenAnswerParts(item){
         });
       } else {
         // Multi-Step case
+        baseParts.push("Torque by step.");
         rows.forEach(r=>{
           const stepTag = normalizeStepLabel(r.label); // STEP1
           const stepNumMatch = stepTag.match(/STEP(\d+)/i);
