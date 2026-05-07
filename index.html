@@ -1147,6 +1147,138 @@ body.authLocked .wrap{
 .authHomeScreenView.show{
   display:flex;
 }
+.authPlanView{
+  display:none;
+  flex-direction:column;
+  gap:12px;
+}
+.authPlanView.show{
+  display:flex;
+}
+.planCard{
+  border:1px solid var(--border-soft);
+  border-radius:14px;
+  background:rgba(255,255,255,.045);
+  padding:14px;
+}
+.planCard.primary{
+  border-color:rgba(79,140,255,.54);
+  background:rgba(79,140,255,.09);
+}
+.planCard.disabled{
+  opacity:.72;
+}
+.planCardTop{
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:10px;
+}
+.planName{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:var(--text);
+  font-size:16px;
+  font-weight:800;
+  line-height:1.2;
+}
+.planRadio{
+  width:14px;
+  height:14px;
+  border:1px solid var(--border-soft);
+  border-radius:999px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 auto;
+  background:rgba(5,6,12,.65);
+}
+.planRadio::after{
+  content:"";
+  width:8px;
+  height:8px;
+  border-radius:999px;
+  background:transparent;
+}
+.planRadio.selected{
+  border-color:rgba(39,228,159,.72);
+}
+.planRadio.selected::after{
+  background:var(--ok);
+}
+.planBadge{
+  flex:0 0 auto;
+  border:1px solid rgba(79,140,255,.48);
+  border-radius:999px;
+  color:#cfe0ff;
+  background:rgba(79,140,255,.12);
+  padding:4px 8px;
+  font-size:10px;
+  font-weight:800;
+  line-height:1;
+}
+.planPrice{
+  display:flex;
+  align-items:baseline;
+  gap:8px;
+  margin-top:10px;
+}
+.planPriceOld{
+  color:var(--muted);
+  font-size:14px;
+  font-weight:700;
+  line-height:1;
+  text-decoration:line-through;
+  text-decoration-thickness:1.5px;
+}
+.planPriceArrow{
+  color:var(--muted);
+  font-size:12px;
+  font-weight:800;
+  line-height:1;
+}
+.planPriceMain{
+  color:var(--text);
+  font-size:24px;
+  font-weight:900;
+  line-height:1;
+}
+.planPriceUnit{
+  color:var(--sub);
+  font-size:12px;
+}
+.planDescription{
+  margin:10px 0 0;
+  color:var(--text);
+  font-size:13px;
+  line-height:1.35;
+}
+.planFeatures{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  margin:12px 0 0;
+  padding:0;
+  list-style:none;
+}
+.planFeatures li{
+  color:var(--sub);
+  font-size:12px;
+  line-height:1.35;
+}
+.planCardActions{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:10px;
+  margin-top:14px;
+}
+.planCheckoutBtn{
+  min-width:150px;
+  height:42px;
+  padding:0 14px;
+}
 .installSteps{
   display:flex;
   flex-direction:column;
@@ -1728,6 +1860,35 @@ body.authLocked .wrap{
       <div id="authInstallRow" class="authInstallRow">
         <button id="authInstallBtn" class="authInstallBtn" type="button">Add SAM. to Home Screen</button>
       </div>
+      <div id="authPlanView" class="authPlanView">
+        <div class="planCard primary">
+          <div class="planCardTop">
+            <div class="planName"><span class="planRadio selected" aria-hidden="true"></span>SAM. Standard</div>
+            <div class="planBadge">Early access</div>
+          </div>
+          <div class="planPrice">
+            <span class="planPriceOld">$5.99</span>
+            <span class="planPriceArrow">→</span>
+            <span class="planPriceMain">$2.99</span>
+            <span class="planPriceUnit">/ month</span>
+          </div>
+          <p class="planDescription">For individual users who work on motorcycles.</p>
+          <ul class="planFeatures">
+            <li>50 searches per month</li>
+            <li>Photo search included during early access</li>
+          </ul>
+          <div class="planCardActions">
+            <button id="authPlanStartBtn" class="authSubmit planCheckoutBtn" type="button">Continue to checkout</button>
+          </div>
+        </div>
+        <div class="planCard disabled">
+          <div class="planCardTop">
+            <div class="planName"><span class="planRadio" aria-hidden="true"></span>SAM. Pro</div>
+            <div class="planBadge">Coming soon</div>
+          </div>
+          <p class="planDescription">For technicians and shops who need higher monthly usage and more photo analysis.</p>
+        </div>
+      </div>
       <div id="authHomeScreenView" class="authHomeScreenView">
         <div id="authHomeScreenSteps" class="installSteps"></div>
         <div id="authHomeScreenNote" class="installNote"></div>
@@ -1839,6 +2000,8 @@ body.authLocked .wrap{
     const authAccountActions = document.getElementById("authAccountActions");
     const authInstallRow = document.getElementById("authInstallRow");
     const authInstallBtn = document.getElementById("authInstallBtn");
+    const authPlanView = document.getElementById("authPlanView");
+    const authPlanStartBtn = document.getElementById("authPlanStartBtn");
     const authHomeScreenView = document.getElementById("authHomeScreenView");
     const authHomeScreenSteps = document.getElementById("authHomeScreenSteps");
     const authHomeScreenNote = document.getElementById("authHomeScreenNote");
@@ -1959,7 +2122,7 @@ body.authLocked .wrap{
     }
 
     function updateInstallActionVisibility(){
-      const show = !!(CURRENT_USER && !isStandaloneDisplay());
+      const show = !!(CURRENT_USER && !isStandaloneDisplay() && !authPlanView?.classList.contains("show"));
       if (authInstallRow) authInstallRow.classList.toggle("show", show);
     }
 
@@ -2100,9 +2263,27 @@ body.authLocked .wrap{
       if (authAccountActions) authAccountActions.classList.toggle("show", !!CURRENT_USER);
       if (authContactView) authContactView.classList.remove("show");
       if (authHomeScreenView) authHomeScreenView.classList.remove("show");
+      if (authPlanView) authPlanView.classList.remove("show");
       if (authCloseBtn) authCloseBtn.classList.add("show");
       if (authContactSubmitBtn) authContactSubmitBtn.disabled = false;
       updateInstallActionVisibility();
+      clearContactCloseTimer();
+      setContactMessage("");
+    }
+
+    function showPlanView(){
+      if (!CURRENT_USER) return;
+      setAuthTitle("Manage plan");
+      if (authAccountEmail) authAccountEmail.style.display = "none";
+      if (authAccountSummary) authAccountSummary.classList.remove("show");
+      if (authAccountNotice) authAccountNotice.classList.remove("show");
+      if (authAccountActions) authAccountActions.classList.remove("show");
+      if (authInstallRow) authInstallRow.classList.remove("show");
+      if (authHomeScreenView) authHomeScreenView.classList.remove("show");
+      if (authContactView) authContactView.classList.remove("show");
+      if (authPlanView) authPlanView.classList.add("show");
+      if (authCloseBtn) authCloseBtn.classList.add("show");
+      setAuthMessage("");
       clearContactCloseTimer();
       setContactMessage("");
     }
@@ -2112,6 +2293,7 @@ body.authLocked .wrap{
       setAuthTitle("Contact");
       if (authInstallRow) authInstallRow.classList.remove("show");
       if (authHomeScreenView) authHomeScreenView.classList.remove("show");
+      if (authPlanView) authPlanView.classList.remove("show");
       if (authContactTitle) {
         authContactTitle.disabled = false;
         authContactTitle.value = "";
@@ -2281,15 +2463,16 @@ body.authLocked .wrap{
       }
     }
 
-    async function openBillingSession(){
+    async function openBillingSession(triggerBtn=authBillingBtn){
       if (!CURRENT_USER){
         openAuthOverlay();
         return;
       }
-      if (!authBillingBtn) return;
-      const originalText = authBillingBtn.textContent;
-      authBillingBtn.disabled = true;
-      authBillingBtn.textContent = "Opening...";
+      const btn = triggerBtn || authBillingBtn;
+      if (!btn) return;
+      const originalText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = "Opening...";
       setAuthMessage("");
       if (authAccountNotice) {
         authAccountNotice.textContent = "";
@@ -2318,8 +2501,9 @@ body.authLocked .wrap{
           authAccountNotice.textContent = "Billing is unavailable.\nTry again later.";
           authAccountNotice.classList.add("show");
         }
-        authBillingBtn.disabled = false;
-        authBillingBtn.textContent = originalText;
+        setAuthMessage("Billing is unavailable. Try again later.", "error");
+        btn.disabled = false;
+        btn.textContent = originalText;
       }
     }
 
@@ -2491,6 +2675,7 @@ body.authLocked .wrap{
         if (authAccountNotice) authAccountNotice.classList.remove("show");
         if (authContactView) authContactView.classList.remove("show");
         if (authHomeScreenView) authHomeScreenView.classList.remove("show");
+        if (authPlanView) authPlanView.classList.remove("show");
         if (authCloseBtn) authCloseBtn.classList.remove("show");
       }
       lockPageScrollForAuth();
@@ -2529,6 +2714,7 @@ body.authLocked .wrap{
       if (authAccountSummary) authAccountSummary.classList.toggle("show", signedIn && authMode !== "update_password");
       if (authAccountNotice) authAccountNotice.classList.toggle("show", signedIn && authMode !== "update_password" && !!ACCOUNT_ALERT?.message);
       if (authContactView) authContactView.classList.remove("show");
+      if (authPlanView) authPlanView.classList.remove("show");
       if (authForm) authForm.style.display = signedIn && authMode !== "update_password" ? "none" : "";
       if (authSecondaryRow) authSecondaryRow.style.display = signedIn && authMode !== "update_password" ? "none" : "";
       if (authGuestBtn) authGuestBtn.style.display = signedIn || authMode === "update_password" ? "none" : "";
@@ -2709,7 +2895,17 @@ body.authLocked .wrap{
       }
       if (authBillingBtn){
         authBillingBtn.addEventListener("click", ()=>{
-          openBillingSession();
+          showPlanView();
+        });
+      }
+      if (authPlanStartBtn){
+        authPlanStartBtn.addEventListener("click", ()=>{
+          openBillingSession(authPlanStartBtn);
+        });
+      }
+      if (authPlanView){
+        authPlanView.addEventListener("click", (e)=>{
+          e.stopPropagation();
         });
       }
       if (authInstallBtn){
@@ -4582,6 +4778,7 @@ async function initApp(){
       if (authAccountActions) authAccountActions.classList.remove("show");
       if (authInstallRow) authInstallRow.classList.remove("show");
       if (authContactView) authContactView.classList.remove("show");
+      if (authPlanView) authPlanView.classList.remove("show");
       if (authHomeScreenView) authHomeScreenView.classList.remove("show");
       if (authHomeScreenView) authHomeScreenView.classList.add("show");
       if (authCloseBtn) authCloseBtn.classList.remove("show");
