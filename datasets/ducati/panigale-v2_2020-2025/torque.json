@@ -2005,7 +2005,7 @@
       "component_name": "Sub frame screw",
       "tightening_type": "multi_step",
       "torque_nm_single": null,
-      "torque_steps": "Main frame: 28Nm; Head: 22Nm",
+      "torque_steps": "Frame: 28Nm; Head: 22Nm",
       "threadlock": null,
       "threadlock_symbol": null,
       "lubrication": "SHELL Retinax HDX2",
@@ -3180,7 +3180,7 @@
       "special_tool_name": "Torque wrench adaptor",
       "tightening_seq": null,
       "extra_notes": null,
-      "item_number": "Item #4",
+      "item_number": "Item #15, #16",
       "common_name": [
         "cylinder head nut",
         "head nut"
