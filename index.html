@@ -1030,6 +1030,17 @@ body.authLocked .wrap{
   font-size:12px;
   line-height:1.4;
 }
+.authTrialLead{
+  display:none;
+  margin:-4px 0 12px;
+  color:#cfe0ff;
+  font-size:12px;
+  font-weight:700;
+  line-height:1.35;
+}
+.authTrialLead.show{
+  display:block;
+}
 .authLeadWarn{
   color:var(--danger);
   font-weight:700;
@@ -1818,6 +1829,7 @@ body.authLocked .wrap{
       <div id="authSubtitle" class="authSubtitle" style="display:none"></div>
       <div id="authLead" class="authLead">SAM. is an AI-powered torque spec assistant.<br>Sign in to access torque data.</div>
       <form id="authForm" class="authForm" novalidate>
+        <div id="authTrialLead" class="authTrialLead">Start with a 14-day free trial and 30 searches.</div>
         <input id="authEmail" class="authInput" type="email" placeholder="Email" autocomplete="email" required />
         <div id="authPasswordRow" class="authPasswordWrap">
           <input id="authPassword" class="authInput" type="password" placeholder="Password" autocomplete="current-password" required minlength="6" />
@@ -1981,6 +1993,7 @@ body.authLocked .wrap{
     const authTitle = document.getElementById("authTitle");
     const authSubtitle = document.getElementById("authSubtitle");
     const authLead = document.getElementById("authLead");
+    const authTrialLead = document.getElementById("authTrialLead");
     const authForm = document.getElementById("authForm");
     const authEmail = document.getElementById("authEmail");
     const authPasswordRow = document.getElementById("authPasswordRow");
@@ -2618,6 +2631,7 @@ body.authLocked .wrap{
         if (!needsConfirm) authPasswordConfirm.value = "";
       }
       if (authGuestBtn) authGuestBtn.style.display = authPromptReason === "guest_limit" || authMode === "update_password" ? "none" : "";
+      if (authTrialLead) authTrialLead.classList.toggle("show", authMode === "signup" && authPromptReason !== "guest_limit");
       setAuthMessage("");
     }
 
@@ -2652,6 +2666,7 @@ body.authLocked .wrap{
       setAuthIntro();
       if (CURRENT_USER && authMode !== "update_password"){
         if (authForm) authForm.style.display = "none";
+        if (authTrialLead) authTrialLead.classList.remove("show");
         if (authSecondaryRow) authSecondaryRow.style.display = "none";
         if (authGuestBtn) authGuestBtn.style.display = "none";
         if (authAccountActions) authAccountActions.classList.add("show");
@@ -2681,6 +2696,7 @@ body.authLocked .wrap{
       lockPageScrollForAuth();
       if (authOverlay) authOverlay.classList.add("show");
       if (authGuestBtn && !CURRENT_USER) authGuestBtn.style.display = authPromptReason === "guest_limit" || authMode === "update_password" ? "none" : "";
+      if (authTrialLead) authTrialLead.classList.toggle("show", !CURRENT_USER && authMode === "signup" && authPromptReason !== "guest_limit");
       const shouldAutoFocusAuth = !window.matchMedia("(max-width: 768px), (pointer: coarse)").matches;
       if (shouldAutoFocusAuth){
         try{ authEmail?.focus(); }catch(e){}
@@ -2716,6 +2732,7 @@ body.authLocked .wrap{
       if (authContactView) authContactView.classList.remove("show");
       if (authPlanView) authPlanView.classList.remove("show");
       if (authForm) authForm.style.display = signedIn && authMode !== "update_password" ? "none" : "";
+      if (authTrialLead) authTrialLead.classList.toggle("show", !signedIn && authMode === "signup" && authPromptReason !== "guest_limit");
       if (authSecondaryRow) authSecondaryRow.style.display = signedIn && authMode !== "update_password" ? "none" : "";
       if (authGuestBtn) authGuestBtn.style.display = signedIn || authMode === "update_password" ? "none" : "";
       if (authLead) authLead.style.display = signedIn && authMode !== "update_password" ? "none" : "";
