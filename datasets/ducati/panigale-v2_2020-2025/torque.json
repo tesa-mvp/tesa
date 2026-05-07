@@ -3035,12 +3035,19 @@
       "item_number": "Item #12",
       "common_name": [
         "timing chain gear plate",
+        "timing chain hear cap",
         "timing chain gear shaft cover",
         "timing chain gear shaft plate",
+        "timing chain gear shaft cap",
         "timing gear shaft cover",
         "timing gear shaft plate",
+        "timing gear shaft cap",
         "timing gear cover",
-        "timing gear plate"
+        "timing gear plate",
+        "timing gear cap",
+        "cam chain gear cover",
+        "cam chain gear plate",
+        "cam chain gear cap"
       ],
       "ref_images": [
         "timing_chain_gear_cover.png"
@@ -3368,7 +3375,7 @@
       "special_tool_name": null,
       "tightening_seq": null,
       "extra_notes": null,
-      "item_number": "Item #8",
+      "item_number": null,
       "common_name": [
         "rear shock support",
         "rear suspension support",
