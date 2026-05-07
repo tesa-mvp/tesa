@@ -502,7 +502,7 @@
       "special_tool_name": null,
       "tightening_seq": null,
       "extra_notes": null,
-      "item_number": "Item #11",
+      "item_number": "Item #12",
       "common_name": [
         "rear brake disc",
         "rear brake rotor",
@@ -1220,7 +1220,7 @@
       "special_tool_name": null,
       "tightening_seq": null,
       "extra_notes": null,
-      "item_number": "Item #6",
+      "item_number": "Item #7",
       "common_name": [
         "abs bracket",
         "abs support",
@@ -2221,7 +2221,7 @@
       "special_tool_name": null,
       "tightening_seq": null,
       "extra_notes": null,
-      "item_number": "Item #28",
+      "item_number": "Item #29",
       "common_name": [
         "front frame"
       ],
@@ -2660,7 +2660,7 @@
       "special_tool_name": null,
       "tightening_seq": "Criss-cross pattern",
       "extra_notes": null,
-      "item_number": "Item #2, #3",
+      "item_number": "Item #2",
       "common_name": [
         "heat exchanger",
         "oil cooler"
@@ -3000,7 +3000,7 @@
       "special_tool_name": null,
       "tightening_seq": null,
       "extra_notes": null,
-      "item_number": "Item #16",
+      "item_number": "Item #18",
       "common_name": [
         "rocker arm shaft retaining plate",
         "rocker arm shaft stop plate",
@@ -3142,7 +3142,7 @@
       ]
     },
     {
-      "id": "nut_cylinder_head_stud_12p",
+      "id": "cylinder_head_nut_12p",
       "group": null,
       "component_name": "Cylinder head stud nut - 12-point",
       "tightening_type": "multi_step",
@@ -3165,12 +3165,12 @@
         "head nut"
       ],
       "ref_images": [
-        "cylinder_head_stud_12p_1.png",
-        "cylinder_head_stud_12p_2.png"
+        "cylinder_head_nut_12p_1.png",
+        "cylinder_head_nut_12p_2.png"
       ]
     },
     {
-      "id": "nut_cylinder_head_stud_6p",
+      "id": "cylinder_head_nut_6p",
       "group": null,
       "component_name": "Cylinder head stud nut - 6-point",
       "tightening_type": "single",
@@ -3193,13 +3193,13 @@
         "head nut"
       ],
       "ref_images": [
-        "cylinder_head_stud_6p_1.png",
-        "cylinder_head_stud_6p_2.png",
-        "cylinder_head_stud_6p_3.png"
+        "cylinder_head_nut_6p_1.png",
+        "cylinder_head_nut_6p_2.png",
+        "cylinder_head_nut_6p_3.png"
       ]
     },
     {
-      "id": "cylinder_head",
+      "id": "cylinder_head_screw",
       "group": null,
       "component_name": "Cylinder head screw - timing chain side",
       "tightening_type": "single",
@@ -3219,7 +3219,7 @@
       "item_number": "Item #14",
       "common_name": [],
       "ref_images": [
-        "cylinder_head.png"
+        "cylinder_head_screw.png"
       ]
     },
     {
@@ -3377,7 +3377,7 @@
       "special_tool_name": null,
       "tightening_seq": null,
       "extra_notes": null,
-      "item_number": null,
+      "item_number": "Item #8",
       "common_name": [
         "rear shock support",
         "rear suspension support",
