@@ -5372,12 +5372,12 @@ function tokenizeNormalized(s){
       const q3 = ngrams(queryTokens, 3);
       const q2 = ngrams(queryTokens, 2);
       for (const p of q3){
-        if (componentText.includes(p)) b += 12;
+        if (componentText.includes(p)) b += 8;
       }
       for (const p of q2){
-        if (componentText.includes(p)) b += 10;
+        if (componentText.includes(p)) b += 4;
       }
-      return Math.min(b, 16);
+      return Math.min(b, 10);
     }
 
     function rareTokenBonus(matchedTokens){
