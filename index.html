@@ -3880,6 +3880,7 @@ llm_query: (typeof data?.llm_query === "string") ? data.llm_query : "",
     const MIN_SCORE_TO_ANSWER = 40;   // score too low -> refuse (raw score; no 100 cap)
     const MIN_GAP_TO_ANSWER   = 15;  // best-second gap too small -> ambiguous (raw score)
     const MULTI_MIN_SCORE    = 44;  // Multi-match list hides candidates below this score (raw score)
+    const MULTI_MAX_GAP_FROM_BEST = 20; // Multi-match list hides candidates far below the best score
     const MAX_CANDIDATES_UI   = 5;
 
     let torqueData = [];
@@ -6317,8 +6318,16 @@ function escapeHtml(s){
       // 2) Normalize user-side fastener synonyms.
       // SAM. keeps dataset labels screw-focused, while users often say bolt.
       const synonymBase = base
+        .replace(/\bpinch\s+bolt\b/g, "__pinch_bolt__")
+        .replace(/\bpinch\s+bolts\b/g, "__pinch_bolts__")
+        .replace(/\bbanjo\s+bolt\b/g, "__banjo_bolt__")
+        .replace(/\bbanjo\s+bolts\b/g, "__banjo_bolts__")
         .replace(/\bmachine\s+bolts?\b/g, "screw")
-        .replace(/\bbolts?\b/g, "screw");
+        .replace(/\bbolts?\b/g, "screw")
+        .replace(/__pinch_bolt__/g, "pinch bolt")
+        .replace(/__pinch_bolts__/g, "pinch bolts")
+        .replace(/__banjo_bolt__/g, "banjo bolt")
+        .replace(/__banjo_bolts__/g, "banjo bolts");
 
       // 3) Tokenize + remove STOPWORDS (normalize-only process)
       const tokens = tokenizeForNormalize(synonymBase);
@@ -6696,7 +6705,10 @@ if (!candidates.length){
       // Rail #3: ambiguous → user choose
       if (second && gap < MIN_GAP_TO_ANSWER){
         // In multi-match mode, hide low-score candidates that are effectively noise.
-        const meaningful = candidates.filter(c => (c.score ?? 0) >= MULTI_MIN_SCORE);
+        const meaningful = candidates.filter(c => {
+          const score = c.score ?? 0;
+          return score >= MULTI_MIN_SCORE && (bestScore - score) <= MULTI_MAX_GAP_FROM_BEST;
+        });
 
         // If filtering leaves only one meaningful candidate, treat it as a single match.
         if (meaningful.length <= 1){
