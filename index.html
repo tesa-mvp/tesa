@@ -5502,6 +5502,11 @@ function tokenizeNormalized(s){
       return {score, hits: uniqHits};
     }
 
+    function isFastenerRoleToken(token){
+      const t = String(token || "").trim().toLowerCase();
+      return !!t && FASTENER_TRIGGER_TOKENS.includes(t) && t !== "mounting";
+    }
+
     function scoreItemV2(queryNorm, item, bonusTokens){
       // queryNorm is expected to be the already-normalized nq (output of normalizeQuery).
       const qTokens = tokenizeNormalized(queryNorm);
@@ -5513,10 +5518,18 @@ function tokenizeNormalized(s){
       if (!itemText || !itemTokens.length) return { score: 0, breakdown: { reason: "EMPTY_ITEM" } };
 
       const itemSet = new Set(itemTokens);
+      const coreQueryTokens = qTokens.filter(t => !isFastenerRoleToken(t));
+      const fastenerQueryTokens = qTokens.filter(t => isFastenerRoleToken(t));
 
       const matched = [];
       for (const t of qTokens){
         if (itemSet.has(t)) matched.push(t);
+      }
+      const matchedCore = coreQueryTokens.filter(t => itemSet.has(t));
+      const matchedFastener = fastenerQueryTokens.filter(t => itemSet.has(t));
+
+      if (coreQueryTokens.length && !matchedCore.length){
+        return { score: 0, breakdown: { overlap: 0, reason: "NO_CORE_TOKEN_MATCH" } };
       }
 
       const overlapCount = matched.length;
@@ -5524,7 +5537,9 @@ function tokenizeNormalized(s){
 
       // Components
       const overlapScore = overlapCount * 6; // main driver
-      const coverage = overlapCount / qTokens.length;
+      const coverageBase = coreQueryTokens.length ? coreQueryTokens.length : qTokens.length;
+      const coverageHits = coreQueryTokens.length ? matchedCore.length : overlapCount;
+      const coverage = coverageHits / coverageBase;
       const coverageScore = Math.round(coverage * 30); // 0..30
       const pBonus = phraseBonus(qTokens, itemText);   // 0..24
       const cPhraseBonus = componentPhraseBonus(qTokens, item); // 0..16
@@ -5547,6 +5562,8 @@ function tokenizeNormalized(s){
         llm_bonus: llm.score || 0,
         llm_hits: llm.hits || [],
         matched_tokens: uniq(matched),
+        matched_core_tokens: uniq(matchedCore),
+        matched_fastener_tokens: uniq(matchedFastener),
         q_tokens: qTokens
       };
 
