@@ -274,6 +274,48 @@
       padding-right:10px;
       border-right:1px solid var(--border-soft);
     }
+    .voiceToggleWrap{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      color:var(--sub);
+      font-size:11px;
+      font-weight:700;
+      line-height:1;
+      white-space:nowrap;
+    }
+    .voiceSwitch{
+      width:42px;
+      height:24px;
+      border:1px solid var(--border);
+      border-radius:999px;
+      background:rgba(9,11,18,.85);
+      color:var(--sub);
+      padding:0;
+      display:inline-flex;
+      align-items:center;
+      cursor:pointer;
+      transition:border-color .12s ease, background .12s ease;
+    }
+    .voiceSwitch:hover{
+      border-color:#4b5061;
+    }
+    .voiceSwitchKnob{
+      width:18px;
+      height:18px;
+      margin-left:3px;
+      border-radius:999px;
+      background:var(--sub);
+      transition:transform .14s ease, background .14s ease;
+    }
+    .voiceSwitch.on{
+      border-color:rgba(39,228,159,.55);
+      background:rgba(39,228,159,.13);
+    }
+    .voiceSwitch.on .voiceSwitchKnob{
+      transform:translateX(18px);
+      background:var(--ok);
+    }
     .pillBtn{
       padding:7px 10px;
       border-radius:999px;
@@ -319,34 +361,6 @@
     .controls .iconBtn.clearBtn.isPressed{
       border-color:rgba(255,79,106,.55);
     }
-    .voiceReadToggle{
-      border-color:var(--border);
-      color:var(--sub);
-    }
-    .voiceReadToggle:hover{
-      border-color:#4b5061;
-    }
-    .voiceReadToggle .audioIconOn{
-      display:none;
-    }
-    .voiceReadToggle .audioIconOff{
-      display:block;
-    }
-    .voiceReadToggle.on{
-      border-color:rgba(39,228,159,.55);
-      color:#d9fff1;
-      box-shadow:0 0 0 2px rgba(39,228,159,.10) inset;
-    }
-    .voiceReadToggle.on:hover{
-      border-color:rgba(39,228,159,.72);
-    }
-    .voiceReadToggle.on .audioIconOn{
-      display:block;
-    }
-    .voiceReadToggle.on .audioIconOff{
-      display:none;
-    }
-
     .partName{
       font-size:16px;
       font-weight:700;
@@ -374,6 +388,7 @@
     }
     .emptyLine{
       font-size:13px;
+      white-space:pre-line;
     }
     .metaRow{
       display:flex;
@@ -1169,15 +1184,15 @@ body.authLocked .wrap{
 .planCard{
   border:1px solid var(--border-soft);
   border-radius:14px;
-  background:rgba(255,255,255,.045);
+  background:rgba(255,255,255,.035);
   padding:14px;
 }
 .planCard.primary{
-  border-color:rgba(79,140,255,.54);
-  background:rgba(79,140,255,.09);
+  border-color:rgba(255,255,255,.16);
+  background:rgba(255,255,255,.045);
 }
 .planCard.disabled{
-  opacity:.72;
+  opacity:.62;
 }
 .planCardTop{
   display:flex;
@@ -1220,39 +1235,39 @@ body.authLocked .wrap{
 }
 .planBadge{
   flex:0 0 auto;
-  border:1px solid rgba(79,140,255,.48);
+  border:1px solid rgba(255,255,255,.16);
   border-radius:999px;
-  color:#cfe0ff;
-  background:rgba(79,140,255,.12);
+  color:var(--sub);
+  background:rgba(255,255,255,.045);
   padding:4px 8px;
   font-size:10px;
-  font-weight:800;
+  font-weight:700;
   line-height:1;
 }
 .planPrice{
   display:flex;
   align-items:baseline;
   gap:8px;
-  margin-top:10px;
+  margin:10px 0 0 22px;
 }
 .planPriceOld{
   color:var(--muted);
-  font-size:14px;
-  font-weight:700;
+  font-size:12px;
+  font-weight:600;
   line-height:1;
   text-decoration:line-through;
-  text-decoration-thickness:1.5px;
+  text-decoration-thickness:1px;
 }
 .planPriceArrow{
   color:var(--muted);
-  font-size:12px;
-  font-weight:800;
+  font-size:11px;
+  font-weight:700;
   line-height:1;
 }
 .planPriceMain{
   color:var(--text);
-  font-size:24px;
-  font-weight:900;
+  font-size:16px;
+  font-weight:800;
   line-height:1;
 }
 .planPriceUnit{
@@ -1260,7 +1275,7 @@ body.authLocked .wrap{
   font-size:12px;
 }
 .planDescription{
-  margin:10px 0 0;
+  margin:8px 0 0 22px;
   color:var(--text);
   font-size:13px;
   line-height:1.35;
@@ -1269,9 +1284,10 @@ body.authLocked .wrap{
   display:flex;
   flex-direction:column;
   gap:6px;
-  margin:12px 0 0;
-  padding:0;
-  list-style:none;
+  margin:12px 0 0 22px;
+  padding:0 0 0 16px;
+  list-style:disc;
+  list-style-position:outside;
 }
 .planFeatures li{
   color:var(--sub);
@@ -1285,10 +1301,12 @@ body.authLocked .wrap{
   gap:10px;
   margin-top:14px;
 }
-.planCheckoutBtn{
-  min-width:150px;
-  height:42px;
-  padding:0 14px;
+.authSubmit.planCheckoutBtn{
+  min-width:0;
+  width:auto;
+  height:38px;
+  padding:0 12px;
+  font-size:12px;
 }
 .installSteps{
   display:flex;
@@ -1374,20 +1392,26 @@ body.authLocked .wrap{
   display:flex;
   gap:8px;
   align-items:center;
-  justify-content:flex-end;
+  justify-content:center;
   flex-wrap:wrap;
 }
-.authContactActions .authSwitch,
 .authContactActions .authSubmit{
   width:96px;
-  height:42px;
+  height:38px;
   padding:0 12px;
+  border-radius:12px;
+  font-size:12px;
 }
 .authContactMessageLine{
-  min-height:16px;
+  display:none;
+  min-height:0;
   font-size:12px;
   line-height:1.35;
   color:var(--sub);
+}
+.authContactMessageLine.show{
+  display:block;
+  min-height:16px;
 }
 .authContactMessageLine.error{
   color:var(--danger);
@@ -1774,16 +1798,12 @@ body.authLocked .wrap{
       <div class="resultTop">
         <div class="controls">
           <div class="controlGroup" aria-label="Read result aloud">
-            <button id="voiceReadToggle" class="pillBtn iconBtn voiceReadToggle" type="button" aria-label="Audio off" aria-pressed="false" title="Audio">
-              <svg class="audioIconOn" viewBox="0 0 24 24" aria-hidden="true">
-                <path fill="currentColor" d="M4 9v6h4l5 4V5L8 9H4zm12.5 3a4.5 4.5 0 0 0-2-3.74v7.48a4.5 4.5 0 0 0 2-3.74z"/>
-                <path fill="currentColor" d="M16.9 4.6a1 1 0 0 0-1.1 1.68 6.8 6.8 0 0 1 0 11.44 1 1 0 1 0 1.1 1.68 8.8 8.8 0 0 0 0-14.8z"/>
-              </svg>
-              <svg class="audioIconOff" viewBox="0 0 24 24" aria-hidden="true">
-                <path fill="currentColor" d="M4 9v6h4l5 4V5L8 9H4z"/>
-                <path fill="currentColor" d="M18.7 5.3a1 1 0 0 0-1.4 0L3.3 19.3a1 1 0 1 0 1.4 1.4l14-14a1 1 0 0 0 0-1.4z"/>
-              </svg>
-            </button>
+            <div class="voiceToggleWrap">
+              <span>Voice</span>
+              <button id="voiceReadToggle" class="voiceSwitch" type="button" role="switch" aria-label="Voice off" aria-checked="false" title="Voice">
+                <span class="voiceSwitchKnob" aria-hidden="true"></span>
+              </button>
+            </div>
             <button id="repeatBtn" class="pillBtn iconBtn" type="button" aria-label="Repeat audio" title="Repeat" disabled>
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path fill="currentColor" d="M8 5v14l11-7L8 5z"/>
@@ -1878,13 +1898,13 @@ body.authLocked .wrap{
             <div class="planName"><span class="planRadio selected" aria-hidden="true"></span>SAM. Standard</div>
             <div class="planBadge">Early access</div>
           </div>
+          <p class="planDescription">For individual use.</p>
           <div class="planPrice">
-            <span class="planPriceOld">$5.99</span>
+            <span class="planPriceOld">$4.99</span>
             <span class="planPriceArrow">→</span>
-            <span class="planPriceMain">$2.99</span>
+            <span class="planPriceMain">$1.99</span>
             <span class="planPriceUnit">/ month</span>
           </div>
-          <p class="planDescription">For individual users who work on motorcycles.</p>
           <ul class="planFeatures">
             <li>50 searches per month</li>
             <li>Photo search included during early access</li>
@@ -1898,22 +1918,18 @@ body.authLocked .wrap{
             <div class="planName"><span class="planRadio" aria-hidden="true"></span>SAM. Pro</div>
             <div class="planBadge">Coming soon</div>
           </div>
-          <p class="planDescription">For technicians and shops who need higher monthly usage and more photo analysis.</p>
+          <p class="planDescription">For shops and technicians.</p>
         </div>
       </div>
       <div id="authHomeScreenView" class="authHomeScreenView">
         <div id="authHomeScreenSteps" class="installSteps"></div>
         <div id="authHomeScreenNote" class="installNote"></div>
-        <div class="authContactActions">
-          <button id="authHomeScreenCloseBtn" class="authSwitch" type="button">Close</button>
-        </div>
       </div>
       <form id="authContactView" class="authContactView" novalidate>
         <input id="authContactTitle" class="authContactTitle" type="text" placeholder="Title" maxlength="120" />
         <textarea id="authContactMessage" class="authContactMessage" placeholder="Tell us what happened." maxlength="2000"></textarea>
         <div id="authContactMessageLine" class="authContactMessageLine"></div>
         <div class="authContactActions">
-          <button id="authContactBackBtn" class="authSwitch" type="button">Close</button>
           <button id="authContactSubmitBtn" class="authSubmit" type="submit">Send</button>
         </div>
       </form>
@@ -2044,6 +2060,7 @@ body.authLocked .wrap{
     function setContactMessage(text, type=""){
       if (!authContactMessageLine) return;
       authContactMessageLine.textContent = text || "";
+      authContactMessageLine.classList.toggle("show", !!text);
       authContactMessageLine.classList.toggle("error", type === "error");
       authContactMessageLine.classList.toggle("ok", type === "ok");
     }
@@ -2196,7 +2213,7 @@ body.authLocked .wrap{
           row: "Searches",
           message: level === "trial"
             ? "You've reached your free trial search limit.\nManage plan to continue using SAM."
-            : "You've reached your monthly search limit.\nManage plan or contact support.",
+            : "You've reached your monthly search limit.\nContact us if you need more searches before renewal.",
           usage: usage || null
         };
       }
@@ -2263,6 +2280,14 @@ body.authLocked .wrap{
       authAccountSummary.classList.add("show");
     }
 
+    function isAuthSubviewOpen(){
+      return !!(
+        authContactView?.classList.contains("show") ||
+        authHomeScreenView?.classList.contains("show") ||
+        authPlanView?.classList.contains("show")
+      );
+    }
+
     function showAccountView(){
       setAuthTitle("Settings");
       if (authAccountEmail) authAccountEmail.style.display = CURRENT_USER ? "" : "none";
@@ -2326,7 +2351,7 @@ body.authLocked .wrap{
       if (authAccountNotice) authAccountNotice.classList.remove("show");
       if (authAccountActions) authAccountActions.classList.remove("show");
       if (authContactView) authContactView.classList.add("show");
-      if (authCloseBtn) authCloseBtn.classList.remove("show");
+      if (authCloseBtn) authCloseBtn.classList.add("show");
       setAuthMessage("");
       clearContactCloseTimer();
       setContactMessage("");
@@ -2475,11 +2500,18 @@ body.authLocked .wrap{
             ACCOUNT_ALERT?.row === "Trial ended"
           ]);
         }
-        renderAccountSummary(rows);
+        if (isAuthSubviewOpen()){
+          if (authAccountSummary) authAccountSummary.classList.remove("show");
+          if (authAccountNotice) authAccountNotice.classList.remove("show");
+        } else {
+          renderAccountSummary(rows);
+        }
       } catch(e){
         console.error("Account summary failed:", e);
         CURRENT_ENTITLEMENT = null;
-        renderAccountSummary([], "Account details unavailable.");
+        if (!isAuthSubviewOpen()){
+          renderAccountSummary([], "Account details unavailable.");
+        }
       }
     }
 
@@ -2719,8 +2751,13 @@ body.authLocked .wrap{
 
     function setAuthUi(session){
       const wasSignedIn = !!CURRENT_USER;
+      const previousUserId = CURRENT_USER?.id || null;
+      const contactWasOpen = !!authContactView?.classList.contains("show");
+      const homeScreenWasOpen = !!authHomeScreenView?.classList.contains("show");
+      const planWasOpen = !!authPlanView?.classList.contains("show");
       CURRENT_USER = session?.user || null;
       const signedIn = !!CURRENT_USER;
+      const sameUserRefresh = !!(signedIn && wasSignedIn && previousUserId === CURRENT_USER?.id);
       if (signedIn) GUEST_MODE = false;
       else {
         ACCOUNT_ALERT = null;
@@ -2739,8 +2776,21 @@ body.authLocked .wrap{
       }
       if (authAccountSummary) authAccountSummary.classList.toggle("show", signedIn && authMode !== "update_password");
       if (authAccountNotice) authAccountNotice.classList.toggle("show", signedIn && authMode !== "update_password" && !!ACCOUNT_ALERT?.message);
-      if (authContactView) authContactView.classList.remove("show");
-      if (authPlanView) authPlanView.classList.remove("show");
+      if (!sameUserRefresh){
+        if (authContactView) authContactView.classList.remove("show");
+        if (authPlanView) authPlanView.classList.remove("show");
+      } else {
+        if (authContactView) authContactView.classList.toggle("show", contactWasOpen);
+        if (authHomeScreenView) authHomeScreenView.classList.toggle("show", homeScreenWasOpen);
+        if (authPlanView) authPlanView.classList.toggle("show", planWasOpen);
+        if (contactWasOpen || homeScreenWasOpen || planWasOpen){
+          if (authAccountEmail) authAccountEmail.style.display = "none";
+          if (authAccountSummary) authAccountSummary.classList.remove("show");
+          if (authAccountNotice) authAccountNotice.classList.remove("show");
+          if (authAccountActions) authAccountActions.classList.remove("show");
+          if (authInstallRow) authInstallRow.classList.remove("show");
+        }
+      }
       if (authForm) authForm.style.display = signedIn && authMode !== "update_password" ? "none" : "";
       if (authTrialLead) authTrialLead.classList.toggle("show", !signedIn && authMode === "signup" && authPromptReason !== "guest_limit");
       if (authSecondaryRow) authSecondaryRow.style.display = signedIn && authMode !== "update_password" ? "none" : "";
@@ -2748,13 +2798,16 @@ body.authLocked .wrap{
       if (authLead) authLead.style.display = signedIn && authMode !== "update_password" ? "none" : "";
       if (authSubtitle) authSubtitle.style.display = "none";
       if (authTitle) {
-        const titleText =
+        let titleText =
           signedIn && authMode !== "update_password" ? "Settings" :
           authMode === "update_password" ? "Set new password" :
           authMode === "recovery" ? "Reset password" :
           authPromptReason === "guest_limit" ? "Create an account to continue" :
           authMode === "signup" ? "Create account" :
           "Welcome to SAM.";
+        if (sameUserRefresh && contactWasOpen) titleText = "Contact";
+        else if (sameUserRefresh && planWasOpen) titleText = "Manage plan";
+        else if (sameUserRefresh && homeScreenWasOpen) titleText = "Add SAM. to Home Screen";
         setAuthTitle(titleText);
       }
       if (signedIn && authMode !== "update_password"){
@@ -2954,7 +3007,18 @@ body.authLocked .wrap{
         });
       }
       if (authCloseBtn){
-        authCloseBtn.addEventListener("click", closeAuthOverlay);
+        authCloseBtn.addEventListener("click", ()=>{
+          const inSettingsSubview = !!CURRENT_USER && (
+            authPlanView?.classList.contains("show") ||
+            authContactView?.classList.contains("show") ||
+            authHomeScreenView?.classList.contains("show")
+          );
+          if (inSettingsSubview){
+            showAccountView();
+            return;
+          }
+          closeAuthOverlay();
+        });
       }
       const bindPasswordToggle = (input, btn, labelBase)=>{
         if (!input || !btn) return;
@@ -3087,7 +3151,7 @@ body.authLocked .wrap{
       warmBackend();
       initVoiceReadPreference();
       setupSpeechUnlockGestures();
-      renderEmpty("Torque results will appear here.");
+      renderEmpty("Torque results will appear here.\nTurn on Voice to let SAM. read results automatically.");
       setStatus("");
       const authed = await initAuth();
       if (authed) await startAppAfterAuth();
@@ -4329,7 +4393,7 @@ function stopStatusDots(){
       repeatPayload = null;
       setRepeatStop(false);
       // show waiting message again
-      renderEmpty("Torque results will appear here.");
+      renderEmpty("Torque results will appear here.\nTurn on Voice to let SAM. read results automatically.");
     }
 
 
@@ -4714,7 +4778,7 @@ async function loadModelIndex(){
       if (prevModelId && prevModelId !== CURRENT_MODEL_ID){
         clearResultHistory();
       } else {
-        renderEmpty("Torque results will appear here.");
+        renderEmpty("Torque results will appear here.\nTurn on Voice to let SAM. read results automatically.");
         // Clear typed fallback input
         setQueryInputValue("", "text");
       }
@@ -4836,7 +4900,7 @@ async function initApp(){
       if (authPlanView) authPlanView.classList.remove("show");
       if (authHomeScreenView) authHomeScreenView.classList.remove("show");
       if (authHomeScreenView) authHomeScreenView.classList.add("show");
-      if (authCloseBtn) authCloseBtn.classList.remove("show");
+      if (authCloseBtn) authCloseBtn.classList.add("show");
       setAuthMessage("");
       clearContactCloseTimer();
 
@@ -5524,9 +5588,9 @@ function tokenizeNormalized(s){
     function updateVoiceReadToggle(){
       if (!voiceReadToggle) return;
       voiceReadToggle.classList.toggle("on", !!VOICE_READ_ENABLED);
-      voiceReadToggle.setAttribute("aria-pressed", VOICE_READ_ENABLED ? "true" : "false");
-      voiceReadToggle.setAttribute("aria-label", VOICE_READ_ENABLED ? "Audio on" : "Audio off");
-      voiceReadToggle.title = VOICE_READ_ENABLED ? "Audio on" : "Audio off";
+      voiceReadToggle.setAttribute("aria-checked", VOICE_READ_ENABLED ? "true" : "false");
+      voiceReadToggle.setAttribute("aria-label", VOICE_READ_ENABLED ? "Voice on" : "Voice off");
+      voiceReadToggle.title = VOICE_READ_ENABLED ? "Voice on" : "Voice off";
     }
     function setVoiceReadEnabled(next){
       VOICE_READ_ENABLED = !!next;
@@ -6360,7 +6424,7 @@ async function handleQuery(raw, __preRoute){
       // Empty query guard (avoid unnecessary /api/route calls; check normalized query)
       if (!localNq){
         setStatus("Enter a part name.", true, true);
-        renderEmpty("Torque results will appear here.");
+        renderEmpty("Torque results will appear here.\nTurn on Voice to let SAM. read results automatically.");
         return;
       }
 
