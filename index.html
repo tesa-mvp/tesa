@@ -827,10 +827,17 @@
   width: 100% !important;
   height: 200px !important;
   object-fit: cover !important;
+  display:none;
+}
+.candThumb.isLoaded{
+  display:block;
 }
 .candThumbPh{
   width: 100% !important;
   height: 200px !important;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 /* Title/ItemNo above image */
 .candCard{
@@ -6284,7 +6291,7 @@ const thumb = refImgs.length ? getRefImageUrl(refImgs[0]) : "";
               <strong>${escapeHtml(title)}</strong>
             </div>
             <div class="candThumbWrap">
-              ${thumb ? `<img class="candThumb" src="${thumb}" alt="Reference image">` : `<div class="candThumbPh">No image</div>`}
+              ${thumb ? `<img class="candThumb" src="${thumb}" alt="Reference image" loading="eager" decoding="async"><div class="candThumbPh">Loading image...</div>` : `<div class="candThumbPh">No image</div>`}
             </div>
           </div>
         </button>`;
@@ -6299,6 +6306,27 @@ const thumb = refImgs.length ? getRefImageUrl(refImgs[0]) : "";
 
       // bind inside this card only
       const btns = card.querySelectorAll(".candBtn");
+      card.querySelectorAll(".candThumb").forEach((img)=>{
+        const wrap = img.closest(".candThumbWrap");
+        const placeholder = wrap?.querySelector(".candThumbPh");
+        const markLoaded = ()=>{
+          img.classList.add("isLoaded");
+          if (placeholder) placeholder.style.display = "none";
+        };
+        const markFailed = ()=>{
+          img.remove();
+          if (placeholder) {
+            placeholder.textContent = "No image";
+            placeholder.style.display = "flex";
+          }
+        };
+        img.addEventListener("load", markLoaded, { once:true });
+        img.addEventListener("error", markFailed, { once:true });
+        if (img.complete) {
+          if (img.naturalWidth > 0) markLoaded();
+          else markFailed();
+        }
+      });
       btns.forEach((b, idx)=>{
         b.addEventListener("click", (ev)=>{
           prepareSpeechForUserGesture();
