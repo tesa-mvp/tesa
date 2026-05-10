@@ -4029,6 +4029,7 @@ const modelBadgeEl = document.getElementById("modelBadge");
 const statusLine = document.getElementById("statusLine");
 let __statusDotsTimer = null;
 let __statusMessageTimer = null;
+let __statusDetailTimer = null;
 function startStatusDots(baseText, opts={}){
   stopStatusDots();
   if (!statusLine) return;
@@ -4044,6 +4045,14 @@ function startStatusDots(baseText, opts={}){
       setStatus(currentBase + frames[i], true, false);
     }, delay);
   }
+  if (opts.detailText){
+    const detailDelay = Number.isFinite(Number(opts.detailDelayMs)) ? Number(opts.detailDelayMs) : 8000;
+    __statusDetailTimer = setTimeout(()=>{
+      currentBase = opts.detailText;
+      i = 0;
+      setStatus(currentBase + frames[i], true, false);
+    }, detailDelay);
+  }
   __statusDotsTimer = setInterval(() => {
     i = (i + 1) % frames.length;
     setStatus(currentBase + frames[i], true, false);
@@ -4057,6 +4066,10 @@ function stopStatusDots(){
   if (__statusMessageTimer){
     clearTimeout(__statusMessageTimer);
     __statusMessageTimer = null;
+  }
+  if (__statusDetailTimer){
+    clearTimeout(__statusDetailTimer);
+    __statusDetailTimer = null;
   }
 }
 
@@ -4119,8 +4132,7 @@ function stopStatusDots(){
       });
     }
 
-    if (usePhotoBtn){
-      usePhotoBtn.addEventListener("click", async () => {
+    async function analyzePendingPhoto(){
         prepareSpeechForUserGesture();
         if (!lastPhotoFile){
           setStatus("No photo selected.", true, true);
@@ -4137,7 +4149,9 @@ function stopStatusDots(){
           usePhotoBtn.disabled = true;
           startStatusDots("AI is analyzing the photo", {
             nextText: "Finishing analysis",
-            delayMs: 3000
+            delayMs: 3000,
+            detailText: "Checking a few more details",
+            detailDelayMs: 8000
           });
 
           // Downscale/compress to reduce payload size and avoid frequent timeouts.
@@ -4310,7 +4324,31 @@ function stopStatusDots(){
           setStatus("Photo analysis failed.\nRetake or type a part name.", true, true);
           usePhotoBtn.disabled = false;
         }
-      });
+    }
+
+    function shouldAnalyzePhotoFromSubmit(){
+      return !String(questionInput?.value || "").trim()
+        && !!lastPhotoFile
+        && !!usePhotoBtn
+        && !usePhotoBtn.disabled;
+    }
+
+    async function submitCurrentInput(){
+      prepareSpeechForUserGesture();
+      try{ questionInput?.blur(); }catch(e){}
+      if (shouldAnalyzePhotoFromSubmit()){
+        await analyzePendingPhoto();
+        return;
+      }
+      if (!String(questionInput?.value || "").trim() && lastPhotoFile && usePhotoBtn?.disabled){
+        return;
+      }
+      discardPendingPhotoForManualQuery();
+      handleQuery(questionInput.value);
+    }
+
+    if (usePhotoBtn){
+      usePhotoBtn.addEventListener("click", analyzePendingPhoto);
     }
 
     const questionInput = document.getElementById("questionInput");
@@ -4864,6 +4902,7 @@ async function initApp(){
 
     // Lightweight "working" indicator (animated dots) during /api/route calls
     let __tesaWorkingTimer = null;
+    let __tesaWorkingDetailTimer = null;
     function startWorkingIndicator(){
       if (__tesaWorkingTimer) return;
       let base = "AI is analyzing your request";
@@ -4874,6 +4913,11 @@ async function initApp(){
         dots = 0;
         setStatus(base + "...", true, false);
       }, 3000);
+      __tesaWorkingDetailTimer = setTimeout(()=>{
+        base = "Checking a few more details";
+        dots = 0;
+        setStatus(base + "...", true, false);
+      }, 5500);
       __tesaWorkingTimer = setInterval(()=>{
         dots = (dots + 1) % 4; // 0..3
         setStatus(base + (dots ? ".".repeat(dots) : ""), true, false);
@@ -4886,6 +4930,10 @@ async function initApp(){
       if (__statusMessageTimer){
         clearTimeout(__statusMessageTimer);
         __statusMessageTimer = null;
+      }
+      if (__tesaWorkingDetailTimer){
+        clearTimeout(__tesaWorkingDetailTimer);
+        __tesaWorkingDetailTimer = null;
       }
     }
 
@@ -6927,18 +6975,12 @@ if (!candidates.length){
     // Events
     // =========================
     sendBtn.addEventListener("click", ()=>{
-      prepareSpeechForUserGesture();
-      try{ questionInput?.blur(); }catch(e){}
-      discardPendingPhotoForManualQuery();
-      handleQuery(questionInput.value);
+      submitCurrentInput();
     });
     questionInput.addEventListener("keydown", (e)=>{
       if (e.key === "Enter"){
         e.preventDefault();
-        prepareSpeechForUserGesture();
-        try{ questionInput?.blur(); }catch(e){}
-        discardPendingPhotoForManualQuery();
-        handleQuery(questionInput.value);
+        submitCurrentInput();
       }
     });
 
