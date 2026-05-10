@@ -3937,13 +3937,7 @@
         "swingarm pinch",
         "swingarm pivot pinch",
         "swingarm support pinch",
-        "swing arm support pinch",
-        "rearset bracket pinch",
-        "reatset mounting pinch",
-        "rearset support pinch",
-        "rear set bracket pinch",
-        "reat set mounting pinch",
-        "rear set support pinch"
+        "swing arm support pinch"
       ],
       "ref_images": [
         "swing_arm_shaft_pinch_1.png",
