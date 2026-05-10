@@ -3880,7 +3880,7 @@
     {
       "id": "swing_arm",
       "group": null,
-      "component_name": "Swing arm shaft",
+      "component_name": "Swingarm shaft",
       "vision_query": "swing arm shaft",
       "tightening_type": "single",
       "torque_nm_single": 100,
@@ -3898,6 +3898,7 @@
       "extra_notes": null,
       "item_number": 23,
       "common_name": [
+        "swing arm shaft",
         "swing arm screw",
         "swing arm bolt",
         "swing arm pivot",
@@ -3913,7 +3914,7 @@
     {
       "id": "swing_arm_shaft_pinch",
       "group": null,
-      "component_name": "Swing arm shaft pinch bolt",
+      "component_name": "Swingarm shaft pinch bolt",
       "vision_query": "swing arm shaft pinch bolt",
       "tightening_type": "single",
       "torque_nm_single": 15,
@@ -3931,14 +3932,12 @@
       "extra_notes": null,
       "item_number": "5, 2",
       "common_name": [
+        "swing arm shaft pinch",
         "swing arm pinch",
         "swing arm pivot pinch",
-        "swingarm shaft",
-        "swingarm pinch",
         "swingarm pinch",
         "swingarm pivot pinch",
-        "swingarm support pinch",
-        "swing arm support pinch"
+        "swingarm support pinch"
       ],
       "ref_images": [
         "swing_arm_shaft_pinch_1.png",
@@ -3948,7 +3947,7 @@
     {
       "id": "swing_arm_support",
       "group": null,
-      "component_name": "Swing arm support screw",
+      "component_name": "Swingarm support screw",
       "vision_query": "swing arm support",
       "tightening_type": "single",
       "torque_nm_single": 25,
@@ -3966,9 +3965,9 @@
       "extra_notes": null,
       "item_number": "8, 1",
       "common_name": [
-        "swingarm support",
         "swingarm mounting",
         "swingarm mount",
+        "swing arm support",
         "swing arm mounting",
         "swing arm mount",
         "rearset mounting",
