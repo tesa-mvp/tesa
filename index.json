@@ -87,62 +87,6 @@
             "ducati panigale v2",
             "panigale v2"
           ]
-        },
-        {
-          "id": "ducati_streetfighter-v2_2025-2026",
-          "label": "Streetfighter V2",
-          "group_id": "streetfighter",
-          "group_label": "Streetfighter",
-          "group_sort_order": 2,
-          "sort_order": 5,
-          "years": {
-            "from": 2025,
-            "to": 2026
-          },
-          "years_label": "2025–2026",
-          "file": "datasets/ducati/streetfighter-v2_2025-2026/torque.json",
-          "aliases": [
-            "ducati streetfighter v2",
-            "streetfighter v2"
-          ]
-        },
-        {
-          "id": "ducati_streetfighter-v2_2022-2025",
-          "label": "Streetfighter V2",
-          "group_id": "streetfighter",
-          "group_label": "Streetfighter",
-          "group_sort_order": 2,
-          "sort_order": 6,
-          "years": {
-            "from": 2022,
-            "to": 2025
-          },
-          "years_label": "2022–2025",
-          "file": "datasets/ducati/streetfighter-v2_2022-2025/torque.json",
-          "aliases": [
-            "ducati streetfighter v2",
-            "streetfighter v2",
-            "new streetfighter v2"
-          ]
-        },
-        {
-          "id": "ducati_monster-937_2021-2025",
-          "label": "Monster 937",
-          "group_id": "monster",
-          "group_label": "Monster",
-          "group_sort_order": 3,
-          "sort_order": 7,
-          "years": {
-            "from": 2021,
-            "to": 2025
-          },
-          "years_label": "2021–2025",
-          "file": "datasets/ducati/monster-937_2021-2025/torque.json",
-          "aliases": [
-            "ducati monster",
-            "monster 937",
-            "monster"
-          ]
         }
       ]
     },
@@ -189,52 +133,6 @@
             "yzf r7",
             "r7",
             "yamaha r7"
-          ]
-        },
-        {
-          "id": "yamaha_yzf-r6_2017-2021",
-          "label": "YZF-R6",
-          "group_id": "superbike",
-          "group_label": "Supersport",
-          "group_sort_order": 1,
-          "sort_order": 3,
-          "years": {
-            "from": 2017,
-            "to": 2021
-          },
-          "years_label": "2017–2021",
-          "file": "datasets/yamaha/yzf-r6_2017-2021/torque.json",
-          "aliases": [
-            "yamaha yzf r6",
-            "yzf r6",
-            "r6",
-            "yamaha r6"
-          ]
-        }
-      ]
-    },
-    {
-      "make": "Kramer",
-      "make_id": "kramer",
-      "sort_order": 3,
-      "models": [
-        {
-          "id": "kramer_apx-350_2025-2026",
-          "label": "APX-350",
-          "group_id": null,
-          "group_label": null,
-          "group_sort_order": 1,
-          "sort_order": 1,
-          "years": {
-            "from": 2025,
-            "to": 2026
-          },
-          "years_label": "2025–2026",
-          "file": "datasets/kramer/apx-350_2025-2026/torque.json",
-          "aliases": [
-            "kramer apx350",
-            "kramer 350",
-            "talent cup bike"
           ]
         }
       ]
