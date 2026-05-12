@@ -1030,9 +1030,11 @@ body.authLocked .wrap{
 .authPanelClose.show{
   display:flex;
 }
-.authPanelClose:hover{
-  border-color:rgba(79,140,255,.6);
-  color:var(--text);
+@media (hover: hover) and (pointer: fine){
+  .authPanelClose:hover{
+    border-color:rgba(79,140,255,.6);
+    color:var(--text);
+  }
 }
 .authPanel h2{
   margin:0;
@@ -1903,7 +1905,7 @@ body.authLocked .wrap{
         <div class="planCard primary">
           <div class="planCardTop">
             <div class="planName"><span class="planRadio selected" aria-hidden="true"></span>SAM. Standard</div>
-            <div class="planBadge">Early access</div>
+            <div class="planBadge">Limited Pilot</div>
           </div>
           <p class="planDescription">For individual use.</p>
           <div class="planPrice">
@@ -1914,7 +1916,7 @@ body.authLocked .wrap{
           </div>
           <ul class="planFeatures">
             <li>50 searches per month</li>
-            <li>Photo search included during early access</li>
+            <li>Photo search included during limited pilot</li>
           </ul>
           <div class="planCardActions">
             <button id="authPlanStartBtn" class="authSubmit planCheckoutBtn" type="button">Continue to checkout</button>
@@ -2098,6 +2100,11 @@ body.authLocked .wrap{
     function setAuthTitle(text){
       if (!authTitle) return;
       authTitle.textContent = text || "";
+    }
+
+    function clearAuthCloseButtonState(){
+      if (!authCloseBtn) return;
+      try{ authCloseBtn.blur(); }catch(e){}
     }
 
     let deferredInstallPrompt = null;
@@ -2315,6 +2322,7 @@ body.authLocked .wrap{
       updateInstallActionVisibility();
       clearContactCloseTimer();
       setContactMessage("");
+      clearAuthCloseButtonState();
     }
 
     function showPlanView(){
@@ -4119,7 +4127,7 @@ function stopStatusDots(){
         openPhotoPane();
         if (usePhotoBtn) usePhotoBtn.disabled = false;
 
-        setStatus("Photo captured — ready to analyze (beta).", true, false);
+        setStatus("Photo search (Beta) is ready to analyze.\nResults are improving with real-world use.", true, false);
       });
     }
 
