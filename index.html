@@ -5609,9 +5609,10 @@ function tokenizeNormalized(s){
       const cPhraseBonus = componentPhraseBonus(qTokens, item); // 0..16
       const rBonus = rareTokenBonus(uniq(matched));    // 0..20
       const eBonus = exactMatchBonus(queryNorm, item); // 0..18
+      const fRoleBonus = Math.min(12, uniq(matchedFastener).length * 10); // 0..12
       const llm = llmTokenBonus(bonusTokens, itemSet); // 0..10
 
-      let total = overlapScore + coverageScore + pBonus + cPhraseBonus + rBonus + eBonus + (llm.score||0);
+      let total = overlapScore + coverageScore + pBonus + cPhraseBonus + rBonus + eBonus + fRoleBonus + (llm.score||0);
 
       // Floor only (no 100 cap)
       if (total < 0) total = 0;
@@ -5623,6 +5624,7 @@ function tokenizeNormalized(s){
         component_phrase: cPhraseBonus,
         rare: rBonus,
         exact: eBonus,
+        fastener_role: fRoleBonus,
         llm_bonus: llm.score || 0,
         llm_hits: llm.hits || [],
         matched_tokens: uniq(matched),
