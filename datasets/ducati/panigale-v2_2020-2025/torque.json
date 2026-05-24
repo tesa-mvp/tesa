@@ -611,7 +611,7 @@
       "group": null,
       "component_name": "Crankcase screw - M6",
       "vision_query": "crankcase screw",
-      "tightening_type": "multi_step",
+      "tightening_type": "single",
       "torque_nm_single": 13,
       "torque_steps": null,
       "threadlock": null,
