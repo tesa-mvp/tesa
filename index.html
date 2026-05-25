@@ -5280,6 +5280,13 @@ function buildChemistryItems(value, symbol, fallbackKey){
   }));
 }
 
+function joinForSpeech(items){
+  const vals = (Array.isArray(items) ? items : []).map(x => String(x ?? "").trim()).filter(Boolean);
+  if (vals.length <= 1) return vals[0] || "";
+  if (vals.length === 2) return `${vals[0]} and ${vals[1]}`;
+  return `${vals.slice(0, -1).join(", ")}, and ${vals[vals.length - 1]}`;
+}
+
 // --- Torque helpers (support tightening_type + string/array torque_steps) ---
 function parseTorqueStepsText(text){
   // Accept separators: newline or semicolon. Preserve user-entered content as much as possible.
@@ -6182,37 +6189,21 @@ function buildSpokenAnswerParts(item){
   }
 
   // -----------------------
-  // Chemistry (values only)
+  // Chemistry symbols
   // -----------------------
-  const chemVals = [];
-
-  if (item.threadlock) {
-    chemVals.push(speakNumbersDigitByDigit(item.threadlock));
-  }
-  const lubeSpoken = item.lubrication;
-  if (lubeSpoken) {
-    chemVals.push(String(lubeSpoken));
-  }
-  if (item.sealant) {
-    chemVals.push(speakNumbersDigitByDigit(item.sealant));
-  }
-  if (chemVals.length) {
-    baseParts.push(`Apply ${chemVals.join(", ")}.`);
+  const chemSymbols = [
+    ...splitList(item.threadlock_symbol),
+    ...splitList(item.lubrication_symbol),
+    ...splitList(item.sealant_symbol)
+  ];
+  if (chemSymbols.length) {
+    const chemList = joinForSpeech(chemSymbols);
+    baseParts.push(`${chemList} ${chemSymbols.length === 1 ? "is" : "are"} required.`);
   }
 
   // -----------------------
   // Info block (spoken only when user says YES)
   // -----------------------
-  const tools = getSpecialTools(item);
-  if (tools.length){
-    infoParts.push("A special tool is required. Check the part number on screen.");
-  }
-
-  if (item.tightening_seq){
-    const seq = String(item.tightening_seq).trim();
-    if (seq) infoParts.push(/[.?!]$/.test(seq) ? seq : (seq + "."));
-  }
-
   const notes = getExtraNotesList(item);
   if (notes.length){
     notes.forEach(note => {
@@ -6222,10 +6213,20 @@ function buildSpokenAnswerParts(item){
     });
   }
 
+  const tools = getSpecialTools(item);
+  if (tools.length){
+    infoParts.push("A special tool is required.");
+  }
+
+  if (item.tightening_seq){
+    const seq = String(item.tightening_seq).trim();
+    if (seq) infoParts.push("Follow the tightening sequence shown on screen.");
+  }
+
   return {
     base: baseParts.join(" "),
     info: infoParts.join(" "),
-    hasChem: chemVals.length > 0
+    hasChem: chemSymbols.length > 0
   };
 }
 
