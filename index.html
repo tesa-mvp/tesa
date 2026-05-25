@@ -5270,6 +5270,16 @@ function splitList(val){
     .filter(Boolean);
 }
 
+function buildChemistryItems(value, symbol, fallbackKey){
+  const values = splitList(value);
+  const symbols = splitList(symbol);
+  if (!values.length) return [];
+  return values.map((v, idx) => ({
+    k: symbols[idx] || fallbackKey,
+    v
+  }));
+}
+
 // --- Torque helpers (support tightening_type + string/array torque_steps) ---
 function parseTorqueStepsText(text){
   // Accept separators: newline or semicolon. Preserve user-entered content as much as possible.
@@ -6226,13 +6236,12 @@ function buildSpokenAnswerParts(item){
 
       // ----- Chemistry line (threadlock / lube / sealant) -----
       const chemItems = [];
-      if (item.threadlock)  chemItems.push({k:(item.threadlock_symbol || "Threadlock"), v:item.threadlock});
+      chemItems.push(...buildChemistryItems(item.threadlock, item.threadlock_symbol, "Threadlock"));
 
         // ✅ show symbol instead of full lubrication text
-      const lubeDisplay = item.lubrication;
-      if (lubeDisplay) chemItems.push({k:(item.lubrication_symbol || "Lubrication"), v:lubeDisplay});
+      chemItems.push(...buildChemistryItems(item.lubrication, item.lubrication_symbol, "Lubrication"));
 
-      if (item.sealant)     chemItems.push({k:(item.sealant_symbol || "Sealant"), v:item.sealant});
+      chemItems.push(...buildChemistryItems(item.sealant, item.sealant_symbol, "Sealant"));
 
       // ----- Steps normalize (by tightening_type) -----
       const rows = getTorqueStepsRows(item);
