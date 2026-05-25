@@ -6260,10 +6260,10 @@ function buildSpokenAnswerParts(item){
           const toolNum  = (t?.special_tool_number ?? "").toString().trim();
 
           // Screen exposure rules:
-          // - name+number: "name - number"
+          // - number+name: "number name"
           // - name only: "name"
           // - number only: "number"
-          if (toolName && toolNum) toolLines.push(`${toolName} - ${toolNum}`);
+          if (toolName && toolNum) toolLines.push(`${toolNum} ${toolName}`);
           else if (toolName) toolLines.push(`${toolName}`);
           else if (toolNum) toolLines.push(`${toolNum}`);
         });
@@ -6340,7 +6340,7 @@ if (hasInfoBlock){
           const toolLines = _toolsInfo.map(t=>{
             const toolName = (t?.special_tool_name ?? "").toString().trim();
             const toolNum  = (t?.special_tool_number ?? "").toString().trim();
-            if (toolName && toolNum) return `${toolName} - ${toolNum}`;
+            if (toolName && toolNum) return `${toolNum} ${toolName}`;
             if (toolName) return `${toolName}`;
             if (toolNum) return `${toolNum}`;
             return "";
