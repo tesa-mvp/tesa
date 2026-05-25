@@ -6340,7 +6340,15 @@ function buildSpokenAnswerParts(item){
 if (hasInfoBlock){
         html += `<div class="infoBlock" id="infoBlock">`;
 
-        // 1) Special tool
+        // 1) Extra notes
+        const _notesForScreen = getExtraNotesList(item);
+        if (_notesForScreen.length){
+          _notesForScreen.forEach(n=>{
+            html += `<div class="infoLine"><span class="infoKey">Note:</span> <span class="infoText">${escapeHtmlWithLineBreaks(n)}</span></div>`;
+          });
+        }
+
+        // 2) Special tool
         const _toolsInfo = getSpecialTools(item);
         if (_toolsInfo.length){
           const toolLines = _toolsInfo.map(t=>{
@@ -6357,17 +6365,9 @@ if (hasInfoBlock){
           }
         }
 
-        // 2) Tightening sequence
+        // 3) Tightening sequence
         if (item.tightening_seq){
           html += `<div class="infoLine"><span class="infoKey">Sequence:</span> <span class="infoText">${escapeHtmlWithLineBreaks(String(item.tightening_seq))}</span></div>`;
-        }
-
-        // 3) Extra notes
-        const _notesForScreen = getExtraNotesList(item);
-        if (_notesForScreen.length){
-          _notesForScreen.forEach(n=>{
-            html += `<div class="infoLine"><span class="infoKey">Note:</span> <span class="infoText">${escapeHtmlWithLineBreaks(n)}</span></div>`;
-          });
         }
 
         html += `</div>`;
