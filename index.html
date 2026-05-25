@@ -6359,7 +6359,7 @@ if (hasInfoBlock){
 
         // 2) Tightening sequence
         if (item.tightening_seq){
-          html += `<div class="infoLine"><span class="infoKey">Sequence:</span> ${escapeHtml(String(item.tightening_seq))}</div>`;
+          html += `<div class="infoLine"><span class="infoKey">Sequence:</span> <span class="infoText">${escapeHtmlWithLineBreaks(String(item.tightening_seq))}</span></div>`;
         }
 
         // 3) Extra notes
