@@ -3599,7 +3599,7 @@
       "special_tool_numbers": null,
       "special_tool_name": null,
       "tightening_seq": "\nLower case: 1-10(M10), 11-16(M8)\nStud Nut: 17\nUpper case: 18-20(M8)",
-      "extra_notes": "MOTOR OIL to M10 only,\nGREASE C to Nut only",
+      "extra_notes": "MOTOR OIL to M10,GREASE C to Stud Nut",
       "item_number": null,
       "common_name": [
         "crank case",
