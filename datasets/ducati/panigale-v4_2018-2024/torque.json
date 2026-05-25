@@ -3584,11 +3584,11 @@
     {
       "id": "crankcase_step1",
       "group": null,
-      "component_name": "Crankcase screw - Step1/2",
+      "component_name": "Crankcase screw - Step 1 of 2",
       "vision_query": "crankcase screw",
       "tightening_type": "multi_size",
       "torque_nm_single": null,
-      "torque_steps": "M10, M8: 18Nm;Nut: 25Nm",
+      "torque_steps": "M10, M8: 18Nm;Stud Nut: 25Nm",
       "threadlock": null,
       "threadlock_symbol": null,
       "lubrication": "SHELL Advance 4T Ultra;SHELL Retinax LX2",
@@ -3598,7 +3598,7 @@
       "thread_spec": "M8, M10",
       "special_tool_numbers": null,
       "special_tool_name": null,
-      "tightening_seq": "1-16(Lower), 17(Nut), 18-20(Upper)",
+      "tightening_seq": "Lower case: 1-10(M10), 11-16(M8)\nStud Nut: 17\nUpper case: 18-20(M8)",
       "extra_notes": "MOTOR OIL to M10 only, GREASE C to Nut only\nFollow Step1 and 2 in order.",
       "item_number": null,
       "common_name": [
@@ -3614,7 +3614,7 @@
     {
       "id": "crankcase_step2",
       "group": null,
-      "component_name": "Crankcase screw - Step2/2",
+      "component_name": "Crankcase screw - Step 2 of 2",
       "vision_query": "crankcase screw",
       "tightening_type": "multi_size",
       "torque_nm_single": null,
@@ -3628,8 +3628,8 @@
       "thread_spec": "M6, M8, M10",
       "special_tool_numbers": null,
       "special_tool_name": null,
-      "tightening_seq": "1-19(Lower), 20-25(Upper)",
-      "extra_notes": "Follow Step1 and 2 in order.",
+      "tightening_seq": "Lower case:\n1-4(M10x105), 5,6(M10x55), 7,8(M10x85), 9,10(M10x47)\n11-16 (M8), 17-19(M6)\nUpper case: 20-24(M8), 25(M6)",
+      "extra_notes": null,
       "item_number": null,
       "common_name": [
         "crank case",
