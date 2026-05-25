@@ -5366,6 +5366,18 @@ function extractNmNumber(text){
   return m ? m[1] : null;
 }
 
+function extractNmRange(text){
+  const s = String(text ?? "");
+  const m = s.match(/\b(\d+(?:\.\d+)?)\s*(?:-|–|—|~|to)\s*(\d+(?:\.\d+)?)\s*nm\b/i);
+  return m ? { from: m[1], to: m[2] } : null;
+}
+
+function extractNmSpeechValue(text){
+  const range = extractNmRange(text);
+  if (range) return `${range.from} to ${range.to}`;
+  return extractNmNumber(text);
+}
+
 function formatTorqueValueHtml(valueText){
   const s = String(valueText ?? "");
 
@@ -5375,6 +5387,11 @@ function formatTorqueValueHtml(valueText){
 
   if (deg && !hasNm){
     return `<span class="stepNum">${escapeHtml(deg[1])}</span><span class="stepUnit">°</span>`;
+  }
+
+  const range = extractNmRange(s);
+  if (range){
+    return `<span class="stepNum">${escapeHtml(range.from)}-${escapeHtml(range.to)}</span><span class="stepUnit">Nm</span>`;
   }
 
   const num = extractNmNumber(s);
@@ -6076,7 +6093,7 @@ function buildSpokenAnswerParts(item){
         baseParts.push("Torque by size.");
         rows.forEach(r=>{
           const size = normalizeSizeLabel(r.label);
-          const nm = extractNmNumber(r.value);
+          const nm = extractNmSpeechValue(r.value);
           const degMatch = String(r.value ?? "").match(/(\d+(?:\.\d+)?)\s*°/);
           const deg = degMatch ? degMatch[1] : null;
 
@@ -6092,7 +6109,7 @@ function buildSpokenAnswerParts(item){
         baseParts.push("Torque by location.");
         rows.forEach(r=>{
           const location = String(r.label ?? "").trim() || "Location";
-          const nm = extractNmNumber(r.value);
+          const nm = extractNmSpeechValue(r.value);
           const degMatch = String(r.value ?? "").match(/(\d+(?:\.\d+)?)\s*Â°/);
           const deg = degMatch ? degMatch[1] : null;
 
@@ -6108,7 +6125,7 @@ function buildSpokenAnswerParts(item){
         baseParts.push("Torque by type.");
         rows.forEach(r=>{
           const typeLabel = normalizeTypeLabel(r.label);
-          const nm = extractNmNumber(r.value);
+          const nm = extractNmSpeechValue(r.value);
           const degMatch = String(r.value ?? "").match(/(\d+(?:\.\d+)?)\s*Â°/);
           const deg = degMatch ? degMatch[1] : null;
 
@@ -6127,7 +6144,7 @@ function buildSpokenAnswerParts(item){
           const stepTag = normalizeStepLabel(r.label); // STEP1
           const stepNumMatch = stepTag.match(/STEP(\d+)/i);
           const stepNum = stepNumMatch ? stepNumMatch[1] : "";
-          const nm = extractNmNumber(r.value);
+          const nm = extractNmSpeechValue(r.value);
           const degMatch = String(r.value ?? "").match(/(\d+(?:\.\d+)?)\s*°/);
           const deg = degMatch ? degMatch[1] : null;
 
@@ -6161,7 +6178,7 @@ function buildSpokenAnswerParts(item){
   if (item.threadlock) {
     chemVals.push(speakNumbersDigitByDigit(item.threadlock));
   }
-  const lubeSpoken = item.lubrication_symbol || item.lubrication;
+  const lubeSpoken = item.lubrication;
   if (lubeSpoken) {
     chemVals.push(String(lubeSpoken));
   }
@@ -6211,7 +6228,7 @@ function buildSpokenAnswerParts(item){
       if (item.threadlock)  chemItems.push({k:"Threadlock", v:item.threadlock});
 
         // ✅ show symbol instead of full lubrication text
-      const lubeDisplay = item.lubrication_symbol || item.lubrication;
+      const lubeDisplay = item.lubrication;
       if (lubeDisplay) chemItems.push({k:"Lubrication", v:lubeDisplay});
 
       if (item.sealant)     chemItems.push({k:"Sealant", v:item.sealant});
@@ -6228,7 +6245,10 @@ function buildSpokenAnswerParts(item){
       // ----- Pills -----
       const pills = [];
 
-      if (item.thread_spec) pills.push(`Thread: ${item.thread_spec}`);
+      if (item.thread_spec) pills.push(`${item.thread_spec}`);
+      if (item.threadlock_symbol) pills.push(`${item.threadlock_symbol}`);
+      if (item.lubrication_symbol) pills.push(`${item.lubrication_symbol}`);
+      if (item.sealant_symbol) pills.push(`${item.sealant_symbol}`);
 
       // ----- Special tools + Extra notes (new block) -----
       const toolLines = [];
