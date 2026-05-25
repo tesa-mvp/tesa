@@ -585,7 +585,7 @@
       "vision_query": "connecting rod",
       "tightening_type": "multi_step",
       "torque_nm_single": null,
-      "torque_steps": "Step1: 20Nm;\nStep2: 35Nm;\nStep3: 100°",
+      "torque_steps": "Step1: 20Nm;\nStep2: 35Nm;\nStep3: 100°;\nTorque check: 85-115Nm",
       "threadlock": null,
       "threadlock_symbol": null,
       "lubrication": "SHELL Retinax HDX2",
@@ -596,7 +596,7 @@
       "special_tool_numbers": 88713.351,
       "special_tool_name": "Spacer",
       "tightening_seq": null,
-      "extra_notes": "Final Step: Torque check 85 - 115 Nm",
+      "extra_notes": null,
       "item_number": 5,
       "common_name": [
         "con rod",
