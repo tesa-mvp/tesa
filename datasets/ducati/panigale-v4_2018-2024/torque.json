@@ -1376,7 +1376,7 @@
       "special_tool_numbers": null,
       "special_tool_name": null,
       "tightening_seq": null,
-      "extra_notes": "LOCK 5 to lower nut only,\nGREASE B to upper screw only",
+      "extra_notes": "GREASE B to upper screw only,\nLOCK 5 to lower nut only",
       "item_number": "1, 4, 5",
       "common_name": [
         "rear shock mounting",
