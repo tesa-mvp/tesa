@@ -6226,13 +6226,13 @@ function buildSpokenAnswerParts(item){
 
       // ----- Chemistry line (threadlock / lube / sealant) -----
       const chemItems = [];
-      if (item.threadlock)  chemItems.push({k:"Threadlock", v:item.threadlock});
+      if (item.threadlock)  chemItems.push({k:(item.threadlock_symbol || "Threadlock"), v:item.threadlock});
 
         // ✅ show symbol instead of full lubrication text
       const lubeDisplay = item.lubrication;
-      if (lubeDisplay) chemItems.push({k:"Lubrication", v:lubeDisplay});
+      if (lubeDisplay) chemItems.push({k:(item.lubrication_symbol || "Lubrication"), v:lubeDisplay});
 
-      if (item.sealant)     chemItems.push({k:"Sealant", v:item.sealant});
+      if (item.sealant)     chemItems.push({k:(item.sealant_symbol || "Sealant"), v:item.sealant});
 
       // ----- Steps normalize (by tightening_type) -----
       const rows = getTorqueStepsRows(item);
@@ -6247,9 +6247,6 @@ function buildSpokenAnswerParts(item){
       const pills = [];
 
       if (item.thread_spec) pills.push(`${item.thread_spec}`);
-      if (item.threadlock_symbol) pills.push(`${item.threadlock_symbol}`);
-      if (item.lubrication_symbol) pills.push(`${item.lubrication_symbol}`);
-      if (item.sealant_symbol) pills.push(`${item.sealant_symbol}`);
 
       // ----- Special tools + Extra notes (new block) -----
       const toolLines = [];
