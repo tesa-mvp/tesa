@@ -6148,7 +6148,8 @@ function buildSpokenAnswerParts(item){
           const degMatch = String(r.value ?? "").match(/(\d+(?:\.\d+)?)\s*°/);
           const deg = degMatch ? degMatch[1] : null;
 
-          const spokenLabel = stepNum ? `Step ${stepNum}` : "Step";
+          const rawLabel = String(r.label ?? "").trim();
+          const spokenLabel = stepNum ? `Step ${stepNum}` : (rawLabel || "Step");
           if (nm && deg){
             baseParts.push(`${spokenLabel}. ${nm} newton meters, then add ${deg} degrees.`);
           } else if (nm){
