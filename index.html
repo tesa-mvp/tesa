@@ -485,7 +485,6 @@
       font-size: 12px;
       font-weight: 900;
       letter-spacing: .08em;
-      text-transform: uppercase;
       color: #c2d5ff;
     }
     .stepVal{
@@ -5365,6 +5364,10 @@ function normalizeSizeLabel(label){
   return s ? s.replace(/^m(?=\d)/, "M") : "";
 }
 
+function sizeLabelForSpeech(label){
+  return normalizeSizeLabel(label).replace(/x/gi, " by ");
+}
+
 function normalizeTypeLabel(label){
   const s = String(label ?? "").trim();
   return s || "Type";
@@ -6109,7 +6112,7 @@ function buildSpokenAnswerParts(item){
       if (caseType === "multi_size"){
         baseParts.push("Torque by size.");
         rows.forEach(r=>{
-          const size = normalizeSizeLabel(r.label);
+          const size = sizeLabelForSpeech(r.label);
           const nm = extractNmSpeechValue(r.value);
           const degMatch = String(r.value ?? "").match(/(\d+(?:\.\d+)?)\s*°/);
           const deg = degMatch ? degMatch[1] : null;
