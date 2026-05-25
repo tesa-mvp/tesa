@@ -575,6 +575,9 @@
       color: #d7d8df;
       line-height: 1.35;
     }
+    .infoText{
+      white-space: normal;
+    }
     .infoKey{
       font-weight: 800;
       letter-spacing: .02em;
@@ -6336,7 +6339,7 @@ if (hasInfoBlock){
         const _notesForScreen = getExtraNotesList(item);
         if (_notesForScreen.length){
           _notesForScreen.forEach(n=>{
-            html += `<div class="infoLine"><span class="infoKey">Note:</span> ${escapeHtml(n)}</div>`;
+            html += `<div class="infoLine"><span class="infoKey">Note:</span> <span class="infoText">${escapeHtmlWithLineBreaks(n)}</span></div>`;
           });
         }
 
@@ -6497,6 +6500,10 @@ function escapeHtml(s){
         .replaceAll(">","&gt;")
         .replaceAll('"',"&quot;")
         .replaceAll("'","&#039;");
+    }
+
+    function escapeHtmlWithLineBreaks(s){
+      return escapeHtml(s).replace(/\r?\n/g, "<br>");
     }
 
     // =========================
