@@ -5355,7 +5355,7 @@ function normalizeStepLabel(label){
 
 function normalizeSizeLabel(label){
   const s = String(label ?? "").trim();
-  return s ? s.toUpperCase() : "";
+  return s ? s.replace(/^m(?=\d)/, "M") : "";
 }
 
 function normalizeTypeLabel(label){
