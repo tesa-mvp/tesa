@@ -3588,7 +3588,7 @@
       "vision_query": "crankcase screw",
       "tightening_type": "multi_size",
       "torque_nm_single": null,
-      "torque_steps": "M10, M8: 18Nm;Stud Nut: 25Nm",
+      "torque_steps": "M10, M8: 18Nm;STUD NUT: 25Nm",
       "threadlock": null,
       "threadlock_symbol": null,
       "lubrication": "SHELL Advance 4T Ultra;SHELL Retinax LX2",
