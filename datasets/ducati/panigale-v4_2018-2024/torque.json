@@ -2758,7 +2758,7 @@
       "vision_query": "clutch case cover",
       "tightening_type": "multi_step",
       "torque_nm_single": null,
-      "torque_steps": "Step1: 3-3.5Nm;\nStep2: 90°",
+      "torque_steps": "Step1: 3-3.5Nm;\nStep2: 90°;\nTorque check: 5-10Nm",
       "threadlock": null,
       "threadlock_symbol": null,
       "lubrication": null,
@@ -2769,7 +2769,7 @@
       "special_tool_numbers": null,
       "special_tool_name": null,
       "tightening_seq": null,
-      "extra_notes": "Torque check: 5-10 Nm",
+      "extra_notes": null,
       "item_number": null,
       "common_name": [
         "clutch case cover",
