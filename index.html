@@ -3679,6 +3679,12 @@ const VISION_CONF_MIN = 0.75; // confidence threshold for auto scoring (0..1)
       });
     }
 
+    function logApiTiming(label, startedAt, details){
+      const elapsedMs = Math.round(performance.now() - startedAt);
+      const suffix = details ? ` ${details}` : "";
+      console.log(`[SAM timing] ${label} ${elapsedMs} ms${suffix}`);
+    }
+
     function fileToDataUrl(file){
       return new Promise((resolve, reject)=>{
         try{
@@ -3728,9 +3734,12 @@ const VISION_CONF_MIN = 0.75; // confidence threshold for auto scoring (0..1)
       }
     }
 
-    async function callVisionAPI({ image_data_url, query, locale, debug }){
+    async function callVisionAPI({ image_data_url, query, locale, debug, timing_label }){
       const base = getVisionApiBase();
       const url = base.replace(/\/$/, "") + "/api/vision";
+      const startedAt = performance.now();
+      const timingLabel = timing_label || "vision.js";
+      let timingLogged = false;
 
       const payload = {
         image_data_url,
@@ -3739,23 +3748,31 @@ const VISION_CONF_MIN = 0.75; // confidence threshold for auto scoring (0..1)
         debug: !!debug
       };
 
-      const fetchPromise = fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
+      try{
+        const fetchPromise = fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
 
-      const res = await withTimeout(fetchPromise, VISION_TIMEOUT_MS);
-      const text = await res.text();
-      let data = null;
-      try { data = JSON.parse(text); } catch { data = { raw: text }; }
+        const res = await withTimeout(fetchPromise, VISION_TIMEOUT_MS);
+        const text = await res.text();
+        let data = null;
+        try { data = JSON.parse(text); } catch { data = { raw: text }; }
 
-      if (!res.ok){
-        const err = new Error(`Vision HTTP ${res.status}`);
-        err.data = data;
-        throw err;
+        logApiTiming(timingLabel, startedAt, `(status ${res.status})`);
+        timingLogged = true;
+
+        if (!res.ok){
+          const err = new Error(`Vision HTTP ${res.status}`);
+          err.data = data;
+          throw err;
+        }
+        return data;
+      }catch(e){
+        if (!timingLogged) logApiTiming(timingLabel, startedAt, `(failed: ${e?.message || e})`);
+        throw e;
       }
-      return data;
     }
 
     function isNonSearchVisionQuery(value){
@@ -3851,6 +3868,8 @@ const body = { normalized_query: String(rawQuery || ""),
       if (pending) return await pending;
 
       const routePromise = (async () => {
+const startedAt = performance.now();
+let timingLogged = false;
 try{
         startWorkingIndicator();
   try {
@@ -3864,6 +3883,8 @@ try{
         }), ROUTE_TIMEOUT_MS);
 
         const data = await r.json().catch(()=>null);
+        logApiTiming("route.js", startedAt, `(status ${r.status})`);
+        timingLogged = true;
 
         // DEV TRACE (router)
         __tesaRouteDebugStart("[TESA route] " + (body.normalized_query || ""), body, data);
@@ -3890,6 +3911,7 @@ llm_query: (typeof data?.llm_query === "string") ? data.llm_query : "",
         stopWorkingIndicator();
         return guarded;
       }catch(e){
+        if (!timingLogged) logApiTiming("route.js", startedAt, `(failed: ${e?.message || e})`);
         if (DEBUG_ROUTE){
           console.warn("[TESA route] router call failed:", e?.message || e);
         }
@@ -4193,7 +4215,8 @@ function stopStatusDots(){
               image_data_url,
               query: "",
               locale: "en",
-              debug: DEBUG_VISION
+              debug: DEBUG_VISION,
+              timing_label: "vision.js"
             });
           }catch(err){
             const msg = String(err?.message || err || "");
@@ -4207,7 +4230,8 @@ function stopStatusDots(){
                 image_data_url: smaller,
                 query: "",
                 locale: "en",
-                debug: DEBUG_VISION
+                debug: DEBUG_VISION,
+                timing_label: "vision.js retry"
               });
             } else {
               throw err;
@@ -5255,7 +5279,7 @@ function parseTorqueStepsText(text){
 function getTorqueStepsRows(item){
   // Returns rows for UI in the form [{label, value}] for multi torque types; [] otherwise.
   const tt = (item && item.tightening_type ? String(item.tightening_type).trim().toLowerCase() : "");
-  if (!["multi_step", "multi_size", "multi_location"].includes(tt)) return [];
+  if (!["multi_step", "multi_size", "multi_location", "multi_type"].includes(tt)) return [];
 
   // If torque_steps is an array of objects (structured), keep existing behavior.
   if (Array.isArray(item.torque_steps) && item.torque_steps.length){
@@ -5303,7 +5327,7 @@ function classifyTorqueStepsRows(rows){
 
 function getTorqueCaseType(item, rows){
   const tt = (item && item.tightening_type ? String(item.tightening_type).trim().toLowerCase() : "");
-  if (["multi_step", "multi_size", "multi_location"].includes(tt)) return tt;
+  if (["multi_step", "multi_size", "multi_location", "multi_type"].includes(tt)) return tt;
   return classifyTorqueStepsRows(rows);
 }
 
@@ -5319,6 +5343,11 @@ function normalizeStepLabel(label){
 function normalizeSizeLabel(label){
   const s = String(label ?? "").trim();
   return s ? s.toUpperCase() : "";
+}
+
+function normalizeTypeLabel(label){
+  const s = String(label ?? "").trim();
+  return s || "Type";
 }
 
 function normalizeLocationLabel(label){
@@ -6035,7 +6064,7 @@ function buildSpokenAnswerParts(item){
   // -----------------------
   // Torque / tightening
   // -----------------------
-  if (["multi_step", "multi_size", "multi_location"].includes(tt)){
+  if (["multi_step", "multi_size", "multi_location", "multi_type"].includes(tt)){
     const rows = getTorqueStepsRows(item);
     const caseType = getTorqueCaseType(item, rows);
 
@@ -6070,6 +6099,22 @@ function buildSpokenAnswerParts(item){
             baseParts.push(`${location}. ${nm} newton meters.`);
           } else {
             baseParts.push(`${location}. ${String(r.value ?? "").trim()}.`);
+          }
+        });
+      } else if (caseType === "multi_type"){
+        baseParts.push("Torque by type.");
+        rows.forEach(r=>{
+          const typeLabel = normalizeTypeLabel(r.label);
+          const nm = extractNmNumber(r.value);
+          const degMatch = String(r.value ?? "").match(/(\d+(?:\.\d+)?)\s*Â°/);
+          const deg = degMatch ? degMatch[1] : null;
+
+          if (nm && deg){
+            baseParts.push(`${typeLabel}. ${nm} newton meters, plus ${deg} degrees.`);
+          } else if (nm){
+            baseParts.push(`${typeLabel}. ${nm} newton meters.`);
+          } else {
+            baseParts.push(`${typeLabel}. ${String(r.value ?? "").trim()}.`);
           }
         });
       } else {
@@ -6217,6 +6262,8 @@ function buildSpokenAnswerParts(item){
             tag = normalizeSizeLabel(tag);
           } else if (caseType === "multi_location"){
             tag = normalizeLocationLabel(tag);
+          } else if (caseType === "multi_type"){
+            tag = normalizeTypeLabel(tag);
           } else {
             // multi_step
             tag = normalizeStepLabel(tag);
