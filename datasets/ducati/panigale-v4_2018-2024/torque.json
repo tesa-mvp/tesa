@@ -3598,7 +3598,7 @@
       "thread_spec": "M8, M10",
       "special_tool_numbers": null,
       "special_tool_name": null,
-      "tightening_seq": "\nLower case: 1-10(M10), 11-16(M8)\nStud Nut: 17\nUpper case: 18-20(M8)",
+      "tightening_seq": "\nLower case: 1-16(18 Nm)\nStud Nut: 17(25 Nm)\nUpper case: 18-20(18 Nm)",
       "extra_notes": "MOTOR OIL to M10,GREASE C to Stud Nut",
       "item_number": null,
       "common_name": [
@@ -3628,7 +3628,7 @@
       "thread_spec": "M6, M8, M10",
       "special_tool_numbers": null,
       "special_tool_name": null,
-      "tightening_seq": "\nLower case:\n1-4(M10x105), 5, 6(M10x55), 7, 8(M10x85),\n9, 10(M10x47), 11-16(M8), 17-19(M6)\nUpper case: 20-24(M8), 25(M6)",
+      "tightening_seq": "\nLower case:\n1-4(55 Nm), 5, 6(35 Nm), 7, 8(55 Nm),\n9, 10(35 Nm), 11-16(25 Nm), 17-19(13 Nm)\nUpper case: 20-24(25 Nm), 25(13 Nm)",
       "extra_notes": null,
       "item_number": null,
       "common_name": [
