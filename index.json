@@ -7,28 +7,6 @@
       "sort_order": 1,
       "models": [
         {
-          "id": "ducati_panigale-v4_2025-2026",
-          "label": "Panigale V4",
-          "group_id": "superbike",
-          "group_label": "Superbike",
-          "group_sort_order": 1,
-          "sort_order": 1,
-          "years": {
-            "from": 2025,
-            "to": 2026
-          },
-          "years_label": "2025–2026",
-          "file": "datasets/ducati/panigale-v4_2025-2026/torque.json",
-          "aliases": [
-            "ducati panigale v4",
-            "panigale v4",
-            "v4",
-            "ducati panigale v4s",
-            "panigale v4s",
-            "v4s"
-          ]
-        },
-        {
           "id": "ducati_panigale-v4_2018-2024",
           "label": "Panigale V4",
           "group_id": "superbike",
@@ -51,28 +29,8 @@
           ]
         },
         {
-          "id": "ducati_panigale-v2_2025-2026",
-          "label": "Panigale V2",
-          "group_id": "superbike",
-          "group_label": "Superbike",
-          "group_sort_order": 1,
-          "sort_order": 3,
-          "years": {
-            "from": 2025,
-            "to": 2026
-          },
-          "years_label": "2025–2026",
-          "file": "datasets/ducati/panigale-v2_2025-2026/torque.json",
-          "aliases": [
-            "ducati panigale v2",
-            "panigale v2",
-            "v2",
-            "new panigale v2"
-          ]
-        },
-        {
           "id": "ducati_panigale-v2_2020-2025",
-          "label": "Panigale V2",
+          "label": "Panigale V2 955",
           "group_id": "superbike",
           "group_label": "Superbike",
           "group_sort_order": 1,
@@ -86,53 +44,6 @@
           "aliases": [
             "ducati panigale v2",
             "panigale v2"
-          ]
-        }
-      ]
-    },
-    {
-      "make": "Yamaha",
-      "make_id": "yamaha",
-      "sort_order": 2,
-      "models": [
-        {
-          "id": "yamaha_yzf-r9_2025-2026",
-          "label": "YZF-R9",
-          "group_id": "superbike",
-          "group_label": "Supersport",
-          "group_sort_order": 1,
-          "sort_order": 1,
-          "years": {
-            "from": 2025,
-            "to": 2026
-          },
-          "years_label": "2025–2026",
-          "file": "datasets/yamaha/yzf-r9_2025-2026/torque.json",
-          "aliases": [
-            "yamaha yzf r9",
-            "yzf r9",
-            "r9",
-            "yamaha r9"
-          ]
-        },
-        {
-          "id": "yamaha_yzf-r7_2022-2026",
-          "label": "YZF-R7",
-          "group_id": "superbike",
-          "group_label": "Supersport",
-          "group_sort_order": 1,
-          "sort_order": 2,
-          "years": {
-            "from": 2022,
-            "to": 2026
-          },
-          "years_label": "2022–2026",
-          "file": "datasets/yamaha/yzf-r7_2022-2026/torque.json",
-          "aliases": [
-            "yamaha yzf r7",
-            "yzf r7",
-            "r7",
-            "yamaha r7"
           ]
         }
       ]
