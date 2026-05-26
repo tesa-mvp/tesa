@@ -40,7 +40,7 @@
             "to": 2024
           },
           "years_label": "2023-2024",
-          "file": "datasets/ducati/panigale-v4r_2023-2024",
+          "file": "datasets/ducati/panigale-v4r_2023-2024/torque.json",
           "aliases": [
             "ducati panigale v4r",
             "panigale v4r",
