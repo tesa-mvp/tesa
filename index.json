@@ -12,7 +12,7 @@
           "group_id": "superbike",
           "group_label": "Superbike",
           "group_sort_order": 1,
-          "sort_order": 2,
+          "sort_order": 3,
           "years": {
             "from": 2018,
             "to": 2024
@@ -34,7 +34,7 @@
           "group_id": "superbike",
           "group_label": "Superbike",
           "group_sort_order": 1,
-          "sort_order": 3,
+          "sort_order": 2,
           "years": {
             "from": 2023,
             "to": 2024
