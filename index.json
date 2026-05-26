@@ -8,7 +8,7 @@
       "models": [
         {
           "id": "ducati_panigale-v4_2018-2024",
-          "label": "Panigale V4",
+          "label": "Panigale V4/V4 S",
           "group_id": "superbike",
           "group_label": "Superbike",
           "group_sort_order": 1,
