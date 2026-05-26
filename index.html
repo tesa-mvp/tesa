@@ -4812,7 +4812,7 @@ async function loadModelIndex(){
           const id = btn.getAttribute("data-model-id");
           const file = btn.getAttribute("data-file");
           try{
-            await setCurrentModel(id, file, {speakConfirm:true});
+            await setCurrentModel(id, file, {speakConfirm:false});
           } finally {
             closeSheet();
           }
