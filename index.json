@@ -8,7 +8,7 @@
       "models": [
         {
           "id": "ducati_panigale-v4_2018-2024",
-          "label": "Panigale V4/V4 S",
+          "label": "Panigale V4/V4S",
           "group_id": "superbike",
           "group_label": "Superbike",
           "group_sort_order": 1,
@@ -29,12 +29,31 @@
           ]
         },
         {
+          "id": "panigale-v4r_2023-2024",
+          "label": "Panigale V4R",
+          "group_id": "superbike",
+          "group_label": "Superbike",
+          "group_sort_order": 1,
+          "sort_order": 3,
+          "years": {
+            "from": 2023,
+            "to": 2024
+          },
+          "years_label": "2023-2024",
+          "file": "datasets\\ducati\\panigale-v4r_2023-2024",
+          "aliases": [
+            "ducati panigale v4r",
+            "panigale v4r",
+            "v4r"
+          ]
+        },
+        {
           "id": "ducati_panigale-v2_2020-2025",
           "label": "Panigale V2 955",
           "group_id": "superbike",
           "group_label": "Superbike",
           "group_sort_order": 1,
-          "sort_order": 4,
+          "sort_order": 5,
           "years": {
             "from": 2020,
             "to": 2025
