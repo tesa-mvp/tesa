@@ -1000,6 +1000,66 @@ body.authLocked .wrap{
   overflow-y:auto;
 }
 .authOverlay.show{display:flex}
+.photoGuideOverlay{
+  position:fixed;
+  inset:0;
+  z-index:2600;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  background:rgba(3,4,8,.72);
+  backdrop-filter:blur(12px);
+}
+.photoGuideOverlay.show{display:flex}
+.photoGuidePanel{
+  width:100%;
+  max-width:360px;
+  border:1px solid var(--border);
+  border-radius:18px;
+  background:linear-gradient(145deg,var(--panel),var(--panel2));
+  box-shadow:0 24px 70px rgba(0,0,0,.7);
+  padding:18px;
+}
+.photoGuideTitle{
+  margin:0 0 8px;
+  font-size:17px;
+  line-height:1.2;
+}
+.photoGuideText{
+  margin:0;
+  color:var(--sub);
+  font-size:12px;
+  line-height:1.45;
+}
+.photoGuideActions{
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  margin-top:16px;
+}
+.photoGuideBtn{
+  min-width:76px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background:rgba(9,11,18,.85);
+  color:var(--text);
+  padding:9px 12px;
+  font-size:12px;
+  cursor:pointer;
+}
+.photoGuideBtn.primary{
+  border-color:rgba(79,140,255,.55);
+  background:rgba(79,140,255,.18);
+  color:#dbe7ff;
+  font-weight:800;
+}
+@media (hover: hover) and (pointer: fine){
+  .photoGuideBtn:hover{
+    border-color:rgba(79,140,255,.68);
+    color:var(--text);
+  }
+}
 .authPanel{
   position:relative;
   width:100%;
@@ -1861,6 +1921,17 @@ body.authLocked .wrap{
         <button id="sheetClose" class="sheetClose" type="button">Close</button>
       </div>
       <div id="sheetBody" class="sheetBody"></div>
+    </div>
+  </div>
+
+  <div id="photoGuideOverlay" class="photoGuideOverlay" role="dialog" aria-modal="true" aria-labelledby="photoGuideTitle" aria-describedby="photoGuideText">
+    <div class="photoGuidePanel">
+      <h2 id="photoGuideTitle" class="photoGuideTitle">Photo search (Beta)</h2>
+      <p id="photoGuideText" class="photoGuideText">Results are improving with real-world use. For best results, clearly mark or point to the target fastener or part.</p>
+      <div class="photoGuideActions">
+        <button id="photoGuideCancel" class="photoGuideBtn" type="button">Cancel</button>
+        <button id="photoGuideOk" class="photoGuideBtn primary" type="button">OK</button>
+      </div>
     </div>
   </div>
 
@@ -4122,6 +4193,9 @@ function stopStatusDots(){
     const photoPreview = document.getElementById("photoPreview");
     const usePhotoBtn = document.getElementById("usePhotoBtn");
     const retakePhotoBtn = document.getElementById("retakePhotoBtn");
+    const photoGuideOverlay = document.getElementById("photoGuideOverlay");
+    const photoGuideCancel = document.getElementById("photoGuideCancel");
+    const photoGuideOk = document.getElementById("photoGuideOk");
 
     let lastPhotoFile = null;
 
@@ -4143,11 +4217,27 @@ function stopStatusDots(){
       if (photoInput) photoInput.value = "";
     }
 
+    function openPhotoPicker(){
+      if (!photoInput) return;
+      setQueryInputValue("", "text");
+      photoInput.click();
+    }
+    function closePhotoGuide(){
+      if (!photoGuideOverlay) return;
+      photoGuideOverlay.classList.remove("show");
+    }
+    function openPhotoGuide(){
+      if (!photoGuideOverlay){
+        openPhotoPicker();
+        return;
+      }
+      photoGuideOverlay.classList.add("show");
+      setTimeout(()=>{ try{ photoGuideOk?.focus(); }catch(e){} }, 0);
+    }
+
     if (camBtn && photoInput){
       camBtn.addEventListener("click", () => {
-        setQueryInputValue("", "text");
-        // open camera / picker
-        photoInput.click();
+        openPhotoGuide();
       });
       photoInput.addEventListener("change", () => {
         const file = photoInput.files && photoInput.files[0];
@@ -4160,6 +4250,20 @@ function stopStatusDots(){
         if (usePhotoBtn) usePhotoBtn.disabled = false;
 
         setStatus("Photo search (Beta) is ready to analyze.\nResults are improving with real-world use.", true, false);
+      });
+    }
+    if (photoGuideCancel){
+      photoGuideCancel.addEventListener("click", closePhotoGuide);
+    }
+    if (photoGuideOk){
+      photoGuideOk.addEventListener("click", () => {
+        closePhotoGuide();
+        openPhotoPicker();
+      });
+    }
+    if (photoGuideOverlay){
+      photoGuideOverlay.addEventListener("click", (event) => {
+        if (event.target === photoGuideOverlay) closePhotoGuide();
       });
     }
 
