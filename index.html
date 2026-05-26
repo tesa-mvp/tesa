@@ -4198,6 +4198,7 @@ function stopStatusDots(){
     const photoGuideOk = document.getElementById("photoGuideOk");
 
     let lastPhotoFile = null;
+    const PHOTO_GUIDE_SEEN_KEY = "sam_photo_search_guide_seen";
 
     function openPhotoPane(){
       if (!photoPane) return;
@@ -4217,6 +4218,18 @@ function stopStatusDots(){
       if (photoInput) photoInput.value = "";
     }
 
+    function hasSeenPhotoGuide(){
+      try{
+        return localStorage.getItem(PHOTO_GUIDE_SEEN_KEY) === "1";
+      }catch(e){
+        return false;
+      }
+    }
+    function markPhotoGuideSeen(){
+      try{
+        localStorage.setItem(PHOTO_GUIDE_SEEN_KEY, "1");
+      }catch(e){}
+    }
     function openPhotoPicker(){
       if (!photoInput) return;
       setQueryInputValue("", "text");
@@ -4237,7 +4250,11 @@ function stopStatusDots(){
 
     if (camBtn && photoInput){
       camBtn.addEventListener("click", () => {
-        openPhotoGuide();
+        if (hasSeenPhotoGuide()){
+          openPhotoPicker();
+        } else {
+          openPhotoGuide();
+        }
       });
       photoInput.addEventListener("change", () => {
         const file = photoInput.files && photoInput.files[0];
@@ -4257,6 +4274,7 @@ function stopStatusDots(){
     }
     if (photoGuideOk){
       photoGuideOk.addEventListener("click", () => {
+        markPhotoGuideSeen();
         closePhotoGuide();
         openPhotoPicker();
       });
@@ -4291,7 +4309,7 @@ function stopStatusDots(){
         let visionImageInfo = null;
         try{
           usePhotoBtn.disabled = true;
-          startStatusDots("AI is analyzing the photo", {
+          startStatusDots("SAM. is analyzing the photo", {
             nextText: "Finishing analysis",
             delayMs: 3000,
             detailText: "Checking a few more details",
@@ -5051,7 +5069,7 @@ async function initApp(){
     let __tesaWorkingDetailTimer = null;
     function startWorkingIndicator(){
       if (__tesaWorkingTimer) return;
-      let base = "AI is analyzing your request";
+      let base = "SAM. is analyzing your request";
       let dots = 0;
       setStatus(base + "...", true, false);
       __statusMessageTimer = setTimeout(()=>{
