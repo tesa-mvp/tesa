@@ -1654,6 +1654,16 @@ body.authLocked .wrap{
 .brandText{
   text-align:left;
 }
+.brandLink{
+  color:inherit;
+  text-decoration:none;
+  display:block;
+  border-radius:8px;
+}
+.brandLink:focus{
+  outline:2px solid rgba(79,140,255,.65);
+  outline-offset:4px;
+}
 
 
 /* Stacked result cards */
@@ -1813,10 +1823,12 @@ body.authLocked .wrap{
             <div class="knob"></div>
           </div>
         </div>
-          <div class="brandText">
-            <div class="t1">SAM.</div>
-            <div class="t2">Torque Spec Assistant</div>
-          </div>
+          <a class="brandLink" href="/index.html" aria-label="Go to SAM. home">
+            <div class="brandText">
+              <div class="t1">SAM.</div>
+              <div class="t2">Torque Spec Assistant</div>
+            </div>
+          </a>
         </div>
         <div class="topActions">
           <span id="authMenuAlertBadge" class="authMenuAlertBadge" aria-label="Account attention required">!</span>
