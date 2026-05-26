@@ -1312,7 +1312,7 @@
       "thread_spec": null,
       "special_tool_numbers": null,
       "special_tool_name": null,
-      "tightening_seq": null,
+      "tightening_seq": "1(DOWN) - 2 - 3 - 2 - 1",
       "extra_notes": null,
       "item_number": 3,
       "common_name": [
@@ -3780,6 +3780,34 @@
       ],
       "ref_images": [
         "spark_plug_1.png"
+      ]
+    },
+     {
+      "id": "engine_mounting",
+      "group": null,
+      "component_name": "Engine mounting screw",
+      "vision_query": "engine mounting screw",
+      "tightening_type": "single",
+      "torque_nm_single": 90,
+      "torque_steps": null,
+      "threadlock": null,
+      "threadlock_symbol": null,
+      "lubrication": "SHELL Retinax HDX2",
+      "lubrication_symbol": "GREASE B",
+      "sealant": null,
+      "sealant_symbol": null,
+      "thread_spec": null,
+      "special_tool_numbers": null,
+      "special_tool_name": null,
+      "tightening_seq": null,
+      "extra_notes": null,
+      "item_number": 1,
+      "common_name": [
+        "engine mount"
+      ],
+      "ref_images": [
+        "engine_mounting_1.png",
+        "engine_mounting_2.png"
       ]
     }
   ]
